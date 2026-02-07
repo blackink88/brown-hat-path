@@ -5,7 +5,8 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, Mail, Lock, User, ArrowRight, Check } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Check, Users } from "lucide-react";
+import bhlogo from "@/assets/bhlogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -66,7 +67,7 @@ const Enroll = () => {
             {/* Left: Benefits */}
             <div className="hidden lg:block">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-                <Shield className="h-4 w-4 text-primary" />
+                <Users className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium text-primary">Join 5,000+ students</span>
               </div>
               <h1 className="text-4xl font-bold text-foreground mb-4">
@@ -106,9 +107,7 @@ const Enroll = () => {
             {/* Right: Form */}
             <div className="w-full max-w-md mx-auto lg:mx-0">
               <div className="lg:hidden text-center mb-8">
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground mb-4">
-                  <Shield className="h-7 w-7" />
-                </div>
+                <img src={bhlogo} alt="Brown Hat Academy" className="h-16 w-auto mx-auto mb-4" />
                 <h1 className="text-2xl font-bold text-foreground">Create your account</h1>
                 <p className="text-muted-foreground mt-1">Start your cybersecurity journey</p>
               </div>
