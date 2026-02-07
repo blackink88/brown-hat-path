@@ -2,64 +2,10 @@ import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Check, Zap, Shield, Crown } from "lucide-react";
+import { Check, Zap, Shield, Crown, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const tiers = [
-  {
-    name: "Foundation",
-    price: "R499",
-    period: "/month",
-    description: "Perfect for beginners starting their cybersecurity journey.",
-    icon: Zap,
-    features: [
-      "Level 0: Technical Readiness Program",
-      "Level 1: Foundations Curriculum",
-      "Basic Skills Radar tracking",
-      "Community forum access",
-      "Email support",
-    ],
-    cta: "Start Foundation",
-    popular: false,
-  },
-  {
-    name: "Practitioner",
-    price: "R1,500",
-    period: "/month",
-    description: "For those ready to dive into core cybersecurity skills.",
-    icon: Shield,
-    features: [
-      "Everything in Foundation, plus:",
-      "Level 2: Core Cyber curriculum",
-      "Level 3: Practitioner Core (Blue Team or GRC)",
-      "Certification path tracking",
-      "Toolbox Mastery modules",
-      "Live Q&A sessions",
-      "Priority email support",
-    ],
-    cta: "Start Practitioner",
-    popular: true,
-  },
-  {
-    name: "Professional",
-    price: "R3,000",
-    period: "/month",
-    description: "Complete access for serious career advancement.",
-    icon: Crown,
-    features: [
-      "Everything in Practitioner, plus:",
-      "Level 4: Specialisation Tracks",
-      "Level 5: Advanced & Leadership",
-      "Amajoni Intern eligibility",
-      "Career coaching sessions",
-      "Verified Skills Portfolio",
-      "Employer introductions",
-      "1-on-1 mentorship",
-    ],
-    cta: "Start Professional",
-    popular: false,
-  },
-];
+import { useCurrency } from "@/hooks/useCurrency";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const faqs = [
   {
@@ -81,6 +27,65 @@ const faqs = [
 ];
 
 const Pricing = () => {
+  const { getPrices, currency, isLoading } = useCurrency();
+  const prices = getPrices();
+
+  const tiers = [
+    {
+      name: "Foundation",
+      price: prices.foundation,
+      period: "/month",
+      description: "Perfect for beginners starting their cybersecurity journey.",
+      icon: Zap,
+      features: [
+        "Level 0: Technical Readiness Program",
+        "Level 1: Foundations Curriculum",
+        "Basic Skills Radar tracking",
+        "Community forum access",
+        "Email support",
+      ],
+      cta: "Start Foundation",
+      popular: false,
+    },
+    {
+      name: "Practitioner",
+      price: prices.practitioner,
+      period: "/month",
+      description: "For those ready to dive into core cybersecurity skills.",
+      icon: Shield,
+      features: [
+        "Everything in Foundation, plus:",
+        "Level 2: Core Cyber curriculum",
+        "Level 3: Practitioner Core (Blue Team or GRC)",
+        "Certification path tracking",
+        "Toolbox Mastery modules",
+        "Live Q&A sessions",
+        "Priority email support",
+      ],
+      cta: "Start Practitioner",
+      popular: true,
+    },
+    {
+      name: "Professional",
+      price: prices.professional,
+      period: "/month",
+      description: "Complete access for serious career advancement.",
+      icon: Crown,
+      features: [
+        "Everything in Practitioner, plus:",
+        "Level 4: Specialisation Tracks",
+        "Level 5: Advanced & Leadership",
+        "Amajoni Intern eligibility",
+        "Career coaching sessions",
+        "Verified Skills Portfolio",
+        "Employer introductions",
+        "1-on-1 mentorship",
+      ],
+      cta: "Start Professional",
+      popular: false,
+    },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -96,6 +101,13 @@ const Pricing = () => {
               <p className="text-lg text-primary-foreground/80">
                 Invest in your future with locally affordable, internationally recognized training.
               </p>
+              {/* Currency indicator */}
+              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 backdrop-blur-sm">
+                <Globe className="h-4 w-4 text-accent" />
+                <span className="text-sm font-medium text-primary-foreground/90">
+                  {isLoading ? "Detecting your region..." : `Prices shown in ${currency}`}
+                </span>
+              </div>
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0">
@@ -129,8 +141,14 @@ const Pricing = () => {
                   </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">{tier.name}</h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-foreground">{tier.price}</span>
-                    <span className="text-muted-foreground">{tier.period}</span>
+                    {isLoading ? (
+                      <Skeleton className="h-10 w-24" />
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold text-foreground">{tier.price}</span>
+                        <span className="text-muted-foreground">{tier.period}</span>
+                      </>
+                    )}
                   </div>
                   <p className="text-sm text-muted-foreground mb-6">{tier.description}</p>
                   <ul className="space-y-3 mb-8">
