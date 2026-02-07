@@ -15,6 +15,7 @@ import Pricing from "./pages/Pricing";
 import Employers from "./pages/Employers";
 import Login from "./pages/Login";
 import Enroll from "./pages/Enroll";
+import Quiz from "./pages/Quiz";
 import NotFound from "./pages/NotFound";
 
 // Dashboard pages
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/employers" element={<Employers />} />
             <Route path="/login" element={<Login />} />
             <Route path="/enroll" element={<Enroll />} />
+            <Route path="/quiz" element={<Quiz />} />
 
             {/* Protected Dashboard Routes */}
             <Route
