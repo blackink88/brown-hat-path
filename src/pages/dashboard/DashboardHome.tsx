@@ -67,7 +67,9 @@ export default function DashboardHome() {
           <div className="absolute top-8 left-8 right-8 h-1 bg-border rounded-full" />
           <div
             className="absolute top-8 left-8 h-1 bg-primary rounded-full transition-all"
-            style={{ width: "10%" }}
+            style={{
+              width: `${learningPathStages.find((s) => s.status === "current")?.progress ?? 0}%`,
+            }}
           />
 
           {/* Stages */}
@@ -143,6 +145,9 @@ export default function DashboardHome() {
             <Link to="/dashboard/course/bh-bridge">Continue</Link>
           </Button>
         </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          Start a course from <Link to="/dashboard/courses" className="text-primary hover:underline">My Courses</Link> to see your progress here.
+        </p>
       </div>
 
       {/* Quick Stats */}

@@ -54,6 +54,8 @@ export default function CommandCenter() {
     );
   }
 
+  const hasSkills = skills && skills.length > 0;
+
   return (
     <div className="space-y-8">
       <div>
@@ -91,6 +93,14 @@ export default function CommandCenter() {
       {/* Skill Radar Chart */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">Skills Radar</h2>
+        {!hasSkills ? (
+          <div className="h-80 flex items-center justify-center rounded-lg bg-muted/30 text-center">
+            <div>
+              <p className="text-muted-foreground">No skill domains loaded yet.</p>
+              <p className="text-sm text-muted-foreground mt-1">Complete courses to build your skills profile.</p>
+            </div>
+          </div>
+        ) : (
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={radarData}>
@@ -115,6 +125,7 @@ export default function CommandCenter() {
             </RadarChart>
           </ResponsiveContainer>
         </div>
+        )}
       </div>
 
       {/* Skill Breakdown */}
@@ -122,8 +133,11 @@ export default function CommandCenter() {
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Domain Breakdown
         </h2>
+        {!hasSkills ? (
+          <p className="text-sm text-muted-foreground">Skill domains will appear here as you progress.</p>
+        ) : (
         <div className="grid md:grid-cols-2 gap-4">
-          {skills?.map((skill) => {
+          {skills.map((skill) => {
             const level = userSkillLevels[skill.name] || 0;
             return (
               <div
@@ -142,6 +156,7 @@ export default function CommandCenter() {
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );

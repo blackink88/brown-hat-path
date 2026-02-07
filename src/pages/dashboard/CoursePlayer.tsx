@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,11 +112,13 @@ export default function CoursePlayer() {
     },
   });
 
-  // Set first lesson as selected if none selected
-  if (courseData && !selectedLesson && courseData.modules[0]?.lessons[0]) {
-    setSelectedLesson(courseData.modules[0].lessons[0].id);
-    setExpandedModules([courseData.modules[0].id]);
-  }
+  // Set first lesson as selected when course data loads or course changes
+  useEffect(() => {
+    if (courseData?.modules?.[0]?.lessons?.[0]) {
+      setSelectedLesson(courseData.modules[0].lessons[0].id);
+      setExpandedModules([courseData.modules[0].id]);
+    }
+  }, [courseCode, courseData?.course?.id]);
 
   const currentLesson = courseData?.modules
     .flatMap((m) => m.lessons)

@@ -11,7 +11,9 @@ const levelLabels: Record<number, string> = {
   0: "Bridge",
   1: "Foundations",
   2: "Core",
-  3: "Specialist",
+  3: "Practitioner",
+  4: "Specialisation",
+  5: "Advanced",
 };
 
 export default function MyCourses() {
@@ -42,6 +44,9 @@ export default function MyCourses() {
     );
   }
 
+  const enrolledCourses = courses?.filter((c) => enrolledCourseIds.includes(c.code)) ?? [];
+  const availableCourses = courses?.filter((c) => !enrolledCourseIds.includes(c.code)) ?? [];
+
   return (
     <div className="space-y-8">
       <div>
@@ -56,10 +61,14 @@ export default function MyCourses() {
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Enrolled Courses
         </h2>
+        {enrolledCourses.length === 0 ? (
+          <div className="rounded-xl border border-border bg-muted/30 p-8 text-center">
+            <p className="text-muted-foreground mb-2">You haven't enrolled in any courses yet.</p>
+            <p className="text-sm text-muted-foreground">Courses you enroll in will appear here with your progress.</p>
+          </div>
+        ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {courses
-            ?.filter((c) => enrolledCourseIds.includes(c.code))
-            .map((course) => (
+          {enrolledCourses.map((course) => (
               <div
                 key={course.id}
                 className="rounded-xl border border-border bg-card overflow-hidden hover:shadow-lg transition-shadow"
@@ -91,7 +100,7 @@ export default function MyCourses() {
                     <Progress value={courseProgress[course.code] || 0} className="h-2" />
                   </div>
                   <Button className="w-full" asChild>
-                    <Link to={`/dashboard/course/${course.code.toLowerCase()}`}>
+                    <Link to={`/dashboard/course/${(course.code ?? "").toLowerCase()}`}>
                       <Play className="h-4 w-4 mr-2" />
                       Continue
                     </Link>
@@ -100,6 +109,7 @@ export default function MyCourses() {
               </div>
             ))}
         </div>
+        )}
       </div>
 
       {/* Available Courses */}
@@ -107,10 +117,14 @@ export default function MyCourses() {
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Available Courses
         </h2>
+        {availableCourses.length === 0 && (!courses || courses.length === 0) ? (
+          <div className="rounded-xl border border-border bg-muted/30 p-8 text-center">
+            <p className="text-muted-foreground">No courses available right now.</p>
+            <p className="text-sm text-muted-foreground mt-1">Check back later or contact support.</p>
+          </div>
+        ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {courses
-            ?.filter((c) => !enrolledCourseIds.includes(c.code))
-            .map((course) => {
+          {availableCourses.map((course) => {
               const isLocked = course.required_tier_level > 1; // Simplified check
               return (
                 <div
@@ -164,6 +178,7 @@ export default function MyCourses() {
               );
             })}
         </div>
+        )}
       </div>
     </div>
   );
