@@ -8,9 +8,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
+import {
   ChevronLeft,
   Play,
-  CheckCircle2,
   Clock,
   ChevronDown,
   ChevronRight,
@@ -23,6 +27,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { LabPanel } from "@/components/dashboard/LabPanel";
+import { TutorAIChat } from "@/components/dashboard/TutorAIChat";
 
 export default function CoursePlayer() {
   const { courseCode } = useParams<{ courseCode: string }>();
@@ -134,6 +140,17 @@ export default function CoursePlayer() {
   const progressPercent =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
+  // Handle flag submission
+  const handleFlagSubmit = async (flag: string): Promise<boolean> => {
+    // In production, validate against stored flags in database
+    // For now, accept any flag that matches pattern
+    const isValid = flag.toLowerCase().startsWith("flag{") && flag.endsWith("}");
+    if (isValid && selectedLesson) {
+      toggleCompletion.mutate({ lessonId: selectedLesson, completed: true });
+    }
+    return isValid;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -177,149 +194,187 @@ export default function CoursePlayer() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex gap-6 pt-4 overflow-hidden">
-        {/* Left: Video + Notes */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Video Player Placeholder */}
-          <div className="aspect-video bg-foreground/5 rounded-xl flex items-center justify-center mb-4 border border-border">
-            {currentLesson?.video_url ? (
-              <iframe
-                src={currentLesson.video_url}
-                className="w-full h-full rounded-xl"
-                allowFullScreen
-              />
-            ) : (
-              <div className="text-center text-muted-foreground">
-                <Play className="h-16 w-16 mx-auto mb-2 opacity-50" />
-                <p>Video coming soon</p>
+      {/* Main Content - Split Pane Layout */}
+      <div className="flex-1 pt-4 overflow-hidden">
+        <ResizablePanelGroup direction="horizontal" className="h-full">
+          {/* Left Panel: Video + Notes + Lab */}
+          <ResizablePanel defaultSize={65} minSize={40}>
+            <div className="h-full flex flex-col gap-4 pr-4">
+              {/* Video Player */}
+              <div className="aspect-video bg-foreground/5 rounded-xl flex items-center justify-center border border-border shrink-0">
+                {currentLesson?.video_url ? (
+                  <iframe
+                    src={currentLesson.video_url}
+                    className="w-full h-full rounded-xl"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div className="text-center text-muted-foreground">
+                    <Play className="h-16 w-16 mx-auto mb-2 opacity-50" />
+                    <p>Video coming soon</p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Lesson Info */}
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold text-foreground">
-              {currentLesson?.title || "Select a lesson"}
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              {currentLesson?.description}
-            </p>
-          </div>
-
-          {/* Notes Area */}
-          <div className="flex-1 rounded-xl border border-border bg-card p-4 overflow-auto">
-            <div className="flex items-center gap-2 mb-3">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <h3 className="font-medium text-foreground">Lesson Notes</h3>
-            </div>
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-              {currentLesson?.content_markdown ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: currentLesson.content_markdown,
-                  }}
-                />
-              ) : (
-                <p className="text-muted-foreground italic">
-                  Notes will appear here when you start the lesson.
+              {/* Lesson Info */}
+              <div className="shrink-0">
+                <h2 className="text-xl font-semibold text-foreground">
+                  {currentLesson?.title || "Select a lesson"}
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {currentLesson?.description}
                 </p>
-              )}
-            </div>
-          </div>
-        </div>
+              </div>
 
-        {/* Right: Curriculum */}
-        <div className="w-80 shrink-0 rounded-xl border border-border bg-card flex flex-col">
-          <div className="p-4 border-b border-border">
-            <h3 className="font-semibold text-foreground">Curriculum</h3>
-          </div>
-          <ScrollArea className="flex-1">
-            <div className="p-2">
-              {courseData.modules.map((module) => (
-                <Collapsible
-                  key={module.id}
-                  open={expandedModules.includes(module.id)}
-                  onOpenChange={(open) => {
-                    setExpandedModules(
-                      open
-                        ? [...expandedModules, module.id]
-                        : expandedModules.filter((id) => id !== module.id)
-                    );
-                  }}
-                >
-                  <CollapsibleTrigger className="flex items-center gap-2 w-full p-3 rounded-lg hover:bg-muted/50 text-left">
-                    {expandedModules.includes(module.id) ? (
-                      <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                    )}
-                    <span className="font-medium text-foreground text-sm flex-1">
-                      {module.title}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {module.lessons.filter((l: { id: string }) => userProgress?.[l.id])
-                        .length}
-                      /{module.lessons.length}
-                    </span>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="ml-6 space-y-1">
-                      {module.lessons.map(
-                        (lesson: {
-                          id: string;
-                          title: string;
-                          duration_minutes: number | null;
-                        }) => {
-                          const isComplete = userProgress?.[lesson.id];
-                          const isSelected = selectedLesson === lesson.id;
-                          return (
-                            <div
-                              key={lesson.id}
-                              className={cn(
-                                "flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors",
-                                isSelected
-                                  ? "bg-primary/10 text-primary"
-                                  : "hover:bg-muted/50"
-                              )}
-                              onClick={() => setSelectedLesson(lesson.id)}
-                            >
-                              <Checkbox
-                                checked={isComplete}
-                                onCheckedChange={(checked) => {
-                                  toggleCompletion.mutate({
-                                    lessonId: lesson.id,
-                                    completed: checked as boolean,
-                                  });
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                                className="shrink-0"
-                              />
-                              <span
-                                className={cn(
-                                  "text-sm flex-1 truncate",
-                                  isComplete && "line-through text-muted-foreground"
-                                )}
-                              >
-                                {lesson.title}
-                              </span>
-                              {lesson.duration_minutes && (
-                                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  {lesson.duration_minutes}m
-                                </span>
-                              )}
-                            </div>
-                          );
-                        }
-                      )}
+              {/* Tabs: Notes + Lab + AI Tutor */}
+              <div className="flex-1 min-h-0">
+                <ResizablePanelGroup direction="vertical" className="h-full">
+                  {/* Notes Area */}
+                  <ResizablePanel defaultSize={50} minSize={20}>
+                    <div className="h-full rounded-xl border border-border bg-card p-4 overflow-auto">
+                      <div className="flex items-center gap-2 mb-3">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="font-medium text-foreground">Lesson Notes</h3>
+                      </div>
+                      <div className="prose prose-sm dark:prose-invert max-w-none">
+                        {currentLesson?.content_markdown ? (
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: currentLesson.content_markdown,
+                            }}
+                          />
+                        ) : (
+                          <p className="text-muted-foreground italic">
+                            Notes will appear here when you start the lesson.
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              ))}
+                  </ResizablePanel>
+
+                  <ResizableHandle withHandle />
+
+                  {/* AI Tutor */}
+                  <ResizablePanel defaultSize={50} minSize={20}>
+                    <div className="h-full pt-2">
+                      <TutorAIChat
+                        lessonContext={currentLesson?.title}
+                        courseContext={courseData.course.title}
+                      />
+                    </div>
+                  </ResizablePanel>
+                </ResizablePanelGroup>
+              </div>
             </div>
-          </ScrollArea>
-        </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          {/* Right Panel: Curriculum + Lab */}
+          <ResizablePanel defaultSize={35} minSize={25}>
+            <div className="h-full flex flex-col gap-4 pl-2">
+              {/* Lab Panel */}
+              <LabPanel
+                lessonId={selectedLesson || ""}
+                labUrl="https://tryhackme.com" // Mock lab URL
+                onFlagSubmit={handleFlagSubmit}
+                isCompleted={userProgress?.[selectedLesson || ""] || false}
+              />
+
+              {/* Curriculum */}
+              <div className="flex-1 min-h-0 rounded-xl border border-border bg-card flex flex-col">
+                <div className="p-4 border-b border-border shrink-0">
+                  <h3 className="font-semibold text-foreground">Curriculum</h3>
+                </div>
+                <ScrollArea className="flex-1">
+                  <div className="p-2">
+                    {courseData.modules.map((module) => (
+                      <Collapsible
+                        key={module.id}
+                        open={expandedModules.includes(module.id)}
+                        onOpenChange={(open) => {
+                          setExpandedModules(
+                            open
+                              ? [...expandedModules, module.id]
+                              : expandedModules.filter((id) => id !== module.id)
+                          );
+                        }}
+                      >
+                        <CollapsibleTrigger className="flex items-center gap-2 w-full p-3 rounded-lg hover:bg-muted/50 text-left">
+                          {expandedModules.includes(module.id) ? (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                          )}
+                          <span className="font-medium text-foreground text-sm flex-1">
+                            {module.title}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {module.lessons.filter((l: { id: string }) => userProgress?.[l.id])
+                              .length}
+                            /{module.lessons.length}
+                          </span>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="ml-6 space-y-1">
+                            {module.lessons.map(
+                              (lesson: {
+                                id: string;
+                                title: string;
+                                duration_minutes: number | null;
+                              }) => {
+                                const isComplete = userProgress?.[lesson.id];
+                                const isSelected = selectedLesson === lesson.id;
+                                return (
+                                  <div
+                                    key={lesson.id}
+                                    className={cn(
+                                      "flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors",
+                                      isSelected
+                                        ? "bg-primary/10 text-primary"
+                                        : "hover:bg-muted/50"
+                                    )}
+                                    onClick={() => setSelectedLesson(lesson.id)}
+                                  >
+                                    <Checkbox
+                                      checked={isComplete}
+                                      onCheckedChange={(checked) => {
+                                        toggleCompletion.mutate({
+                                          lessonId: lesson.id,
+                                          completed: checked as boolean,
+                                        });
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="shrink-0"
+                                    />
+                                    <span
+                                      className={cn(
+                                        "text-sm flex-1 truncate",
+                                        isComplete && "line-through text-muted-foreground"
+                                      )}
+                                    >
+                                      {lesson.title}
+                                    </span>
+                                    {lesson.duration_minutes && (
+                                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                        <Clock className="h-3 w-3" />
+                                        {lesson.duration_minutes}m
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );

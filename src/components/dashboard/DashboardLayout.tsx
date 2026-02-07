@@ -13,6 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { GlobalSearch } from "./GlobalSearch";
 
 export function DashboardLayout() {
   const { user, signOut } = useAuth();
@@ -31,10 +33,13 @@ export function DashboardLayout() {
         <DashboardSidebar />
         <SidebarInset className="flex-1">
           {/* Top Header */}
-          <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-border bg-background/95 backdrop-blur px-6">
+          <header className="sticky top-0 z-40 flex h-14 items-center gap-2 sm:gap-4 border-b border-border bg-background/95 backdrop-blur px-3 sm:px-6">
             <SidebarTrigger />
             <DashboardBreadcrumb />
-            <div className="flex-1" />
+            <div className="flex-1 flex justify-center sm:justify-start">
+              <GlobalSearch />
+            </div>
+            <ThemeToggle />
             <Button variant="ghost" size="icon" aria-label="Notifications">
               <Bell className="h-5 w-5" />
             </Button>

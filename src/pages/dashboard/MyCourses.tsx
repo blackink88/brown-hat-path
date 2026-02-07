@@ -67,7 +67,7 @@ export default function MyCourses() {
             <p className="text-sm text-muted-foreground">Courses you enroll in will appear here with your progress.</p>
           </div>
         ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {enrolledCourses.map((course) => (
               <div
                 key={course.id}
@@ -123,7 +123,7 @@ export default function MyCourses() {
             <p className="text-sm text-muted-foreground mt-1">Check back later or contact support.</p>
           </div>
         ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {availableCourses.map((course) => {
               const isLocked = course.required_tier_level > 1; // Simplified check
               return (

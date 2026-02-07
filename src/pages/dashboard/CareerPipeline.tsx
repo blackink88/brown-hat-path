@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   CheckCircle2,
-  Circle,
   Briefcase,
   GraduationCap,
   FileText,
@@ -12,6 +11,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Leaderboard } from "@/components/dashboard/Leaderboard";
+import { PortfolioExport } from "@/components/dashboard/PortfolioExport";
 
 const pipelineSteps = [
   {
@@ -51,11 +52,20 @@ const requirements = [
   { label: "Peer Reviews", current: 0, required: 3, icon: Users },
 ];
 
+// Mock leaderboard data
+const leaderboardEntries = [
+  { rank: 1, userId: "u1", displayName: "CyberNinja42", score: 98, metric: "2:34" },
+  { rank: 2, userId: "u2", displayName: "SecOpsQueen", score: 95, metric: "3:12" },
+  { rank: 3, userId: "u3", displayName: "PacketHunter", score: 92, metric: "3:45" },
+  { rank: 4, userId: "u4", displayName: "FirewallFox", score: 88, metric: "4:01" },
+  { rank: 5, userId: "u5", displayName: "ThreatSeeker", score: 85, metric: "4:22" },
+];
+
 export default function CareerPipeline() {
   const overallProgress = 28; // Calculated from requirements
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Amajoni Pipeline</h1>
         <p className="text-muted-foreground">
@@ -63,27 +73,45 @@ export default function CareerPipeline() {
         </p>
       </div>
 
-      {/* Job Readiness Score */}
-      <div className="rounded-xl border border-border bg-card p-6">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <Briefcase className="h-8 w-8 text-primary" />
+      {/* Top Row: Job Readiness + Leaderboard */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Job Readiness Score */}
+        <div className="rounded-xl border border-border bg-card p-6">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <Briefcase className="h-8 w-8 text-primary" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-foreground">
+                Job Readiness Score
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Complete more requirements to increase your score
+              </p>
+            </div>
+            <div className="text-right">
+              <span className="text-4xl font-bold text-primary">{overallProgress}%</span>
+              <p className="text-sm text-muted-foreground">of 100%</p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h2 className="text-lg font-semibold text-foreground">
-              Job Readiness Score
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Complete more requirements to increase your score
-            </p>
-          </div>
-          <div className="text-right">
-            <span className="text-4xl font-bold text-primary">{overallProgress}%</span>
-            <p className="text-sm text-muted-foreground">of 100%</p>
-          </div>
+          <Progress value={overallProgress} className="h-4" />
         </div>
-        <Progress value={overallProgress} className="h-4" />
+
+        {/* Leaderboard */}
+        <Leaderboard
+          entries={leaderboardEntries}
+          title="Top Performers"
+          metricLabel="Time-to-Mitigation"
+        />
       </div>
+
+      {/* Portfolio Export */}
+      <PortfolioExport
+        userName="Student"
+        completedLessons={12}
+        skillsCount={4}
+        labsCompleted={3}
+      />
 
       {/* Pipeline Stages */}
       <div className="rounded-xl border border-border bg-card p-6">

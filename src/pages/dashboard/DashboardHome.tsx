@@ -3,6 +3,9 @@ import { ArrowRight, CheckCircle2, Circle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { ThreatLevelIndicator } from "@/components/dashboard/ThreatLevelIndicator";
+import { ActiveMissions } from "@/components/dashboard/ActiveMissions";
+import { LiveActivityFeed } from "@/components/dashboard/LiveActivityFeed";
 
 const learningPathStages = [
   {
@@ -39,15 +42,60 @@ const learningPathStages = [
   },
 ];
 
+// Mock missions - in production, fetch from Supabase based on user progress
+const mockMissions = [
+  {
+    id: "1",
+    title: "Introduction to Networking",
+    module: "BH-BRIDGE Module 1",
+    courseCode: "bh-bridge",
+    status: "in_progress" as const,
+  },
+  {
+    id: "2",
+    title: "Understanding the OSI Model",
+    module: "BH-BRIDGE Module 1",
+    courseCode: "bh-bridge",
+    status: "pending" as const,
+  },
+  {
+    id: "3",
+    title: "IP Addressing Fundamentals",
+    module: "BH-BRIDGE Module 2",
+    courseCode: "bh-bridge",
+    status: "locked" as const,
+  },
+];
+
 export default function DashboardHome() {
+  // Calculate threat level based on last lab completion (mock)
+  const lastLabDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000); // 2 days ago
+  const daysSinceLastLab = Math.floor(
+    (Date.now() - lastLabDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const threatLevel =
+    daysSinceLastLab <= 1
+      ? "low"
+      : daysSinceLastLab <= 3
+      ? "guarded"
+      : daysSinceLastLab <= 7
+      ? "elevated"
+      : daysSinceLastLab <= 14
+      ? "high"
+      : "severe";
+
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Welcome back!</h1>
-        <p className="text-muted-foreground">
-          Continue your cybersecurity journey where you left off.
-        </p>
+    <div className="space-y-6">
+      {/* Security Posture Header */}
+      <ThreatLevelIndicator
+        level={threatLevel as "low" | "guarded" | "elevated" | "high" | "severe"}
+        lastLabDate={lastLabDate}
+      />
+
+      {/* Two Column Layout: Missions + Activity Feed */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <ActiveMissions missions={mockMissions} />
+        <LiveActivityFeed />
       </div>
 
       {/* Learning Path Roadmap */}
@@ -63,19 +111,19 @@ export default function DashboardHome() {
 
         {/* Roadmap Visualization */}
         <div className="relative">
-          {/* Connection Line */}
-          <div className="absolute top-8 left-8 right-8 h-1 bg-border rounded-full" />
+          {/* Connection Line - hidden on mobile */}
+          <div className="hidden sm:block absolute top-8 left-8 right-8 h-1 bg-border rounded-full" />
           <div
-            className="absolute top-8 left-8 h-1 bg-primary rounded-full transition-all"
+            className="hidden sm:block absolute top-8 left-8 h-1 bg-primary rounded-full transition-all"
             style={{
               width: `${learningPathStages.find((s) => s.status === "current")?.progress ?? 0}%`,
             }}
           />
 
-          {/* Stages */}
-          <div className="relative grid grid-cols-4 gap-4">
-            {learningPathStages.map((stage, index) => (
-              <div key={stage.id} className="flex flex-col items-center">
+          {/* Stages - vertical on mobile, horizontal on larger screens */}
+          <div className="relative flex flex-col sm:grid sm:grid-cols-4 gap-4 sm:gap-4">
+            {learningPathStages.map((stage) => (
+              <div key={stage.id} className="flex sm:flex-col items-center gap-4 sm:gap-0">
                 {/* Node */}
                 <div
                   className={cn(
@@ -98,7 +146,7 @@ export default function DashboardHome() {
                 </div>
 
                 {/* Label */}
-                <div className="mt-4 text-center">
+                <div className="sm:mt-4 text-left sm:text-center flex-1 sm:flex-none">
                   <p
                     className={cn(
                       "font-semibold",
@@ -128,11 +176,11 @@ export default function DashboardHome() {
       {/* Continue Learning Card */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">Continue Learning</h2>
-        <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
-          <div className="h-16 w-24 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg bg-muted/50">
+          <div className="h-12 sm:h-16 w-full sm:w-24 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
             <span className="text-xs font-mono text-primary">BH-BRIDGE</span>
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 w-full">
             <h3 className="font-medium text-foreground truncate">
               Technical Readiness Bridge
             </h3>
@@ -141,7 +189,7 @@ export default function DashboardHome() {
             </p>
             <Progress value={35} className="h-1.5 mt-2" />
           </div>
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto">
             <Link to="/dashboard/course/bh-bridge">Continue</Link>
           </Button>
         </div>
@@ -151,7 +199,7 @@ export default function DashboardHome() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {[
           { label: "Lessons Completed", value: "12" },
           { label: "Hours Learned", value: "8.5" },
