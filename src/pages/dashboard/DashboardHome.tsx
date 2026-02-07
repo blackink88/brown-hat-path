@@ -109,25 +109,25 @@ export default function DashboardHome() {
           </Button>
         </div>
 
-        {/* Roadmap Visualization */}
+        {/* Roadmap Visualization - stages in a single horizontal row */}
         <div className="relative">
-          {/* Connection Line - hidden on mobile */}
-          <div className="hidden sm:block absolute top-8 left-8 right-8 h-1 bg-border rounded-full" />
+          {/* Connection Line */}
+          <div className="absolute top-8 left-0 right-0 h-1 bg-border rounded-full" />
           <div
-            className="hidden sm:block absolute top-8 left-8 h-1 bg-primary rounded-full transition-all"
+            className="absolute top-8 left-0 h-1 bg-primary rounded-full transition-all"
             style={{
               width: `${learningPathStages.find((s) => s.status === "current")?.progress ?? 0}%`,
             }}
           />
 
-          {/* Stages - vertical on mobile, horizontal on larger screens */}
-          <div className="relative flex flex-col sm:grid sm:grid-cols-4 gap-4 sm:gap-4">
+          {/* Stages - always in a row, 4 columns */}
+          <div className="relative grid grid-cols-4 gap-2 sm:gap-4">
             {learningPathStages.map((stage) => (
-              <div key={stage.id} className="flex sm:flex-col items-center gap-4 sm:gap-0">
+              <div key={stage.id} className="flex flex-col items-center text-center">
                 {/* Node */}
                 <div
                   className={cn(
-                    "relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-4 transition-all",
+                    "relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-4 transition-all",
                     stage.status === "completed" &&
                       "bg-primary border-primary text-primary-foreground",
                     stage.status === "current" &&
@@ -146,10 +146,10 @@ export default function DashboardHome() {
                 </div>
 
                 {/* Label */}
-                <div className="sm:mt-4 text-left sm:text-center flex-1 sm:flex-none">
+                <div className="mt-3 w-full min-w-0">
                   <p
                     className={cn(
-                      "font-semibold",
+                      "font-semibold text-sm truncate",
                       stage.status === "locked"
                         ? "text-muted-foreground"
                         : "text-foreground"
@@ -157,9 +157,9 @@ export default function DashboardHome() {
                   >
                     {stage.title}
                   </p>
-                  <p className="text-xs text-muted-foreground">{stage.subtitle}</p>
+                  <p className="text-xs text-muted-foreground truncate">{stage.subtitle}</p>
                   {stage.status === "current" && (
-                    <div className="mt-2 w-24 mx-auto">
+                    <div className="mt-2 mx-auto w-20">
                       <Progress value={stage.progress} className="h-1.5" />
                       <p className="text-xs text-muted-foreground mt-1">
                         {stage.progress}% complete
@@ -176,11 +176,11 @@ export default function DashboardHome() {
       {/* Continue Learning Card */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">Continue Learning</h2>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg bg-muted/50">
-          <div className="h-12 sm:h-16 w-full sm:w-24 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+        <div className="flex flex-row items-center gap-4 p-4 rounded-lg bg-muted/50">
+          <div className="h-16 w-24 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
             <span className="text-xs font-mono text-primary">BH-BRIDGE</span>
           </div>
-          <div className="flex-1 min-w-0 w-full">
+          <div className="flex-1 min-w-0">
             <h3 className="font-medium text-foreground truncate">
               Technical Readiness Bridge
             </h3>
@@ -189,7 +189,7 @@ export default function DashboardHome() {
             </p>
             <Progress value={35} className="h-1.5 mt-2" />
           </div>
-          <Button asChild className="w-full sm:w-auto">
+          <Button asChild className="shrink-0">
             <Link to="/dashboard/course/bh-bridge">Continue</Link>
           </Button>
         </div>
