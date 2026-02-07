@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Shield, Mail, Linkedin, Twitter, Github } from "lucide-react";
+import { Mail, Linkedin, Twitter, Github } from "lucide-react";
+import bhlogo from "@/assets/bhlogo.png";
 
 const footerLinks = {
   learning: [
@@ -30,17 +31,7 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-bold leading-none tracking-tight">
-                  Brown Hat
-                </span>
-                <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Cybersecurity Academy
-                </span>
-              </div>
+              <img src={bhlogo} alt="Brown Hat Academy" className="h-10 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground mb-4 max-w-xs">
               Cybersecurity skills for the real world. Internationally aligned. Locally affordable.
