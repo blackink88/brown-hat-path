@@ -56,7 +56,7 @@ export default function MyCourses() {
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Enrolled Courses
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courses
             ?.filter((c) => enrolledCourseIds.includes(c.code))
             .map((course) => (
@@ -107,7 +107,7 @@ export default function MyCourses() {
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Available Courses
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courses
             ?.filter((c) => !enrolledCourseIds.includes(c.code))
             .map((course) => {
