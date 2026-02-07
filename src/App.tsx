@@ -23,6 +23,8 @@ import MyCourses from "./pages/dashboard/MyCourses";
 import CommandCenter from "./pages/dashboard/CommandCenter";
 import CareerPipeline from "./pages/dashboard/CareerPipeline";
 import CoursePlayer from "./pages/dashboard/CoursePlayer";
+import Profile from "./pages/dashboard/Profile";
+import Settings from "./pages/dashboard/Settings";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +59,8 @@ const App = () => (
               <Route path="skills" element={<CommandCenter />} />
               <Route path="career" element={<CareerPipeline />} />
               <Route path="course/:courseCode" element={<CoursePlayer />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
