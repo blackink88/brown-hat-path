@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield, Mail, Lock, User, ArrowRight, Check } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const benefits = [
   "Skills-first curriculum aligned to global certifications",
@@ -15,13 +17,44 @@ const benefits = [
 ];
 
 const Enroll = () => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Implement actual signup logic
-    setTimeout(() => setIsLoading(false), 1000);
+
+    if (password.length < 8) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 8 characters.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const { error } = await signUp(email, password, fullName);
+
+    if (error) {
+      toast({
+        title: "Sign up failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    } else {
+      toast({
+        title: "Check your email!",
+        description: "We've sent you a confirmation link to verify your account.",
+      });
+      navigate("/login");
+    }
   };
 
   return (
@@ -98,6 +131,8 @@ const Enroll = () => {
                       type="text"
                       placeholder="John Doe"
                       className="pl-10"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
                       required
                     />
                   </div>
@@ -112,6 +147,8 @@ const Enroll = () => {
                       type="email"
                       placeholder="you@example.com"
                       className="pl-10"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
@@ -126,6 +163,8 @@ const Enroll = () => {
                       type="password"
                       placeholder="Create a strong password"
                       className="pl-10"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>
