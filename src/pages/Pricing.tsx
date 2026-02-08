@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { PaystackButton } from "@/components/pricing/PaystackButton";
 
 type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown };
 
@@ -103,6 +104,7 @@ const Pricing = () => {
       id: t.id,
       name: t.name,
       price: formatPrice(t.price_zar),
+      priceZar: t.price_zar,
       period: "/month",
       description: meta.description,
       icon: meta.icon,
@@ -213,17 +215,11 @@ const Pricing = () => {
                     ))}
                   </ul>
                   {user ? (
-                    <Button
-                      variant={tier.popular ? "accent" : "outline"}
-                      className="w-full"
-                      disabled={checkoutTierId === tier.id}
-                      onClick={() => handleSubscribe(tier.id)}
-                    >
-                      {checkoutTierId === tier.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : null}
-                      Subscribe
-                    </Button>
+                    <PaystackButton
+                      amount={tier.priceZar * 100} // Convert to cents
+                      tierName={tier.name}
+                      popular={tier.popular}
+                    />
                   ) : (
                     <Button variant={tier.popular ? "accent" : "outline"} className="w-full" asChild>
                       <Link to="/enroll">{tier.cta}</Link>
