@@ -29,7 +29,6 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { LabPanel } from "@/components/dashboard/LabPanel";
-import { TutorAIChat } from "@/components/dashboard/TutorAIChat";
 import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
 
 export default function CoursePlayer() {
@@ -249,14 +248,6 @@ export default function CoursePlayer() {
                   )}
                 </div>
               </ScrollArea>
-
-              {/* AI Tutor - compact at bottom */}
-              <div className="shrink-0 rounded-xl border border-border bg-card overflow-hidden" style={{ minHeight: 200 }}>
-                <TutorAIChat
-                  lessonContext={currentLesson?.title}
-                  courseContext={courseData.course.title}
-                />
-              </div>
             </div>
           </ResizablePanel>
 

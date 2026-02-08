@@ -19,7 +19,7 @@ INSERT INTO public.subscription_tiers (name, price_zar, level, features) VALUES
     'Professional',
     3000,
     3,
-    '["All Practitioner features", "Level 4: Specialisation", "Level 5: Advanced", "Amajoni Eligibility", "1-on-1 Mentorship"]'::jsonb
+    '["All Practitioner features", "Level 4: Specialisation", "Level 5: Advanced", "1-on-1 Mentorship"]'::jsonb
   )
 ON CONFLICT (name) DO UPDATE SET
   price_zar = EXCLUDED.price_zar,

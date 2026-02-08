@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 const benefits = [
   "Skills-first curriculum aligned to global certifications",
   "Verified Skills Portfolio for employers",
-  "Access to the Amajoni Internship Program",
+  "Internship and placement opportunities",
   "Learn at your own pace with 24/7 access",
 ];
 

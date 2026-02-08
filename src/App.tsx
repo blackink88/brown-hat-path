@@ -31,7 +31,6 @@ import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import MyCourses from "./pages/dashboard/MyCourses";
 import CommandCenter from "./pages/dashboard/CommandCenter";
-import CareerPipeline from "./pages/dashboard/CareerPipeline";
 import CoursePlayer from "./pages/dashboard/CoursePlayer";
 import Profile from "./pages/dashboard/Profile";
 import Settings from "./pages/dashboard/Settings";
@@ -77,7 +76,6 @@ const App = () => (
               <Route index element={<DashboardHome />} />
               <Route path="courses" element={<MyCourses />} />
               <Route path="skills" element={<CommandCenter />} />
-              <Route path="career" element={<CareerPipeline />} />
               <Route path="course/:courseCode" element={<CoursePlayer />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />

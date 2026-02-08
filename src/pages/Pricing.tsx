@@ -75,7 +75,6 @@ const Pricing = () => {
         "Everything in Practitioner, plus:",
         "Level 4: Specialisation Tracks",
         "Level 5: Advanced & Leadership",
-        "Amajoni Intern eligibility",
         "Career coaching sessions",
         "Verified Skills Portfolio",
         "Employer introductions",

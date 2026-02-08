@@ -3,7 +3,6 @@ import {
   Map,
   BookOpen,
   BarChart3,
-  Briefcase,
   User,
   LogOut,
   Shield,
@@ -30,7 +29,6 @@ const navItems = [
   { title: "Learning Path", url: "/dashboard", icon: Map },
   { title: "My Courses", url: "/dashboard/courses", icon: BookOpen },
   { title: "Command Center", url: "/dashboard/skills", icon: BarChart3 },
-  { title: "Amajoni Pipeline", url: "/dashboard/career", icon: Briefcase },
 ];
 
 const settingsItems = [

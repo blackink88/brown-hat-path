@@ -42,7 +42,7 @@ const benefits = [
 const programs = [
   {
     icon: Briefcase,
-    title: "Amajoni Internship Program",
+    title: "Student Internship Program",
     description:
       "Place high-performing students in 3-6 month internships. We handle screening; you get pre-qualified talent.",
   },

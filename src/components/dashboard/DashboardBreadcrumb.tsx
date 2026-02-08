@@ -13,7 +13,6 @@ const pathLabels: Record<string, string> = {
   "/dashboard/courses": "My Courses",
   "/dashboard/course": "Course",
   "/dashboard/skills": "Command Center",
-  "/dashboard/career": "Amajoni Pipeline",
   "/dashboard/profile": "Profile",
   "/dashboard/settings": "Settings",
 };
