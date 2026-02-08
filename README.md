@@ -50,6 +50,16 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## Populating the curriculum (learning dashboard)
+
+The learning dashboard (My Courses, course player) reads from Supabase. If courses appear empty, **run the curriculum seed** once:
+
+1. Open your project in the [Supabase Dashboard](https://app.supabase.com) → **SQL Editor**.
+2. Paste the full contents of **`supabase/seed-full-curriculum.sql`**.
+3. Click **Run**.
+
+This inserts all 7 courses (BH-BRIDGE through BH-ADV) with modules and lessons. See **`supabase/README-SEED.md`** for details and CLI option.
+
 ## What technologies are used for this project?
 
 This project is built with:

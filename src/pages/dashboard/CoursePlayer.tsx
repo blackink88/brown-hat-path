@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/resizable";
 import {
   ChevronLeft,
-  Play,
   Clock,
   ChevronDown,
   ChevronRight,
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/collapsible";
 import { LabPanel } from "@/components/dashboard/LabPanel";
 import { TutorAIChat } from "@/components/dashboard/TutorAIChat";
+import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
 
 export default function CoursePlayer() {
   const { courseCode } = useParams<{ courseCode: string }>();
@@ -199,71 +199,63 @@ export default function CoursePlayer() {
         <ResizablePanelGroup direction="horizontal" className="h-full">
           {/* Left Panel: Video + Notes + Lab */}
           <ResizablePanel defaultSize={65} minSize={40}>
-            <div className="h-full flex flex-col gap-4 pr-4">
-              {/* Video Player */}
-              <div className="aspect-video bg-foreground/5 rounded-xl flex items-center justify-center border border-border shrink-0">
-                {currentLesson?.video_url ? (
-                  <iframe
-                    src={currentLesson.video_url}
-                    className="w-full h-full rounded-xl"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="text-center text-muted-foreground">
-                    <Play className="h-16 w-16 mx-auto mb-2 opacity-50" />
-                    <p>Video coming soon</p>
+            <div className="h-full flex flex-col gap-4 pr-4 overflow-hidden">
+              {/* Lesson content: text-first (no video) */}
+              <ScrollArea className="flex-1 min-h-0 pr-4">
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-foreground">
+                      {currentLesson?.title || "Select a lesson"}
+                    </h2>
+                    {currentLesson?.description && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {currentLesson.description}
+                      </p>
+                    )}
                   </div>
-                )}
-              </div>
 
-              {/* Lesson Info */}
-              <div className="shrink-0">
-                <h2 className="text-xl font-semibold text-foreground">
-                  {currentLesson?.title || "Select a lesson"}
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {currentLesson?.description}
-                </p>
-              </div>
-
-              {/* Tabs: Notes + Lab + AI Tutor */}
-              <div className="flex-1 min-h-0">
-                <ResizablePanelGroup direction="vertical" className="h-full">
-                  {/* Notes Area */}
-                  <ResizablePanel defaultSize={50} minSize={20}>
-                    <div className="h-full rounded-xl border border-border bg-card p-4 overflow-auto">
-                      <div className="flex items-center gap-2 mb-3">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        <h3 className="font-medium text-foreground">Lesson Notes</h3>
-                      </div>
-                      <div className="prose prose-sm dark:prose-invert max-w-none">
-                        {currentLesson?.content_markdown ? (
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: currentLesson.content_markdown,
-                            }}
-                          />
-                        ) : (
-                          <p className="text-muted-foreground italic">
-                            Notes will appear here when you start the lesson.
-                          </p>
-                        )}
-                      </div>
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <h3 className="font-medium text-foreground">Lesson content</h3>
                     </div>
-                  </ResizablePanel>
-
-                  <ResizableHandle withHandle />
-
-                  {/* AI Tutor */}
-                  <ResizablePanel defaultSize={50} minSize={20}>
-                    <div className="h-full pt-2">
-                      <TutorAIChat
-                        lessonContext={currentLesson?.title}
-                        courseContext={courseData.course.title}
-                      />
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      {currentLesson?.content_markdown ? (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: currentLesson.content_markdown,
+                          }}
+                        />
+                      ) : (
+                        <p className="text-muted-foreground italic">
+                          No content for this lesson yet.
+                        </p>
+                      )}
                     </div>
-                  </ResizablePanel>
-                </ResizablePanelGroup>
+                  </div>
+
+                  {/* Lesson quiz (when we have quiz data) */}
+                  {currentLesson && (
+                    <LessonQuiz
+                      lessonId={currentLesson.id}
+                      onPass={() =>
+                        toggleCompletion.mutate({
+                          lessonId: currentLesson.id,
+                          completed: true,
+                        })
+                      }
+                      alreadyCompleted={!!userProgress?.[currentLesson.id]}
+                    />
+                  )}
+                </div>
+              </ScrollArea>
+
+              {/* AI Tutor - compact at bottom */}
+              <div className="shrink-0 rounded-xl border border-border bg-card overflow-hidden" style={{ minHeight: 200 }}>
+                <TutorAIChat
+                  lessonContext={currentLesson?.title}
+                  courseContext={courseData.course.title}
+                />
               </div>
             </div>
           </ResizablePanel>

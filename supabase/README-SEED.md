@@ -29,8 +29,30 @@ psql "$(supabase status -o env | grep DATABASE_URL | cut -d= -f2-)" -f supabase/
 
 Or open the Supabase SQL Editor in the dashboard and paste the file contents there.
 
+### Optional: Add example quizzes
+
+1. Apply the **quiz migration** first (creates `quiz_questions`, `quiz_question_options`, `user_quiz_attempts`). In Supabase Dashboard → SQL Editor, run the contents of **`migrations/20260207210000_quiz_tables.sql`** if you haven’t already.
+2. Then run **`seed-quiz-example.sql`** in the SQL Editor. This adds quiz questions for the first two lessons of BH-BRIDGE. The course player will show a "Lesson quiz" section for those lessons.
+
 ### After running
 
 - **Dashboard → My Courses** will list all 7 courses.  
 - **Dashboard → Course player** (`/dashboard/course/bh-bridge`, etc.) will show modules and lessons with full content.  
 - Enroll users in courses via `course_enrollments` (or your app’s enrollment flow) so they can track progress.
+
+### If you still don’t see courses
+
+Row Level Security (RLS) only allows **authenticated** users to read `courses` and `modules` by default. If the app still shows an empty curriculum after seeding:
+
+1. **Same project:** Ensure your app’s `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (in `.env`) point to the same Supabase project where you ran the seed.
+2. **Allow catalog read for everyone:** In Supabase **SQL Editor**, run:
+
+```sql
+CREATE POLICY "Anon can view courses" ON public.courses
+  FOR SELECT TO anon USING (true);
+
+CREATE POLICY "Anon can view modules" ON public.modules
+  FOR SELECT TO anon USING (true);
+```
+
+Then refresh the app. Lessons stay gated by subscription; only the course/module list becomes visible.
