@@ -29,7 +29,7 @@ export function HeroSection() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-foreground" />
             </span>
             <span className="text-sm font-medium text-primary-foreground">
-              Now enrolling for 2025
+              Now enrolling for 2026
             </span>
           </div>
 
