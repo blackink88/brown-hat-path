@@ -84,7 +84,8 @@ export default function MyCourses() {
   });
 
   const courseProgress: Record<string, number> = (() => {
-    if (!courses || !userProgress || !lessonCourseMap) return {};
+    if (!courses || !lessonCourseMap) return {};
+    const progressSet = userProgress ?? new Set<string>();
     const byCourse: Record<string, { total: number; completed: number }> = {};
     courses.forEach((c) => {
       byCourse[c.id] = { total: 0, completed: 0 };
@@ -92,7 +93,7 @@ export default function MyCourses() {
     Object.entries(lessonCourseMap).forEach(([lessonId, courseId]) => {
       if (byCourse[courseId]) {
         byCourse[courseId].total += 1;
-        if (userProgress.has(lessonId)) byCourse[courseId].completed += 1;
+        if (progressSet.has(lessonId)) byCourse[courseId].completed += 1;
       }
     });
     const out: Record<string, number> = {};
