@@ -19,7 +19,17 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Loader2, Shield, User, GraduationCap } from "lucide-react";
+import { Loader2, Shield, User, GraduationCap, Ban, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type Profile = { id: string; user_id: string; full_name: string | null };
 type UserRole = { user_id: string; role: string };
@@ -34,6 +44,8 @@ export default function AdminUsers() {
   const [selectedTierId, setSelectedTierId] = useState<string>("");
   const [enrollUser, setEnrollUser] = useState<{ user_id: string; full_name: string | null } | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+  const [revokeUser, setRevokeUser] = useState<{ user_id: string; full_name: string | null; sub_id: string } | null>(null);
+  const [removeUser, setRemoveUser] = useState<{ user_id: string; full_name: string | null } | null>(null);
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ["adminProfiles"],
@@ -134,6 +146,39 @@ export default function AdminUsers() {
     },
   });
 
+  const revokeSubscription = useMutation({
+    mutationFn: async ({ subId }: { subId: string }) => {
+      const { error } = await supabase.from("subscriptions").delete().eq("id", subId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminSubscriptions"] });
+      setRevokeUser(null);
+      toast({ title: "Subscription revoked", description: "User access has been revoked." });
+    },
+    onError: (e) => toast({ title: "Error", description: String(e), variant: "destructive" }),
+  });
+
+  const deleteUser = useMutation({
+    mutationFn: async ({ userId }: { userId: string }) => {
+      // Delete in order: enrollments, subscriptions, progress, roles, profile
+      await supabase.from("course_enrollments").delete().eq("user_id", userId);
+      await supabase.from("subscriptions").delete().eq("user_id", userId);
+      await supabase.from("user_progress").delete().eq("user_id", userId);
+      await supabase.from("user_roles").delete().eq("user_id", userId);
+      const { error } = await supabase.from("profiles").delete().eq("user_id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminProfiles"] });
+      queryClient.invalidateQueries({ queryKey: ["adminSubscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["adminUserRoles"] });
+      setRemoveUser(null);
+      toast({ title: "User removed", description: "User profile and related data deleted." });
+    },
+    onError: (e) => toast({ title: "Error", description: String(e), variant: "destructive" }),
+  });
+
   const roleByUser = (userId: string) => roles?.find((r) => r.user_id === userId)?.role ?? "student";
   const activeSubForUser = (userId: string) =>
     subscriptions?.find((s) => s.user_id === userId && s.status === "active");
@@ -193,15 +238,34 @@ export default function AdminUsers() {
                     >
                       Grant subscription
                     </Button>
+                    {sub && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setRevokeUser({ user_id: profile.user_id, full_name: profile.full_name, sub_id: sub.id })}
+                        className="text-accent hover:text-accent/80 border-accent/50"
+                      >
+                        <Ban className="h-4 w-4 mr-1" />
+                        Revoke
+                      </Button>
+                    )}
                   </td>
-                  <td className="p-3 text-right">
+                  <td className="p-3 text-right space-x-2">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setEnrollUser({ user_id: profile.user_id, full_name: profile.full_name })}
                     >
                       <GraduationCap className="h-4 w-4 mr-1" />
-                      Enroll in course
+                      Enroll
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setRemoveUser({ user_id: profile.user_id, full_name: profile.full_name })}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </td>
                 </tr>
@@ -281,6 +345,50 @@ export default function AdminUsers() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Revoke Subscription Dialog */}
+      <AlertDialog open={!!revokeUser} onOpenChange={(open) => !open && setRevokeUser(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke Subscription</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will remove the active subscription for {revokeUser?.full_name || "this user"}. They will lose access to premium content immediately.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => revokeUser && revokeSubscription.mutate({ subId: revokeUser.sub_id })}
+              className="bg-accent hover:bg-accent/90"
+            >
+              {revokeSubscription.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+              Revoke Access
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Remove User Dialog */}
+      <AlertDialog open={!!removeUser} onOpenChange={(open) => !open && setRemoveUser(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove User</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete {removeUser?.full_name || "this user"}'s profile and all associated data (enrollments, progress, subscriptions). This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => removeUser && deleteUser.mutate({ userId: removeUser.user_id })}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {deleteUser.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+              Delete User
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
