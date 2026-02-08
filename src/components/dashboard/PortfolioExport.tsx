@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { getSkillLevelsFromCourseProgress } from "@/lib/courseSkillAlignment";
 import { Share2, Loader2, CheckCircle2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,8 +56,10 @@ export function PortfolioExport() {
       const courseIds = (enrollments ?? []).map((e) => e.course_id);
 
       const coursesWithProgress: { code: string; title: string; progress: number }[] = [];
+      let coursesData: { id: string; code: string; title: string; aligned_certifications?: string[] }[] = [];
       if (courseIds.length > 0) {
         const { data: courses } = await supabase.from("courses").select("id, code, title, aligned_certifications").in("id", courseIds);
+        coursesData = courses ?? [];
         const { data: modules } = await supabase.from("modules").select("id, course_id");
         const { data: lessons } = await supabase.from("lessons").select("id, module_id");
         const { data: progress } = await supabase
@@ -65,7 +68,7 @@ export function PortfolioExport() {
           .eq("user_id", user!.id)
           .eq("completed", true);
         const completedSet = new Set((progress ?? []).map((p) => p.lesson_id));
-        (courses ?? []).forEach((c) => {
+        coursesData.forEach((c) => {
           const moduleIds = (modules ?? []).filter((m) => m.course_id === c.id).map((m) => m.id);
           const lessonIds = (lessons ?? []).filter((l) => moduleIds.includes(l.module_id)).map((l) => l.id);
           const total = lessonIds.length;
@@ -78,19 +81,19 @@ export function PortfolioExport() {
         });
       }
 
-      const { data: userSkills } = await supabase
-        .from("user_skills")
-        .select("skill_id, current_level")
-        .eq("user_id", user!.id);
-      const { data: skillRows } = await supabase.from("skills").select("id, name");
-      const skillNames = new Map((skillRows ?? []).map((s) => [s.id, s.name]));
-      const skills = (userSkills ?? []).map((u) => ({
-        name: skillNames.get(u.skill_id) ?? "Skill",
-        level: u.current_level ?? 0,
+      const { data: skillRows } = await supabase.from("skills").select("id, name").order("name");
+      const skillNames = (skillRows ?? []).map((s) => s.name);
+      const levelsBySkill = getSkillLevelsFromCourseProgress(
+        coursesWithProgress.map((c) => ({ code: c.code, progress: c.progress })),
+        skillNames
+      );
+      const skills = skillNames.map((name) => ({
+        name,
+        level: levelsBySkill[name] ?? 0,
       }));
 
       const certification_goals: string[] = [];
-      (courses ?? []).forEach((c) => {
+      coursesData.forEach((c) => {
         const certs = Array.isArray(c.aligned_certifications) ? c.aligned_certifications : [];
         certs.forEach((cert) => {
           if (cert && !certification_goals.includes(cert)) certification_goals.push(cert);
