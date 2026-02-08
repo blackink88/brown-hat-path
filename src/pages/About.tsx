@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Shield, Target, Users, Globe, Award, Heart } from "lucide-react";
+import { Shield, Target, Users, Globe, Award, Heart, ChevronDown, ChevronUp } from "lucide-react";
 
 const values = [
   {
@@ -29,14 +30,77 @@ const team = [
   {
     role: "Chief Executive Officer",
     credentials: ["Master's in Information Systems", "Honours in Information Systems", "CCNA"],
-    bio: "Specializes in Identity and Access Management (IAM) with extensive consulting experience. Has developed Security Awareness and Training platforms for SMEs across South Africa.",
+    shortBio: "A cybersecurity practitioner and systems thinker with a strong foundation in information systems, identity governance, and enterprise security architecture.",
+    fullBio: `A cybersecurity practitioner and systems thinker with a strong foundation in information systems, identity governance, and enterprise security architecture. Holds a Master's degree and Honours in Information Systems, supported by hands-on technical expertise and industry certifications.
+
+Specialises in Identity and Access Management (IAM), with experience designing and implementing access control models, identity governance frameworks, and secure system integrations across complex environments. Has worked as a consultant within large, global organisations, operating at the intersection of technology, risk, and business.
+
+Driven by a strong belief that cybersecurity education must be practical, accessible, and outcomes-focused, particularly within the South African and broader African context. Has led the design and development of cybersecurity awareness and training platforms tailored for SMEs, with a focus on skills that translate directly into employability and operational competence.
+
+As CEO, leads with a clear mandate: build scalable cybersecurity capability, close the skills gap, and produce professionals who can operate confidently in real-world security roles—not just pass exams.`,
   },
   {
     role: "Chief of Operations",
     credentials: ["Master's in Information Systems", "Honours in Digital Forensics", "CISSP", "PhD in Progress"],
-    bio: "15+ years in cybersecurity, security operations, and digital forensics. Combines academic rigour with operational leadership, translating security strategy into measurable outcomes. Focused on building secure, resilient systems that scale across Africa.",
+    shortBio: "A seasoned cybersecurity professional with over 15 years of experience across information systems, security operations, and digital forensics.",
+    fullBio: `A seasoned cybersecurity professional with over 15 years of experience across information systems, security operations, and digital forensics. Holds Master's degree in Information Systems and an Honours degree specialising in Digital Forensics from a leading global university, and is currently completing a PhD in Information Systems.
+
+Brings deep technical and strategic expertise in information security, with a strong background in research and applied cybersecurity within the African context. Combines academic rigour with real-world operational leadership, ensuring that security strategy translates into practical, measurable outcomes. Focused on building secure, resilient systems and operational models that scale.`,
   },
 ];
+
+// Team Card Component with Read More toggle
+function TeamCard({ member }: { member: typeof team[number] }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="p-8 rounded-xl border border-border bg-card text-center">
+      {/* Avatar with cyber ring */}
+      <div className="relative h-32 w-32 mx-auto mb-6">
+        <div className="absolute inset-0 rounded-full border-2 border-cyber-teal" />
+        <div className="absolute inset-2 rounded-full bg-muted flex items-center justify-center">
+          <Users className="h-12 w-12 text-muted-foreground" />
+        </div>
+      </div>
+
+      {/* Role */}
+      <h3 className="text-xl font-bold text-cyber-teal mb-4">{member.role}</h3>
+
+      {/* Credentials badges */}
+      <div className="flex flex-wrap justify-center gap-2 mb-6">
+        {member.credentials.map((cred) => (
+          <span
+            key={cred}
+            className="px-3 py-1 text-xs font-medium rounded-md bg-cyber-teal/10 text-cyber-teal border border-cyber-teal/30"
+          >
+            {cred}
+          </span>
+        ))}
+      </div>
+
+      {/* Bio with Read More */}
+      <div className="text-left">
+        <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+          {expanded ? member.fullBio : member.shortBio}
+        </p>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-cyber-teal hover:text-cyber-teal/80 transition-colors"
+        >
+          {expanded ? (
+            <>
+              Read less <ChevronUp className="h-4 w-4" />
+            </>
+          ) : (
+            <>
+              Read more <ChevronDown className="h-4 w-4" />
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const About = () => {
   return (
@@ -131,36 +195,7 @@ const About = () => {
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {team.map((member) => (
-                <div
-                  key={member.role}
-                  className="p-8 rounded-xl border border-border bg-card text-center"
-                >
-                  {/* Avatar with cyber ring */}
-                  <div className="relative h-32 w-32 mx-auto mb-6">
-                    <div className="absolute inset-0 rounded-full border-2 border-cyber-teal" />
-                    <div className="absolute inset-2 rounded-full bg-muted flex items-center justify-center">
-                      <Users className="h-12 w-12 text-muted-foreground" />
-                    </div>
-                  </div>
-                  
-                  {/* Role */}
-                  <h3 className="text-xl font-bold text-cyber-teal mb-4">{member.role}</h3>
-                  
-                  {/* Credentials badges */}
-                  <div className="flex flex-wrap justify-center gap-2 mb-6">
-                    {member.credentials.map((cred) => (
-                      <span
-                        key={cred}
-                        className="px-3 py-1 text-xs font-medium rounded-md bg-cyber-teal/10 text-cyber-teal border border-cyber-teal/30"
-                      >
-                        {cred}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  {/* Bio */}
-                  <p className="text-sm text-muted-foreground leading-relaxed">{member.bio}</p>
-                </div>
+                <TeamCard key={member.role} member={member} />
               ))}
             </div>
           </div>
