@@ -110,19 +110,26 @@ export default function DashboardHome() {
         <div className="relative">
           <div className="absolute top-8 left-0 right-0 h-1 bg-border rounded-full" />
           <div
-            className="absolute top-8 left-0 h-1 bg-primary rounded-full transition-all"
+            className="absolute top-8 left-0 h-1 bg-gradient-to-r from-cyber-blue to-cyber-teal rounded-full transition-all"
             style={{
               width: `${learningPathStages.find((s) => s.status === "current")?.progress ?? 0}%`,
             }}
           />
           <div className="relative grid grid-cols-4 gap-2 sm:gap-4">
-            {learningPathStages.map((stage) => (
+            {learningPathStages.map((stage, index) => {
+              const stageColors = [
+                "border-cyber-blue bg-cyber-blue",
+                "border-cyber-teal bg-cyber-teal", 
+                "border-cyber-purple bg-cyber-purple",
+                "border-level-advanced bg-level-advanced"
+              ];
+              return (
               <div key={stage.id} className="flex flex-col items-center text-center">
                 <div
                   className={cn(
                     "relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-4 transition-all",
-                    stage.status === "completed" && "bg-primary border-primary text-primary-foreground",
-                    stage.status === "current" && "bg-background border-primary text-primary animate-pulse",
+                    stage.status === "completed" && `${stageColors[index]} text-white`,
+                    stage.status === "current" && `bg-background border-cyber-blue text-cyber-blue animate-pulse`,
                     stage.status === "locked" && "bg-muted border-border text-muted-foreground"
                   )}
                 >
@@ -141,13 +148,13 @@ export default function DashboardHome() {
                   <p className="text-xs text-muted-foreground truncate">{stage.subtitle}</p>
                   {stage.status === "current" && (
                     <div className="mt-2 mx-auto w-20">
-                      <Progress value={stage.progress} className="h-1.5" />
+                      <Progress value={stage.progress} className="h-1.5 [&>div]:bg-cyber-blue" />
                       <p className="text-xs text-muted-foreground mt-1">{stage.progress}% complete</p>
                     </div>
                   )}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </div>
       </div>
@@ -161,16 +168,16 @@ export default function DashboardHome() {
           </div>
         ) : continueLearningCourse ? (
           <>
-            <div className="flex flex-row items-center gap-4 p-4 rounded-lg bg-muted/50">
-              <div className="h-16 w-24 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
-                <span className="text-xs font-mono text-primary">{continueLearningCourse.code}</span>
+            <div className="flex flex-row items-center gap-4 p-4 rounded-lg bg-muted/50 border border-cyber-blue/20">
+              <div className="h-16 w-24 shrink-0 rounded-lg bg-gradient-to-br from-cyber-blue/20 to-cyber-teal/20 flex items-center justify-center">
+                <span className="text-xs font-mono text-cyber-blue">{continueLearningCourse.code}</span>
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-foreground truncate">{continueLearningCourse.title}</h3>
                 <p className="text-sm text-muted-foreground">{continueLearningCourse.progress}% complete</p>
-                <Progress value={continueLearningCourse.progress} className="h-1.5 mt-2" />
+                <Progress value={continueLearningCourse.progress} className="h-1.5 mt-2 [&>div]:bg-cyber-teal" />
               </div>
-              <Button asChild className="shrink-0">
+              <Button asChild className="shrink-0 bg-cyber-blue hover:bg-cyber-blue/90">
                 <Link to={`/dashboard/course/${(continueLearningCourse.code ?? "").toLowerCase()}`}>Continue</Link>
               </Button>
             </div>

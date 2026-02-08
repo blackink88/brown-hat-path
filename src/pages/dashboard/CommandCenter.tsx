@@ -95,23 +95,23 @@ export default function CommandCenter() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-xl border border-border bg-card p-4 text-center">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-            <Target className="h-5 w-5 text-primary" />
+        <div className="rounded-xl border border-cyber-blue/30 bg-card p-4 text-center">
+          <div className="h-10 w-10 rounded-full bg-cyber-blue/10 flex items-center justify-center mx-auto mb-2">
+            <Target className="h-5 w-5 text-cyber-blue" />
           </div>
           <p className="text-2xl font-bold text-foreground">{overallScore}%</p>
           <p className="text-xs text-muted-foreground">Overall Readiness</p>
         </div>
-        <div className="rounded-xl border border-border bg-card p-4 text-center">
-          <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-2">
-            <TrendingUp className="h-5 w-5 text-accent" />
+        <div className="rounded-xl border border-cyber-teal/30 bg-card p-4 text-center">
+          <div className="h-10 w-10 rounded-full bg-cyber-teal/10 flex items-center justify-center mx-auto mb-2">
+            <TrendingUp className="h-5 w-5 text-cyber-teal" />
           </div>
           <p className="text-2xl font-bold text-foreground">{scoreValues.length}</p>
           <p className="text-xs text-muted-foreground">Skills Tracked</p>
         </div>
-        <div className="rounded-xl border border-border bg-card p-4 text-center">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-            <Award className="h-5 w-5 text-primary" />
+        <div className="rounded-xl border border-cyber-purple/30 bg-card p-4 text-center">
+          <div className="h-10 w-10 rounded-full bg-cyber-purple/10 flex items-center justify-center mx-auto mb-2">
+            <Award className="h-5 w-5 text-cyber-purple" />
           </div>
           <p className="text-2xl font-bold text-foreground">{domainsAbove50}</p>
           <p className="text-xs text-muted-foreground">Domains 50%+</p>
@@ -145,8 +145,8 @@ export default function CommandCenter() {
               <Radar
                 name="Skills"
                 dataKey="value"
-                stroke="hsl(var(--primary))"
-                fill="hsl(var(--primary))"
+                stroke="hsl(var(--cyber-blue))"
+                fill="hsl(var(--cyber-blue))"
                 fillOpacity={0.3}
                 strokeWidth={2}
               />
@@ -174,7 +174,7 @@ export default function CommandCenter() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium text-foreground">{skill.name}</span>
-                  <span className="text-sm font-mono text-primary">{level}%</span>
+                  <span className="text-sm font-mono text-cyber-blue">{level}%</span>
                 </div>
                 <Slider
                   value={[level]}
