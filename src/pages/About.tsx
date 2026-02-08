@@ -60,8 +60,11 @@ const About = () => {
               <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
                 Building Africa's Cybersecurity Workforce
               </h1>
-              <p className="text-lg text-primary-foreground/80">
+              <p className="text-lg text-primary-foreground/80 mb-4">
                 Brown Hat Academy was founded on a simple belief: talent is everywhere, but opportunity isn't. We're changing that.
+              </p>
+              <p className="text-sm font-semibold text-accent tracking-wide uppercase">
+                Built in South Africa. Trusted globally.
               </p>
             </div>
           </div>
