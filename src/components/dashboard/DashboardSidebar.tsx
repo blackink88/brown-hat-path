@@ -5,10 +5,10 @@ import {
   BarChart3,
   User,
   LogOut,
-  Shield,
   Settings,
   Settings2,
 } from "lucide-react";
+import bhlogo from "@/assets/bhlogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { cn } from "@/lib/utils";
@@ -59,9 +59,7 @@ export function DashboardSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border">
       <SidebarHeader className="p-4">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0">
-            <Shield className="h-5 w-5" />
-          </div>
+          <img src={bhlogo} alt="Brown Hat" className="h-9 w-auto shrink-0" />
           {!collapsed && (
             <div className="flex flex-col">
               <span className="text-sm font-bold leading-none text-foreground">

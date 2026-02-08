@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, BookOpen, Users, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import bhlogo from "@/assets/bhlogo.png";
 
 const navItems = [
   { title: "Overview", url: "/dashboard/admin", icon: LayoutDashboard },
@@ -15,6 +16,10 @@ export function AdminLayout() {
   return (
     <div className="flex gap-6">
       <aside className="w-56 shrink-0 border-r border-border pr-4">
+        <Link to="/dashboard" className="flex items-center gap-2 mb-6 px-2">
+          <img src={bhlogo} alt="Brown Hat" className="h-9 w-auto" />
+          <span className="text-sm font-bold text-foreground">Brown Hat</span>
+        </Link>
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">
           Admin
         </h2>
