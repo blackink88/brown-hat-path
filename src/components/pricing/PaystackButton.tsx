@@ -5,14 +5,14 @@ import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface PaystackButtonProps {
-  amount: number;
+  planCode: string;
   tierName: string;
   popular?: boolean;
 }
 
 // Inner component that only renders when we have a valid public key
 function PaystackPaymentButton({ 
-  amount, 
+  planCode, 
   tierName, 
   popular, 
   publicKey 
@@ -20,7 +20,7 @@ function PaystackPaymentButton({
   const navigate = useNavigate();
 
   const { pay, isVerifying } = usePaystackSubscription({
-    amount,
+    planCode,
     publicKey,
     onSuccess: () => {
       navigate("/dashboard");
@@ -46,7 +46,7 @@ function PaystackPaymentButton({
   );
 }
 
-export function PaystackButton({ amount, tierName, popular }: PaystackButtonProps) {
+export function PaystackButton({ planCode, tierName, popular }: PaystackButtonProps) {
   const { publicKey, isLoading, error } = usePaystackConfig();
 
   if (isLoading) {
@@ -68,7 +68,7 @@ export function PaystackButton({ amount, tierName, popular }: PaystackButtonProp
 
   return (
     <PaystackPaymentButton
-      amount={amount}
+      planCode={planCode}
       tierName={tierName}
       popular={popular}
       publicKey={publicKey}
