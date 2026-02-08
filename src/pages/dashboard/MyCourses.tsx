@@ -85,7 +85,8 @@ export default function MyCourses() {
 
   const courseProgress: Record<string, number> = (() => {
     if (!courses || !lessonCourseMap) return {};
-    const progressSet = userProgress ?? new Set<string>();
+    // Ensure progressSet is always a Set, even if userProgress is cached in wrong format
+    const progressSet = userProgress instanceof Set ? userProgress : new Set<string>();
     const byCourse: Record<string, { total: number; completed: number }> = {};
     courses.forEach((c) => {
       byCourse[c.id] = { total: 0, completed: 0 };
