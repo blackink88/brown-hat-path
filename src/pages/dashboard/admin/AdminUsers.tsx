@@ -19,18 +19,21 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Loader2, Shield, User } from "lucide-react";
+import { Loader2, Shield, User, GraduationCap } from "lucide-react";
 
 type Profile = { id: string; user_id: string; full_name: string | null };
 type UserRole = { user_id: string; role: string };
 type Subscription = { id: string; user_id: string; tier_id: string; status: string };
 type Tier = { id: string; name: string; level: number };
+type Course = { id: string; code: string; title: string };
 
 export default function AdminUsers() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [grantSubUser, setGrantSubUser] = useState<{ user_id: string; email?: string } | null>(null);
   const [selectedTierId, setSelectedTierId] = useState<string>("");
+  const [enrollUser, setEnrollUser] = useState<{ user_id: string; full_name: string | null } | null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ["adminProfiles"],
@@ -68,6 +71,15 @@ export default function AdminUsers() {
     },
   });
 
+  const { data: courses } = useQuery({
+    queryKey: ["adminCoursesList"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("courses").select("id, code, title").order("order_index");
+      if (error) throw error;
+      return (data as Course[]) ?? [];
+    },
+  });
+
   const grantSubscription = useMutation({
     mutationFn: async ({ userId, tierId }: { userId: string; tierId: string }) => {
       const { error } = await supabase.from("subscriptions").insert({
@@ -98,6 +110,30 @@ export default function AdminUsers() {
     onError: (e) => toast({ title: "Error", description: String(e), variant: "destructive" }),
   });
 
+  const enrollInCourse = useMutation({
+    mutationFn: async ({ userId, courseId }: { userId: string; courseId: string }) => {
+      const { error } = await supabase.from("course_enrollments").insert({
+        user_id: userId,
+        course_id: courseId,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminStats"] });
+      setEnrollUser(null);
+      setSelectedCourseId("");
+      toast({ title: "Enrolled in course" });
+    },
+    onError: (e) => {
+      const msg = String(e.message);
+      toast({
+        title: msg.includes("unique") || msg.includes("duplicate") ? "Already enrolled" : "Enrollment failed",
+        description: msg.includes("unique") || msg.includes("duplicate") ? undefined : msg,
+        variant: "destructive",
+      });
+    },
+  });
+
   const roleByUser = (userId: string) => roles?.find((r) => r.user_id === userId)?.role ?? "student";
   const activeSubForUser = (userId: string) =>
     subscriptions?.find((s) => s.user_id === userId && s.status === "active");
@@ -120,6 +156,7 @@ export default function AdminUsers() {
               <th className="text-left p-3 font-medium">Role</th>
               <th className="text-left p-3 font-medium">Subscription</th>
               <th className="text-right p-3 font-medium">Actions</th>
+              <th className="text-right p-3 font-medium w-[140px]">Enroll</th>
             </tr>
           </thead>
           <tbody>
@@ -157,6 +194,16 @@ export default function AdminUsers() {
                       Grant subscription
                     </Button>
                   </td>
+                  <td className="p-3 text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEnrollUser({ user_id: profile.user_id, full_name: profile.full_name })}
+                    >
+                      <GraduationCap className="h-4 w-4 mr-1" />
+                      Enroll in course
+                    </Button>
+                  </td>
                 </tr>
               );
             })}
@@ -192,6 +239,44 @@ export default function AdminUsers() {
             >
               {grantSubscription.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
               Grant
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!enrollUser} onOpenChange={(open) => { if (!open) { setEnrollUser(null); setSelectedCourseId(""); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enroll in course</DialogTitle>
+            {enrollUser && (
+              <p className="text-sm text-muted-foreground">
+                Enroll {enrollUser.full_name || enrollUser.user_id} in a course.
+              </p>
+            )}
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Course</Label>
+              <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select course" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses?.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.code} — {c.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setEnrollUser(null); setSelectedCourseId(""); }}>Cancel</Button>
+            <Button
+              onClick={() => enrollUser && selectedCourseId && enrollInCourse.mutate({ userId: enrollUser.user_id, courseId: selectedCourseId })}
+              disabled={!selectedCourseId || enrollInCourse.isPending}
+            >
+              {enrollInCourse.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+              Enroll
             </Button>
           </DialogFooter>
         </DialogContent>

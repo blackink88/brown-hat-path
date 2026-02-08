@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Lock, Play, CheckCircle2, Loader2 } from "lucide-react";
+import { Lock, Play, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 const levelLabels: Record<number, string> = {
   0: "Bridge",
@@ -17,7 +19,11 @@ const levelLabels: Record<number, string> = {
 };
 
 export default function MyCourses() {
-  const { data: courses, isLoading } = useQuery({
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,12 +35,94 @@ export default function MyCourses() {
     },
   });
 
-  // Mock enrollment data - replace with real data
-  const enrolledCourseIds = ["BH-BRIDGE", "BH-FOUND-1"];
-  const courseProgress: Record<string, number> = {
-    "BH-BRIDGE": 35,
-    "BH-FOUND-1": 10,
-  };
+  const { data: enrollments, isLoading: enrollmentsLoading } = useQuery({
+    queryKey: ["courseEnrollments", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("course_enrollments")
+        .select("course_id")
+        .eq("user_id", user?.id ?? "");
+      if (error) throw error;
+      return (data ?? []).map((e) => e.course_id);
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: userProgress } = useQuery({
+    queryKey: ["userProgress", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_progress")
+        .select("lesson_id")
+        .eq("user_id", user?.id ?? "")
+        .eq("completed", true);
+      if (error) throw error;
+      return new Set((data ?? []).map((p) => p.lesson_id));
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: lessonCourseMap } = useQuery({
+    queryKey: ["lessonCourseMap"],
+    queryFn: async () => {
+      const { data: modules, error: modErr } = await supabase
+        .from("modules")
+        .select("id, course_id");
+      if (modErr) throw modErr;
+      const { data: lessons, error: lessErr } = await supabase
+        .from("lessons")
+        .select("id, module_id");
+      if (lessErr) throw lessErr;
+      const moduleToCourse = new Map((modules ?? []).map((m) => [m.id, m.course_id]));
+      const map: Record<string, string> = {};
+      (lessons ?? []).forEach((l) => {
+        const courseId = moduleToCourse.get(l.module_id);
+        if (courseId) map[l.id] = courseId;
+      });
+      return map;
+    },
+  });
+
+  const courseProgress: Record<string, number> = (() => {
+    if (!courses || !userProgress || !lessonCourseMap) return {};
+    const byCourse: Record<string, { total: number; completed: number }> = {};
+    courses.forEach((c) => {
+      byCourse[c.id] = { total: 0, completed: 0 };
+    });
+    Object.entries(lessonCourseMap).forEach(([lessonId, courseId]) => {
+      if (byCourse[courseId]) {
+        byCourse[courseId].total += 1;
+        if (userProgress.has(lessonId)) byCourse[courseId].completed += 1;
+      }
+    });
+    const out: Record<string, number> = {};
+    Object.entries(byCourse).forEach(([courseId, { total, completed }]) => {
+      out[courseId] = total > 0 ? Math.round((completed / total) * 100) : 0;
+    });
+    return out;
+  })();
+
+  const enrollInCourse = useMutation({
+    mutationFn: async (courseId: string) => {
+      const { error } = await supabase.from("course_enrollments").insert({
+        user_id: user?.id,
+        course_id: courseId,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courseEnrollments", user?.id] });
+      toast({ title: "Enrolled", description: "You can start the course now." });
+    },
+    onError: (e) =>
+      toast({ title: "Enrollment failed", description: String(e.message), variant: "destructive" }),
+  });
+
+  const enrolledCourseIds = new Set(enrollments ?? []);
+  const enrolledCourses = courses?.filter((c) => enrolledCourseIds.has(c.id)) ?? [];
+  const availableCourses = courses?.filter((c) => !enrolledCourseIds.has(c.id)) ?? [];
+
+  const isLoading = coursesLoading || (!!user && enrollmentsLoading);
 
   if (isLoading) {
     return (
@@ -43,9 +131,6 @@ export default function MyCourses() {
       </div>
     );
   }
-
-  const enrolledCourses = courses?.filter((c) => enrolledCourseIds.includes(c.code)) ?? [];
-  const availableCourses = courses?.filter((c) => !enrolledCourseIds.includes(c.code)) ?? [];
 
   return (
     <div className="space-y-8">
@@ -94,10 +179,10 @@ export default function MyCourses() {
                     <div className="flex items-center justify-between text-xs mb-1">
                       <span className="text-muted-foreground">Progress</span>
                       <span className="font-medium text-foreground">
-                        {courseProgress[course.code] || 0}%
+                        {courseProgress[course.id] ?? 0}%
                       </span>
                     </div>
-                    <Progress value={courseProgress[course.code] || 0} className="h-2" />
+                    <Progress value={courseProgress[course.id] ?? 0} className="h-2" />
                   </div>
                   <Button className="w-full" asChild>
                     <Link to={`/dashboard/course/${(course.code ?? "").toLowerCase()}`}>
@@ -162,8 +247,12 @@ export default function MyCourses() {
                     <Button
                       variant={isLocked ? "outline" : "secondary"}
                       className="w-full"
-                      disabled={isLocked}
+                      disabled={isLocked || enrollInCourse.isPending}
+                      onClick={() => !isLocked && enrollInCourse.mutate(course.id)}
                     >
+                      {enrollInCourse.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
                       {isLocked ? (
                         <>
                           <Lock className="h-4 w-4 mr-2" />
