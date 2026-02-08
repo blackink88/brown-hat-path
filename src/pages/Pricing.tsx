@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { PaystackButton } from "@/components/pricing/PaystackButton";
 
-type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown };
+type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown; paystack_plan_code: string | null };
 
 const tierMeta: Record<string, { icon: typeof Zap; description: string; cta: string; popular: boolean }> = {
   Foundation: {
@@ -79,7 +79,7 @@ const Pricing = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("subscription_tiers")
-        .select("id, name, price_zar, level, features")
+        .select("id, name, price_zar, level, features, paystack_plan_code")
         .order("level");
       if (error) throw error;
       return (data ?? []) as TierRow[];
@@ -104,7 +104,7 @@ const Pricing = () => {
       id: t.id,
       name: t.name,
       price: formatPrice(t.price_zar),
-      priceZar: t.price_zar,
+      planCode: t.paystack_plan_code || "",
       period: "/month",
       description: meta.description,
       icon: meta.icon,
@@ -216,7 +216,7 @@ const Pricing = () => {
                   </ul>
                   {user ? (
                     <PaystackButton
-                      amount={tier.priceZar * 100} // Convert to cents
+                      planCode={tier.planCode}
                       tierName={tier.name}
                       popular={tier.popular}
                     />

@@ -5,13 +5,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
 interface UsePaystackOptions {
-  amount: number;
+  planCode: string;
   publicKey: string;
   onSuccess?: () => void;
   onError?: (error: string) => void;
 }
 
-export function usePaystackSubscription({ amount, publicKey, onSuccess, onError }: UsePaystackOptions) {
+export function usePaystackSubscription({ planCode, publicKey, onSuccess, onError }: UsePaystackOptions) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isVerifying, setIsVerifying] = useState(false);
@@ -21,7 +21,7 @@ export function usePaystackSubscription({ amount, publicKey, onSuccess, onError 
   const config = {
     reference,
     email: user?.email || "",
-    amount,
+    plan: planCode,
     publicKey,
     currency: "ZAR",
   };
@@ -42,8 +42,8 @@ export function usePaystackSubscription({ amount, publicKey, onSuccess, onError 
 
       if (data?.success) {
         toast({
-          title: "Payment Successful!",
-          description: "Welcome to Brown Hat Academy. Your subscription is now active.",
+          title: "Subscription Activated!",
+          description: "Welcome to Brown Hat Academy. Your monthly subscription is now active.",
         });
         onSuccess?.();
       } else {
