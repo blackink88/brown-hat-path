@@ -37,7 +37,7 @@ export default function Settings() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("subscriptions")
-        .select("id, status, subscription_tiers(name)")
+        .select("id, status, starts_at, current_period_end, subscription_tiers(name)")
         .eq("user_id", user!.id)
         .eq("status", "active")
         .order("created_at", { ascending: false })
@@ -48,6 +48,16 @@ export default function Settings() {
     },
     enabled: !!user?.id,
   });
+
+  const nextBillingDate = subscription?.current_period_end
+    ? new Date(subscription.current_period_end)
+    : subscription?.starts_at
+      ? (() => {
+          const d = new Date(subscription.starts_at);
+          d.setMonth(d.getMonth() + 1);
+          return d;
+        })()
+      : null;
 
   const handleCancelSubscription = async () => {
     setIsCancelling(true);
@@ -141,7 +151,7 @@ export default function Settings() {
             <CreditCard className="h-5 w-5" />
             Subscription
           </CardTitle>
-          <CardDescription>Manage your plan and billing</CardDescription>
+          <CardDescription>Billing is monthly. Manage your plan and billing.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {subscriptionLoading ? (
@@ -154,6 +164,11 @@ export default function Settings() {
               <p className="text-sm text-foreground">
                 Current plan: <span className="font-medium">{subscription.subscription_tiers?.name ?? "Active"}</span>
               </p>
+              {nextBillingDate && (
+                <p className="text-sm text-muted-foreground">
+                  Next billing date: <span className="font-medium text-foreground">{nextBillingDate.toLocaleDateString(undefined, { dateStyle: "long" })}</span>
+                </p>
+              )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" className="text-destructive border-destructive/50 hover:bg-destructive/10" disabled={isCancelling}>

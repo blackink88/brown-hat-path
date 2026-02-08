@@ -56,9 +56,26 @@ serve(async (req) => {
       .limit(1)
       .maybeSingle();
 
+    let currentPeriodEnd: string | null = null;
+    if (subscriptionId) {
+      try {
+        const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
+          apiVersion: "2023-10-16",
+          httpClient: Stripe.createFetchHttpClient(),
+        });
+        const sub = await stripe.subscriptions.retrieve(subscriptionId);
+        if (sub.current_period_end) {
+          currentPeriodEnd = new Date(sub.current_period_end * 1000).toISOString();
+        }
+      } catch (e) {
+        console.error("Failed to fetch subscription for current_period_end:", e);
+      }
+    }
+
     const stripeFields = {
       ...(customerId && { stripe_customer_id: customerId }),
       ...(subscriptionId && { stripe_subscription_id: subscriptionId }),
+      ...(currentPeriodEnd && { current_period_end: currentPeriodEnd }),
     };
 
     if (existing?.id) {
@@ -94,11 +111,14 @@ serve(async (req) => {
     });
   }
 
-  // When user cancels in Stripe (Portal or API), sync our DB
+  // When subscription changes in Stripe (Portal or API), sync our DB
   if (event.type === "customer.subscription.deleted" || event.type === "customer.subscription.updated") {
     const subscription = event.data.object as Stripe.Subscription;
     const subId = subscription.id;
     const isCanceled = subscription.status === "canceled" || subscription.cancel_at_period_end === true;
+    const currentPeriodEnd = subscription.current_period_end
+      ? new Date(subscription.current_period_end * 1000).toISOString()
+      : null;
 
     if (event.type === "customer.subscription.deleted" || isCanceled) {
       const { error } = await supabase
@@ -109,6 +129,12 @@ serve(async (req) => {
         })
         .eq("stripe_subscription_id", subId);
       if (error) console.error("Subscription sync cancel failed:", error);
+    } else {
+      const { error } = await supabase
+        .from("subscriptions")
+        .update({ current_period_end: currentPeriodEnd })
+        .eq("stripe_subscription_id", subId);
+      if (error) console.error("Subscription sync period end failed:", error);
     }
     return new Response(JSON.stringify({ received: true }), {
       headers: { "Content-Type": "application/json" },
