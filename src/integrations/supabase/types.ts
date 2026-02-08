@@ -410,7 +410,6 @@ export type Database = {
           level: number
           name: string
           price_zar: number
-          stripe_price_id: string | null
         }
         Insert: {
           created_at?: string
@@ -419,7 +418,6 @@ export type Database = {
           level: number
           name: string
           price_zar: number
-          stripe_price_id?: string | null
         }
         Update: {
           created_at?: string
@@ -428,7 +426,6 @@ export type Database = {
           level?: number
           name?: string
           price_zar?: number
-          stripe_price_id?: string | null
         }
         Relationships: []
       }
@@ -655,10 +652,6 @@ export type Database = {
     }
     Functions: {
       get_user_tier_level: { Args: { _user_id: string }; Returns: number }
-      upsert_user_progress: {
-        Args: { p_lesson_id: string; p_completed: boolean; p_completed_at: string | null }
-        Returns: undefined
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
