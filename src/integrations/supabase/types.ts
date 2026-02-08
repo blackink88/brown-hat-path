@@ -251,6 +251,8 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_enrolled: boolean
+          subscription_status: string
           updated_at: string
           user_id: string
         }
@@ -259,6 +261,8 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_enrolled?: boolean
+          subscription_status?: string
           updated_at?: string
           user_id: string
         }
@@ -267,6 +271,8 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_enrolled?: boolean
+          subscription_status?: string
           updated_at?: string
           user_id?: string
         }
@@ -409,6 +415,7 @@ export type Database = {
           id: string
           level: number
           name: string
+          paystack_plan_code: string | null
           price_zar: number
         }
         Insert: {
@@ -417,6 +424,7 @@ export type Database = {
           id?: string
           level: number
           name: string
+          paystack_plan_code?: string | null
           price_zar: number
         }
         Update: {
@@ -425,6 +433,7 @@ export type Database = {
           id?: string
           level?: number
           name?: string
+          paystack_plan_code?: string | null
           price_zar?: number
         }
         Relationships: []
@@ -651,6 +660,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_course_progress_percent: {
+        Args: { p_course_id: string; p_user_id: string }
+        Returns: number
+      }
       get_user_tier_level: { Args: { _user_id: string }; Returns: number }
       has_role: {
         Args: {

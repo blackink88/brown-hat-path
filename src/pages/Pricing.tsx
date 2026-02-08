@@ -11,8 +11,9 @@ import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { PaystackButton } from "@/components/pricing/PaystackButton";
 
-type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown };
+type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown; paystack_plan_code: string | null };
 
 const tierMeta: Record<string, { icon: typeof Zap; description: string; cta: string; popular: boolean }> = {
   Foundation: {
@@ -78,7 +79,7 @@ const Pricing = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("subscription_tiers")
-        .select("id, name, price_zar, level, features")
+        .select("id, name, price_zar, level, features, paystack_plan_code")
         .order("level");
       if (error) throw error;
       return (data ?? []) as TierRow[];
@@ -103,6 +104,7 @@ const Pricing = () => {
       id: t.id,
       name: t.name,
       price: formatPrice(t.price_zar),
+      planCode: t.paystack_plan_code || "",
       period: "/month",
       description: meta.description,
       icon: meta.icon,
@@ -213,17 +215,11 @@ const Pricing = () => {
                     ))}
                   </ul>
                   {user ? (
-                    <Button
-                      variant={tier.popular ? "accent" : "outline"}
-                      className="w-full"
-                      disabled={checkoutTierId === tier.id}
-                      onClick={() => handleSubscribe(tier.id)}
-                    >
-                      {checkoutTierId === tier.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : null}
-                      Subscribe
-                    </Button>
+                    <PaystackButton
+                      planCode={tier.planCode}
+                      tierName={tier.name}
+                      popular={tier.popular}
+                    />
                   ) : (
                     <Button variant={tier.popular ? "accent" : "outline"} className="w-full" asChild>
                       <Link to="/enroll">{tier.cta}</Link>
