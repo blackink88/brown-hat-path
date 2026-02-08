@@ -26,6 +26,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { LabPanel } from "@/components/dashboard/LabPanel";
 import { TutorAIChat } from "@/components/dashboard/TutorAIChat";
 import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
@@ -219,13 +221,11 @@ export default function CoursePlayer() {
                       <FileText className="h-4 w-4 text-muted-foreground" />
                       <h3 className="font-medium text-foreground">Lesson content</h3>
                     </div>
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                    <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-semibold prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">
                       {currentLesson?.content_markdown ? (
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: currentLesson.content_markdown,
-                          }}
-                        />
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {currentLesson.content_markdown}
+                        </ReactMarkdown>
                       ) : (
                         <p className="text-muted-foreground italic">
                           No content for this lesson yet.
