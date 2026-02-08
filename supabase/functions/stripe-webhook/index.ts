@@ -44,22 +44,47 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
   );
 
+  // Cancel any currently active subscriptions for this user
   await supabase
     .from("subscriptions")
     .update({ status: "cancelled" })
     .eq("user_id", userId)
     .eq("status", "active");
 
-  const { error } = await supabase.from("subscriptions").insert({
-    user_id: userId,
-    tier_id: tierId,
-    status: "active",
-    starts_at: new Date().toISOString(),
-  });
+  // Resubscribe: if user already has a row (e.g. cancelled), reactivate it; otherwise insert
+  const { data: existing } = await supabase
+    .from("subscriptions")
+    .select("id")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-  if (error) {
-    console.error("Subscription upsert failed:", error);
-    return new Response("Database error", { status: 500 });
+  if (existing?.id) {
+    const { error } = await supabase
+      .from("subscriptions")
+      .update({
+        tier_id: tierId,
+        status: "active",
+        starts_at: new Date().toISOString(),
+        ends_at: null,
+      })
+      .eq("id", existing.id);
+    if (error) {
+      console.error("Subscription reactivate failed:", error);
+      return new Response("Database error", { status: 500 });
+    }
+  } else {
+    const { error } = await supabase.from("subscriptions").insert({
+      user_id: userId,
+      tier_id: tierId,
+      status: "active",
+      starts_at: new Date().toISOString(),
+    });
+    if (error) {
+      console.error("Subscription insert failed:", error);
+      return new Response("Database error", { status: 500 });
+    }
   }
 
   return new Response(JSON.stringify({ received: true }), {
