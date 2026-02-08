@@ -72,6 +72,28 @@ const About = () => {
           </div>
         </section>
 
+        {/* Why Brown Hat */}
+        <section className="py-16 md:py-24 bg-secondary">
+          <div className="container">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-secondary-foreground mb-8">
+                Why Brown Hat?
+              </h2>
+              <div className="space-y-6 text-lg text-secondary-foreground/90">
+                <p className="font-semibold text-xl">
+                  Black Hats break. White Hats fix. <span className="text-accent">Brown Hats build and defend.</span>
+                </p>
+                <p>
+                  We are the practitioners who understand the foundations of the network.
+                </p>
+                <p>
+                  We are the guardians who keep the lights on while others play games.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Mission */}
         <section className="py-16 md:py-24">
           <div className="container">
