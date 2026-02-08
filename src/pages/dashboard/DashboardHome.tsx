@@ -3,9 +3,6 @@ import { ArrowRight, CheckCircle2, Circle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { ThreatLevelIndicator } from "@/components/dashboard/ThreatLevelIndicator";
-import { ActiveMissions } from "@/components/dashboard/ActiveMissions";
-
 const learningPathStages = [
   {
     id: "bridge",
@@ -41,58 +38,9 @@ const learningPathStages = [
   },
 ];
 
-// Mock missions - in production, fetch from Supabase based on user progress
-const mockMissions = [
-  {
-    id: "1",
-    title: "Introduction to Networking",
-    module: "BH-BRIDGE Module 1",
-    courseCode: "bh-bridge",
-    status: "in_progress" as const,
-  },
-  {
-    id: "2",
-    title: "Understanding the OSI Model",
-    module: "BH-BRIDGE Module 1",
-    courseCode: "bh-bridge",
-    status: "pending" as const,
-  },
-  {
-    id: "3",
-    title: "IP Addressing Fundamentals",
-    module: "BH-BRIDGE Module 2",
-    courseCode: "bh-bridge",
-    status: "locked" as const,
-  },
-];
-
 export default function DashboardHome() {
-  // Calculate threat level based on last lab completion (mock)
-  const lastLabDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000); // 2 days ago
-  const daysSinceLastLab = Math.floor(
-    (Date.now() - lastLabDate.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const threatLevel =
-    daysSinceLastLab <= 1
-      ? "low"
-      : daysSinceLastLab <= 3
-      ? "guarded"
-      : daysSinceLastLab <= 7
-      ? "elevated"
-      : daysSinceLastLab <= 14
-      ? "high"
-      : "severe";
-
   return (
     <div className="space-y-6">
-      {/* Security Posture Header */}
-      <ThreatLevelIndicator
-        level={threatLevel as "low" | "guarded" | "elevated" | "high" | "severe"}
-        lastLabDate={lastLabDate}
-      />
-
-      <ActiveMissions missions={mockMissions} />
-
       {/* Learning Path Roadmap */}
       <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center justify-between mb-6">
