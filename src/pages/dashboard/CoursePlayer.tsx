@@ -30,6 +30,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
+import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
 
 export default function CoursePlayer() {
   const { courseCode } = useParams<{ courseCode: string }>();
@@ -228,6 +229,11 @@ export default function CoursePlayer() {
                       )}
                     </div>
                   </div>
+
+                  {/* Skills You Will Gain - Course Level */}
+                  {Array.isArray(courseData.course.skills) && courseData.course.skills.length > 0 && (
+                    <SkillsYouWillGain skills={courseData.course.skills as string[]} />
+                  )}
 
                   {/* Lesson quiz (when we have quiz data) */}
                   {currentLesson && (
