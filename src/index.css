@@ -9,106 +9,106 @@
 
 @layer base {
   :root {
-    /* Core Brand Colors */
-    --background: 40 20% 98%;
-    --foreground: 220 25% 12%;
+    /* Core Brand Colors - Warm Educator Palette */
+    --background: 30 18% 97%;
+    --foreground: 22 79% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 12%;
+    --card: 30 15% 99%;
+    --card-foreground: 22 79% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 12%;
+    --popover: 30 15% 99%;
+    --popover-foreground: 22 79% 12%;
 
-    /* Primary: Warm Brown - Trust & Grounding */
-    --primary: 25 45% 28%;
-    --primary-foreground: 40 20% 98%;
+    /* Primary: Rich Coffee Brown - Trust & Authority */
+    --primary: 22 82% 19%;
+    --primary-foreground: 30 23% 95%;
 
-    /* Secondary: Deep Slate - Professional */
-    --secondary: 220 25% 18%;
-    --secondary-foreground: 40 20% 98%;
+    /* Secondary: Deep Mahogany - Depth & Sophistication */
+    --secondary: 21 69% 22%;
+    --secondary-foreground: 30 23% 95%;
 
-    /* Muted: Warm Gray */
-    --muted: 30 10% 92%;
-    --muted-foreground: 220 15% 40%;
+    /* Muted: Warm Taupe - Approachable */
+    --muted: 29 23% 88%;
+    --muted-foreground: 22 40% 35%;
 
-    /* Accent: Cyber Teal - Tech & Innovation */
-    --accent: 175 60% 35%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent: Warm Maroon - Energy & Action */
+    --accent: 0 100% 20%;
+    --accent-foreground: 30 23% 98%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 84% 40%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 15% 88%;
-    --input: 30 15% 88%;
-    --ring: 25 45% 28%;
+    --border: 29 20% 85%;
+    --input: 29 20% 85%;
+    --ring: 22 82% 19%;
 
     --radius: 0.625rem;
 
     /* Custom tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(25 45% 28%) 0%, hsl(220 25% 18%) 100%);
-    --gradient-cyber: linear-gradient(135deg, hsl(175 60% 35%) 0%, hsl(190 70% 25%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(30 20% 97%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(22 82% 19%) 0%, hsl(21 69% 15%) 100%);
+    --gradient-cyber: linear-gradient(135deg, hsl(0 100% 20%) 0%, hsl(22 79% 20%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(30 15% 99%) 0%, hsl(29 23% 96%) 100%);
     
-    --shadow-soft: 0 4px 20px -4px hsl(220 25% 12% / 0.08);
-    --shadow-card: 0 8px 32px -8px hsl(220 25% 12% / 0.12);
-    --shadow-elevated: 0 16px 48px -12px hsl(220 25% 12% / 0.18);
+    --shadow-soft: 0 4px 20px -4px hsl(22 79% 12% / 0.08);
+    --shadow-card: 0 8px 32px -8px hsl(22 79% 12% / 0.12);
+    --shadow-elevated: 0 16px 48px -12px hsl(22 79% 12% / 0.18);
 
     /* Sidebar */
-    --sidebar-background: 30 15% 96%;
-    --sidebar-foreground: 220 25% 18%;
-    --sidebar-primary: 25 45% 28%;
-    --sidebar-primary-foreground: 40 20% 98%;
-    --sidebar-accent: 175 60% 35%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 30 15% 88%;
-    --sidebar-ring: 25 45% 28%;
+    --sidebar-background: 29 23% 96%;
+    --sidebar-foreground: 22 79% 12%;
+    --sidebar-primary: 22 82% 19%;
+    --sidebar-primary-foreground: 30 23% 95%;
+    --sidebar-accent: 0 100% 20%;
+    --sidebar-accent-foreground: 30 23% 98%;
+    --sidebar-border: 29 20% 85%;
+    --sidebar-ring: 22 82% 19%;
 
     /* Level Colors for Learning Path */
-    --level-bridge: 35 80% 50%;
-    --level-foundation: 175 60% 35%;
-    --level-core: 25 45% 35%;
-    --level-practitioner: 220 60% 50%;
-    --level-specialisation: 280 50% 50%;
-    --level-advanced: 340 70% 50%;
+    --level-bridge: 50 100% 37%;
+    --level-foundation: 22 82% 25%;
+    --level-core: 0 100% 20%;
+    --level-practitioner: 21 69% 30%;
+    --level-specialisation: 29 23% 45%;
+    --level-advanced: 22 79% 20%;
   }
 
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 40 20% 95%;
+    --background: 22 30% 8%;
+    --foreground: 29 23% 92%;
 
-    --card: 220 25% 12%;
-    --card-foreground: 40 20% 95%;
+    --card: 22 30% 12%;
+    --card-foreground: 29 23% 92%;
 
-    --popover: 220 25% 12%;
-    --popover-foreground: 40 20% 95%;
+    --popover: 22 30% 12%;
+    --popover-foreground: 29 23% 92%;
 
-    --primary: 30 50% 55%;
-    --primary-foreground: 220 25% 8%;
+    --primary: 29 50% 55%;
+    --primary-foreground: 22 30% 8%;
 
-    --secondary: 220 20% 25%;
-    --secondary-foreground: 40 20% 95%;
+    --secondary: 22 40% 20%;
+    --secondary-foreground: 29 23% 92%;
 
-    --muted: 220 20% 18%;
-    --muted-foreground: 220 15% 60%;
+    --muted: 22 25% 18%;
+    --muted-foreground: 29 20% 60%;
 
-    --accent: 175 55% 45%;
-    --accent-foreground: 220 25% 8%;
+    --accent: 0 70% 45%;
+    --accent-foreground: 29 23% 98%;
 
     --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
-    --ring: 30 50% 55%;
+    --border: 22 25% 20%;
+    --input: 22 25% 20%;
+    --ring: 29 50% 55%;
 
-    --sidebar-background: 220 25% 10%;
-    --sidebar-foreground: 40 20% 95%;
-    --sidebar-primary: 30 50% 55%;
-    --sidebar-primary-foreground: 220 25% 8%;
-    --sidebar-accent: 175 55% 45%;
-    --sidebar-accent-foreground: 220 25% 8%;
-    --sidebar-border: 220 20% 20%;
-    --sidebar-ring: 30 50% 55%;
+    --sidebar-background: 22 30% 10%;
+    --sidebar-foreground: 29 23% 92%;
+    --sidebar-primary: 29 50% 55%;
+    --sidebar-primary-foreground: 22 30% 8%;
+    --sidebar-accent: 0 70% 45%;
+    --sidebar-accent-foreground: 29 23% 98%;
+    --sidebar-border: 22 25% 20%;
+    --sidebar-ring: 29 50% 55%;
   }
 }
 
