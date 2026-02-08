@@ -167,6 +167,39 @@ export type Database = {
           },
         ]
       }
+      portfolio_snapshots: {
+        Row: {
+          certification_goals: Json | null
+          courses_completed: Json | null
+          created_at: string
+          display_name: string
+          skills: Json | null
+          slug: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          certification_goals?: Json | null
+          courses_completed?: Json | null
+          created_at?: string
+          display_name: string
+          skills?: Json | null
+          slug: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          certification_goals?: Json | null
+          courses_completed?: Json | null
+          created_at?: string
+          display_name?: string
+          skills?: Json | null
+          slug?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -353,6 +386,27 @@ export type Database = {
           },
         ]
       }
+      user_certification_goals: {
+        Row: {
+          certification_slug: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          certification_slug: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          certification_slug?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           completed: boolean
@@ -478,57 +532,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      portfolio_snapshots: {
-        Row: {
-          slug: string
-          user_id: string
-          display_name: string | null
-          courses_completed: Json
-          skills: Json
-          certification_goals: string[]
-          updated_at: string
-        }
-        Insert: {
-          slug: string
-          user_id: string
-          display_name?: string | null
-          courses_completed?: Json
-          skills?: Json
-          certification_goals?: string[]
-          updated_at?: string
-        }
-        Update: {
-          slug?: string
-          user_id?: string
-          display_name?: string | null
-          courses_completed?: Json
-          skills?: Json
-          certification_goals?: string[]
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      user_certification_goals: {
-        Row: {
-          id: string
-          user_id: string
-          certification_slug: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          certification_slug: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          certification_slug?: string
-          created_at?: string
-        }
-        Relationships: []
       }
     }
     Views: {
