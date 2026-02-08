@@ -2,47 +2,31 @@ import { usePaystackPayment } from "react-paystack";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface UsePaystackOptions {
-  amount: number; // Amount in kobo/cents (e.g., 49900 for R499)
+  amount: number;
+  publicKey: string;
   onSuccess?: () => void;
   onError?: (error: string) => void;
 }
 
-export function usePaystackSubscription({ amount, onSuccess, onError }: UsePaystackOptions) {
+export function usePaystackSubscription({ amount, publicKey, onSuccess, onError }: UsePaystackOptions) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isVerifying, setIsVerifying] = useState(false);
-  const [publicKey, setPublicKey] = useState<string | null>(null);
-  const [isLoadingKey, setIsLoadingKey] = useState(true);
 
   const reference = `bh_${Date.now()}_${user?.id?.slice(0, 8) || "guest"}`;
-
-  // Fetch public key from edge function
-  useEffect(() => {
-    const fetchPublicKey = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke("get-paystack-config");
-        if (error) throw error;
-        setPublicKey(data?.publicKey || null);
-      } catch (err) {
-        console.error("Failed to fetch Paystack config:", err);
-        setPublicKey(null);
-      } finally {
-        setIsLoadingKey(false);
-      }
-    };
-    fetchPublicKey();
-  }, []);
 
   const config = {
     reference,
     email: user?.email || "",
     amount,
-    publicKey: publicKey || "",
+    publicKey,
     currency: "ZAR",
   };
+
+  const initializePayment = usePaystackPayment(config);
 
   const handleSuccess = async (response: { reference: string }) => {
     setIsVerifying(true);
@@ -85,8 +69,6 @@ export function usePaystackSubscription({ amount, onSuccess, onError }: UsePayst
     });
   };
 
-  const initializePayment = usePaystackPayment(config);
-
   const pay = () => {
     if (!user?.email) {
       toast({
@@ -97,25 +79,8 @@ export function usePaystackSubscription({ amount, onSuccess, onError }: UsePayst
       return;
     }
 
-    if (isLoadingKey) {
-      toast({
-        title: "Loading...",
-        description: "Please wait while we prepare the payment.",
-      });
-      return;
-    }
-
-    if (!publicKey) {
-      toast({
-        title: "Configuration Error",
-        description: "Payment system is not configured. Please contact support.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     initializePayment({ onSuccess: handleSuccess, onClose: handleClose });
   };
 
-  return { pay, isVerifying: isVerifying || isLoadingKey, reference };
+  return { pay, isVerifying, reference };
 }
