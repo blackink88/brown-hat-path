@@ -27,19 +27,14 @@ const values = [
 
 const team = [
   {
-    name: "Dr. Thabo Mokoena",
-    role: "Founder & CEO",
-    bio: "20+ years in cybersecurity, former CISO at a major African bank.",
+    role: "Chief Executive Officer",
+    credentials: ["Master's in Information Systems", "Honours in Information Systems", "CCNA"],
+    bio: "Specializes in Identity and Access Management (IAM) with extensive consulting experience. Has developed Security Awareness and Training platforms for SMEs across South Africa.",
   },
   {
-    name: "Naledi Sithole",
-    role: "Head of Curriculum",
-    bio: "ISC² certified educator with expertise in skills-based learning design.",
-  },
-  {
-    name: "David Okonkwo",
-    role: "Industry Partnerships",
-    bio: "Connects students with employers across the continent.",
+    role: "Chief of Operations",
+    credentials: ["Master's in Information Systems", "CISSP", "Honours in Digital Forensics"],
+    bio: "15+ years in cybersecurity and IT. Extensive research experience in Information Security across Africa. A proven leader dedicated to building secure systems.",
   },
 ];
 
@@ -134,18 +129,37 @@ const About = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {team.map((member) => (
                 <div
-                  key={member.name}
-                  className="text-center p-6 rounded-xl border border-border bg-card"
+                  key={member.role}
+                  className="p-8 rounded-xl border border-border bg-card text-center"
                 >
-                  <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <Users className="h-10 w-10 text-primary" />
+                  {/* Avatar with cyber ring */}
+                  <div className="relative h-32 w-32 mx-auto mb-6">
+                    <div className="absolute inset-0 rounded-full border-2 border-cyber-teal" />
+                    <div className="absolute inset-2 rounded-full bg-muted flex items-center justify-center">
+                      <Users className="h-12 w-12 text-muted-foreground" />
+                    </div>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
-                  <p className="text-sm text-accent font-medium mb-2">{member.role}</p>
-                  <p className="text-sm text-muted-foreground">{member.bio}</p>
+                  
+                  {/* Role */}
+                  <h3 className="text-xl font-bold text-cyber-teal mb-4">{member.role}</h3>
+                  
+                  {/* Credentials badges */}
+                  <div className="flex flex-wrap justify-center gap-2 mb-6">
+                    {member.credentials.map((cred) => (
+                      <span
+                        key={cred}
+                        className="px-3 py-1 text-xs font-medium rounded-md bg-cyber-teal/10 text-cyber-teal border border-cyber-teal/30"
+                      >
+                        {cred}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  {/* Bio */}
+                  <p className="text-sm text-muted-foreground leading-relaxed">{member.bio}</p>
                 </div>
               ))}
             </div>
