@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,6 +37,7 @@ export default function CoursePlayer() {
   const { courseCode } = useParams<{ courseCode: string }>();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
 
@@ -83,12 +85,13 @@ export default function CoursePlayer() {
         .eq("user_id", user?.id || "");
 
       if (error) throw error;
-      return data.reduce(
-        (acc, p) => ({ ...acc, [p.lesson_id]: p.completed }),
+      const list = data ?? [];
+      return list.reduce(
+        (acc, p) => ({ ...acc, [p.lesson_id]: !!p.completed }),
         {} as Record<string, boolean>
       );
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   });
 
   // Toggle lesson completion (uses RPC to avoid 409 on duplicate row)
@@ -100,6 +103,7 @@ export default function CoursePlayer() {
       lessonId: string;
       completed: boolean;
     }) => {
+      if (!user?.id) throw new Error("You must be signed in to save progress.");
       const { error } = await supabase.rpc("upsert_user_progress", {
         p_lesson_id: lessonId,
         p_completed: completed,
@@ -107,8 +111,22 @@ export default function CoursePlayer() {
       });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      queryClient.setQueryData<Record<string, boolean>>(
+        ["userProgress", user?.id],
+        (prev) => ({
+          ...(prev ?? {}),
+          [variables.lessonId]: variables.completed,
+        })
+      );
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
+    },
+    onError: (err) => {
+      toast({
+        title: "Could not save progress",
+        description: err instanceof Error ? err.message : String(err),
+        variant: "destructive",
+      });
     },
   });
 
@@ -340,7 +358,7 @@ export default function CoursePlayer() {
                                       onCheckedChange={(checked) => {
                                         toggleCompletion.mutate({
                                           lessonId: lesson.id,
-                                          completed: checked as boolean,
+                                          completed: checked === true,
                                         });
                                       }}
                                       onClick={(e) => e.stopPropagation()}
