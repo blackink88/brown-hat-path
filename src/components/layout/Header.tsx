@@ -36,7 +36,7 @@ export function Header() {
               key={link.href}
               to={link.href}
               className={cn(
-                "px-4 py-2 text-sm font-medium rounded-md transition-colors",
+                "px-4 py-2 text-base font-medium rounded-md transition-colors",
                 location.pathname === link.href
                   ? "text-primary bg-primary/5"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -49,10 +49,10 @@ export function Header() {
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="sm" asChild>
+          <Button variant="ghost" size="default" asChild>
             <Link to="/login">Log In</Link>
           </Button>
-          <Button size="sm" asChild>
+          <Button size="default" asChild>
             <Link to="/enroll">Start Learning</Link>
           </Button>
         </div>
@@ -77,7 +77,7 @@ export function Header() {
                 to={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
-                  "px-4 py-3 text-sm font-medium rounded-md transition-colors",
+                  "px-4 py-3 text-base font-medium rounded-md transition-colors",
                   location.pathname === link.href
                     ? "text-primary bg-primary/5"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
