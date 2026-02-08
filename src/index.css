@@ -9,7 +9,7 @@
 
 @layer base {
   :root {
-    /* Light mode - warm professional tones */
+    /* Light mode - warm professional tones with cyber accents */
     --background: 0 0% 96%;
     --foreground: 0 0% 11%;
 
@@ -44,77 +44,99 @@
 
     --radius: 0.625rem;
 
+    /* Cyber accent colors - blues and teals */
+    --cyber-blue: 210 80% 55%;
+    --cyber-teal: 180 65% 45%;
+    --cyber-purple: 260 60% 55%;
+    --cyber-green: 160 70% 40%;
+
     /* Custom tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(10 27% 19%) 0%, hsl(0 0% 11%) 100%);
-    --gradient-cyber: linear-gradient(135deg, hsl(20 57% 40%) 0%, hsl(20 50% 35%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(10 10% 94%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(10 27% 19%) 0%, hsl(220 50% 15%) 100%);
+    --gradient-cyber: linear-gradient(135deg, hsl(210 80% 55%) 0%, hsl(180 65% 45%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(210 20% 96%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(20 57% 40%) 0%, hsl(20 50% 35%) 100%);
     
-    --shadow-soft: 0 4px 20px -4px hsl(0 0% 11% / 0.08);
-    --shadow-card: 0 8px 32px -8px hsl(0 0% 11% / 0.12);
-    --shadow-elevated: 0 16px 48px -12px hsl(0 0% 11% / 0.18);
+    --shadow-soft: 0 4px 20px -4px hsl(210 50% 20% / 0.08);
+    --shadow-card: 0 8px 32px -8px hsl(210 50% 20% / 0.12);
+    --shadow-elevated: 0 16px 48px -12px hsl(210 50% 20% / 0.18);
+    --shadow-cyber: 0 8px 32px -8px hsl(210 80% 55% / 0.25);
 
     /* Sidebar - Deep Umber */
     --sidebar-background: 10 27% 19%;
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 20 57% 40%;
-    --sidebar-primary-foreground: 0 0% 96%;
-    --sidebar-accent: 20 57% 45%;
-    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-primary: 210 80% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 180 65% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 11 27% 24%;
-    --sidebar-ring: 20 57% 40%;
+    --sidebar-ring: 210 80% 55%;
 
-    /* Level Colors for Learning Path */
-    --level-bridge: 20 57% 40%;
-    --level-foundation: 10 27% 25%;
-    --level-core: 0 50% 30%;
-    --level-practitioner: 20 45% 35%;
-    --level-specialisation: 15 30% 45%;
-    --level-advanced: 0 60% 35%;
+    /* Level Colors for Learning Path - more vibrant */
+    --level-bridge: 210 80% 50%;
+    --level-foundation: 180 65% 40%;
+    --level-core: 260 60% 50%;
+    --level-practitioner: 20 70% 45%;
+    --level-specialisation: 160 70% 40%;
+    --level-advanced: 340 70% 45%;
   }
 
   .dark {
-    /* Dark mode - Modern Guardian Theme */
-    --background: 0 0% 11%;
+    /* Dark mode - Modern Guardian Theme with cyber accents */
+    --background: 220 20% 10%;
     --foreground: 0 0% 96%;
 
-    --card: 0 0% 14%;
+    --card: 220 20% 13%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 14%;
+    --popover: 220 20% 13%;
     --popover-foreground: 0 0% 96%;
 
-    /* Primary: Burnt Sienna */
-    --primary: 20 57% 40%;
-    --primary-foreground: 0 0% 96%;
+    /* Primary: Cyber Blue */
+    --primary: 210 80% 55%;
+    --primary-foreground: 0 0% 100%;
 
     /* Secondary: Deep Umber */
     --secondary: 10 27% 19%;
     --secondary-foreground: 0 0% 96%;
 
-    /* Muted: Dark neutrals */
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 65%;
+    /* Muted: Dark blue-grey */
+    --muted: 220 15% 18%;
+    --muted-foreground: 210 20% 65%;
 
-    /* Accent: Burnt Sienna */
-    --accent: 20 57% 45%;
-    --accent-foreground: 0 0% 96%;
+    /* Accent: Cyber Teal */
+    --accent: 180 65% 45%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 11 27% 24%;
-    --input: 11 27% 24%;
-    --ring: 20 57% 40%;
+    --border: 220 20% 22%;
+    --input: 220 20% 22%;
+    --ring: 210 80% 55%;
 
-    /* Sidebar - Deep Umber */
-    --sidebar-background: 10 27% 19%;
+    /* Cyber accent colors */
+    --cyber-blue: 210 80% 60%;
+    --cyber-teal: 180 65% 50%;
+    --cyber-purple: 260 60% 60%;
+    --cyber-green: 160 70% 45%;
+
+    /* Sidebar - Deep Umber with cyber glow */
+    --sidebar-background: 220 25% 12%;
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 20 57% 45%;
-    --sidebar-primary-foreground: 0 0% 96%;
-    --sidebar-accent: 20 57% 50%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 11 27% 28%;
-    --sidebar-ring: 20 57% 40%;
+    --sidebar-primary: 210 80% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 180 65% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 20% 20%;
+    --sidebar-ring: 210 80% 55%;
+
+    /* Level Colors - vibrant for dark mode */
+    --level-bridge: 210 85% 55%;
+    --level-foundation: 180 70% 45%;
+    --level-core: 260 65% 55%;
+    --level-practitioner: 25 80% 50%;
+    --level-specialisation: 160 75% 45%;
+    --level-advanced: 340 75% 50%;
   }
 }
 
