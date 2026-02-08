@@ -24,67 +24,95 @@ serve(async (req) => {
     return new Response("Invalid signature", { status: 400 });
   }
 
-  if (event.type !== "checkout.session.completed") {
-    return new Response(JSON.stringify({ received: true }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const session = event.data.object as Stripe.Checkout.Session;
-  const userId = session.client_reference_id ?? (session.metadata?.user_id as string | undefined);
-  const tierId = session.metadata?.tier_id as string | undefined;
-
-  if (!userId || !tierId) {
-    console.error("Missing user_id or tier_id in session metadata");
-    return new Response("Bad payload", { status: 400 });
-  }
-
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
   );
 
-  // Cancel any currently active subscriptions for this user
-  await supabase
-    .from("subscriptions")
-    .update({ status: "cancelled" })
-    .eq("user_id", userId)
-    .eq("status", "active");
+  // Handle checkout completed: create/update subscription and store Stripe ids
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const userId = session.client_reference_id ?? (session.metadata?.user_id as string | undefined);
+    const tierId = session.metadata?.tier_id as string | undefined;
+    const customerId = typeof session.customer === "string" ? session.customer : null;
+    const subscriptionId = typeof session.subscription === "string" ? session.subscription : null;
 
-  // Resubscribe: if user already has a row (e.g. cancelled), reactivate it; otherwise insert
-  const { data: existing } = await supabase
-    .from("subscriptions")
-    .select("id")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    if (!userId || !tierId) {
+      console.error("Missing user_id or tier_id in session metadata");
+      return new Response("Bad payload", { status: 400 });
+    }
 
-  if (existing?.id) {
-    const { error } = await supabase
+    await supabase
       .from("subscriptions")
-      .update({
+      .update({ status: "cancelled" })
+      .eq("user_id", userId)
+      .eq("status", "active");
+
+    const { data: existing } = await supabase
+      .from("subscriptions")
+      .select("id")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const stripeFields = {
+      ...(customerId && { stripe_customer_id: customerId }),
+      ...(subscriptionId && { stripe_subscription_id: subscriptionId }),
+    };
+
+    if (existing?.id) {
+      const { error } = await supabase
+        .from("subscriptions")
+        .update({
+          tier_id: tierId,
+          status: "active",
+          starts_at: new Date().toISOString(),
+          ends_at: null,
+          ...stripeFields,
+        })
+        .eq("id", existing.id);
+      if (error) {
+        console.error("Subscription reactivate failed:", error);
+        return new Response("Database error", { status: 500 });
+      }
+    } else {
+      const { error } = await supabase.from("subscriptions").insert({
+        user_id: userId,
         tier_id: tierId,
         status: "active",
         starts_at: new Date().toISOString(),
-        ends_at: null,
-      })
-      .eq("id", existing.id);
-    if (error) {
-      console.error("Subscription reactivate failed:", error);
-      return new Response("Database error", { status: 500 });
+        ...stripeFields,
+      });
+      if (error) {
+        console.error("Subscription insert failed:", error);
+        return new Response("Database error", { status: 500 });
+      }
     }
-  } else {
-    const { error } = await supabase.from("subscriptions").insert({
-      user_id: userId,
-      tier_id: tierId,
-      status: "active",
-      starts_at: new Date().toISOString(),
+    return new Response(JSON.stringify({ received: true }), {
+      headers: { "Content-Type": "application/json" },
     });
-    if (error) {
-      console.error("Subscription insert failed:", error);
-      return new Response("Database error", { status: 500 });
+  }
+
+  // When user cancels in Stripe (Portal or API), sync our DB
+  if (event.type === "customer.subscription.deleted" || event.type === "customer.subscription.updated") {
+    const subscription = event.data.object as Stripe.Subscription;
+    const subId = subscription.id;
+    const isCanceled = subscription.status === "canceled" || subscription.cancel_at_period_end === true;
+
+    if (event.type === "customer.subscription.deleted" || isCanceled) {
+      const { error } = await supabase
+        .from("subscriptions")
+        .update({
+          status: "cancelled",
+          ends_at: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : new Date().toISOString(),
+        })
+        .eq("stripe_subscription_id", subId);
+      if (error) console.error("Subscription sync cancel failed:", error);
     }
+    return new Response(JSON.stringify({ received: true }), {
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   return new Response(JSON.stringify({ received: true }), {

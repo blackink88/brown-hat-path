@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Lock, LogOut, Loader2, AlertTriangle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Lock, LogOut, Loader2, AlertTriangle, CreditCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,14 +22,60 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 export default function Settings() {
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+  const queryClient = useQueryClient();
+  const [isCancelling, setIsCancelling] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const { data: subscription, isLoading: subscriptionLoading } = useQuery({
+    queryKey: ["activeSubscription", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("id, status, subscription_tiers(name)")
+        .eq("user_id", user!.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const handleCancelSubscription = async () => {
+    setIsCancelling(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const { data, error } = await supabase.functions.invoke("cancel-subscription", {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (error) throw error;
+      const result = data as { error?: string; success?: boolean };
+      if (result?.error) throw new Error(result.error);
+      queryClient.invalidateQueries({ queryKey: ["activeSubscription", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["userTierLevel", user?.id] });
+      toast({
+        title: "Subscription cancelled",
+        description: "You no longer have access to subscription content. You can resubscribe anytime from Pricing.",
+      });
+    } catch (e) {
+      toast({
+        title: "Could not cancel",
+        description: e instanceof Error ? e.message : "Please try again or contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
@@ -87,6 +133,63 @@ export default function Settings() {
         <h1 className="text-2xl font-bold text-foreground">Settings</h1>
         <p className="text-muted-foreground">Manage your account settings and preferences</p>
       </div>
+
+      {/* Subscription Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5" />
+            Subscription
+          </CardTitle>
+          <CardDescription>Manage your plan and billing</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {subscriptionLoading ? (
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading…
+            </p>
+          ) : subscription ? (
+            <>
+              <p className="text-sm text-foreground">
+                Current plan: <span className="font-medium">{subscription.subscription_tiers?.name ?? "Active"}</span>
+              </p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="text-destructive border-destructive/50 hover:bg-destructive/10" disabled={isCancelling}>
+                    {isCancelling ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    Cancel subscription
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You will lose access to subscription content immediately. You can resubscribe anytime from the Pricing page.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Keep subscription</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      onClick={handleCancelSubscription}
+                    >
+                      Yes, cancel
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              You don&apos;t have an active subscription.{" "}
+              <Link to="/pricing" className="text-primary font-medium hover:underline">
+                View plans
+              </Link>
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Password Change Card */}
       <Card>

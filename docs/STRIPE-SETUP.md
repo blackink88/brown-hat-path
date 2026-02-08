@@ -25,19 +25,21 @@ UPDATE public.subscription_tiers SET stripe_price_id = 'price_xxx' WHERE name = 
 Set these in Supabase Dashboard → Project Settings → Edge Functions → Secrets (or via CLI):
 
 - `STRIPE_SECRET_KEY` — your Stripe secret key.
-- `STRIPE_WEBHOOK_SECRET` — from Stripe Dashboard → Developers → Webhooks: add endpoint `https://<project-ref>.supabase.co/functions/v1/stripe-webhook`, select event `checkout.session.completed`, then copy the signing secret.
+- `STRIPE_WEBHOOK_SECRET` — from Stripe Dashboard → Developers → Webhooks: add endpoint `https://<project-ref>.supabase.co/functions/v1/stripe-webhook`, select events **`checkout.session.completed`**, **`customer.subscription.updated`**, **`customer.subscription.deleted`**, then copy the signing secret.
 
 ## 4. Deploy Edge Functions
 
 ```bash
 supabase functions deploy create-checkout-session
 supabase functions deploy stripe-webhook
+supabase functions deploy cancel-subscription
 ```
 
 ## 5. Flow
 
 - **Pricing page**: Logged-in user clicks "Subscribe" → frontend calls `create-checkout-session` with `tier_id` → redirects to Stripe Checkout.
-- **After payment**: Stripe redirects to `/dashboard?subscription=success` and sends `checkout.session.completed` to the webhook. The webhook sets any existing active subscription to `cancelled` and inserts a new `subscriptions` row so the user gets access.
+- **After payment**: Stripe redirects to `/dashboard?subscription=success` and sends `checkout.session.completed` to the webhook. The webhook sets any existing active subscription to `cancelled` and inserts/updates a `subscriptions` row (including Stripe customer and subscription IDs) so the user gets access.
+- **Cancellation**: User goes to Dashboard → Settings → Subscription → "Cancel subscription". The app calls `cancel-subscription`, which cancels the subscription in Stripe (if linked) and sets the row to `status: cancelled` so access is revoked immediately. The webhook also handles `customer.subscription.deleted` and `customer.subscription.updated` so if a user cancels in Stripe (e.g. Portal), the database stays in sync.
 
 ## 6. New users and access
 
