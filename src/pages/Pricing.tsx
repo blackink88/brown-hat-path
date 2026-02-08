@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Check, Zap, Shield, Crown, Globe } from "lucide-react";
+import { Check, Zap, Shield, Crown, Globe, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown };
 
@@ -52,6 +55,9 @@ const faqs = [
 ];
 
 const Pricing = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [checkoutTierId, setCheckoutTierId] = useState<string | null>(null);
   const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
 
   const { data: dbTiers, isLoading: tiersLoading } = useQuery({
@@ -81,6 +87,7 @@ const Pricing = () => {
           })()
         : [];
     return {
+      id: t.id,
       name: t.name,
       price: formatPrice(t.price_zar),
       period: "/month",
@@ -91,6 +98,31 @@ const Pricing = () => {
       popular: meta.popular,
     };
   });
+
+  const handleSubscribe = async (tierId: string) => {
+    if (!user) {
+      window.location.href = "/enroll";
+      return;
+    }
+    setCheckoutTierId(tierId);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+        body: { tier_id: tierId },
+      });
+      if (error) throw error;
+      const url = (data as { url?: string })?.url;
+      if (url) window.location.href = url;
+      else throw new Error("No checkout URL returned");
+    } catch (e) {
+      toast({
+        title: "Checkout failed",
+        description: e instanceof Error ? e.message : "Please try again or contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setCheckoutTierId(null);
+    }
+  };
 
   const isLoading = currencyLoading || tiersLoading;
 
@@ -167,13 +199,23 @@ const Pricing = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    variant={tier.popular ? "accent" : "outline"}
-                    className="w-full"
-                    asChild
-                  >
-                    <Link to="/enroll">{tier.cta}</Link>
-                  </Button>
+                  {user ? (
+                    <Button
+                      variant={tier.popular ? "accent" : "outline"}
+                      className="w-full"
+                      disabled={checkoutTierId === tier.id}
+                      onClick={() => handleSubscribe(tier.id)}
+                    >
+                      {checkoutTierId === tier.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : null}
+                      Subscribe
+                    </Button>
+                  ) : (
+                    <Button variant={tier.popular ? "accent" : "outline"} className="w-full" asChild>
+                      <Link to="/enroll">{tier.cta}</Link>
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>

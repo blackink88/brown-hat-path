@@ -92,9 +92,9 @@ export default function CommandCenter() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Command Center</h1>
+        <h1 className="text-2xl font-bold text-foreground">Skills Radar</h1>
         <p className="text-muted-foreground">
-          Skills radar is based on your course progress across cybersecurity domains.
+          Based on your course completion across 8 cybersecurity domains. Complete lessons to build your profile.
         </p>
       </div>
 
@@ -125,7 +125,7 @@ export default function CommandCenter() {
 
       {/* Skill Radar Chart */}
       <div className="rounded-xl border border-border bg-card p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">Skills Radar</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">Your skills by domain</h2>
         {!hasSkills ? (
           <div className="h-80 flex items-center justify-center rounded-lg bg-muted/30 text-center">
             <div>

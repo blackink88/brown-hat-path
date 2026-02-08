@@ -332,6 +332,7 @@ export type Database = {
           level: number
           name: string
           price_zar: number
+          stripe_price_id: string | null
         }
         Insert: {
           created_at?: string
@@ -340,6 +341,7 @@ export type Database = {
           level: number
           name: string
           price_zar: number
+          stripe_price_id?: string | null
         }
         Update: {
           created_at?: string
@@ -348,6 +350,7 @@ export type Database = {
           level?: number
           name?: string
           price_zar?: number
+          stripe_price_id?: string | null
         }
         Relationships: []
       }

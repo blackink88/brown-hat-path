@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -6,17 +7,49 @@ import { ArrowRight, CheckCircle2, Circle, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { getSkillLevelsFromCourseProgress } from "@/lib/courseSkillAlignment";
 
 type StageStatus = "completed" | "current" | "locked";
 
-const learningPathStages: { id: string; title: string; subtitle: string; level: number; status: StageStatus; progress: number }[] = [
-  { id: "bridge", title: "Bridge", subtitle: "Technical Readiness", level: 0, status: "current", progress: 35 },
-  { id: "foundations", title: "Foundations", subtitle: "Core Concepts", level: 1, status: "locked", progress: 0 },
-  { id: "core", title: "Core Cyber", subtitle: "Blue Team / GRC", level: 2, status: "locked", progress: 0 },
-  { id: "specialist", title: "Specialist", subtitle: "Advanced Tracks", level: 3, status: "locked", progress: 0 },
+const STAGE_DEFS: { id: string; title: string; subtitle: string; level: number }[] = [
+  { id: "bridge", title: "Bridge", subtitle: "Technical Readiness", level: 0 },
+  { id: "foundations", title: "Foundations", subtitle: "Core Concepts", level: 1 },
+  { id: "core", title: "Core Cyber", subtitle: "Blue Team / GRC", level: 2 },
+  { id: "specialist", title: "Specialist", subtitle: "Advanced Tracks", level: 3 },
 ];
 
-type EnrolledCourse = { id: string; code: string; title: string; progress: number };
+type EnrolledCourse = { id: string; code: string; title: string; level: number; progress: number };
+
+function useStreak(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["streak", userId],
+    queryFn: async () => {
+      if (!userId) return 0;
+      const { data, error } = await supabase
+        .from("user_progress")
+        .select("completed_at")
+        .eq("user_id", userId)
+        .eq("completed", true)
+        .not("completed_at", "is", null);
+      if (error) throw error;
+      const dates = new Set(
+        (data ?? []).map((p) => p.completed_at!.slice(0, 10))
+      );
+      const sorted = Array.from(dates).sort().reverse();
+      if (sorted.length === 0) return 0;
+      let streak = 0;
+      const check = new Date();
+      for (let i = 0; i < sorted.length; i++) {
+        const expected = check.toISOString().slice(0, 10);
+        if (sorted[i] !== expected) break;
+        streak++;
+        check.setDate(check.getDate() - 1);
+      }
+      return streak;
+    },
+    enabled: !!userId,
+  });
+}
 
 export default function DashboardHome() {
   const { user } = useAuth();
@@ -27,17 +60,17 @@ export default function DashboardHome() {
       const { data: enrollments, error: eErr } = await supabase
         .from("course_enrollments")
         .select("course_id")
-        .eq("user_id", user?.id ?? "");
+        .eq("user_id", user!.id);
       if (eErr) throw eErr;
       const courseIds = (enrollments ?? []).map((e) => e.course_id);
       if (courseIds.length === 0) return [];
       const { data: courses, error: cErr } = await supabase
         .from("courses")
-        .select("id, code, title")
+        .select("id, code, title, level")
         .in("id", courseIds)
         .order("order_index");
       if (cErr) throw cErr;
-      return courses ?? [];
+      return (courses ?? []) as { id: string; code: string; title: string; level: number }[];
     },
     enabled: !!user?.id,
   });
@@ -48,7 +81,7 @@ export default function DashboardHome() {
       const { data, error } = await supabase
         .from("user_progress")
         .select("lesson_id")
-        .eq("user_id", user?.id ?? "")
+        .eq("user_id", user!.id)
         .eq("completed", true);
       if (error) throw error;
       return new Set((data ?? []).map((p) => p.lesson_id));
@@ -73,11 +106,28 @@ export default function DashboardHome() {
     },
   });
 
-  const continueLearningCourse: EnrolledCourse | null = (() => {
-    if (!enrollmentsWithCourses?.length || !lessonCourseMap) return null;
-    // Ensure progressSet is always a Set, even if userProgress is cached in wrong format
+  const { data: userTierLevel = 0 } = useQuery({
+    queryKey: ["userTierLevel", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("subscription_tiers(level)")
+        .eq("user_id", user!.id)
+        .eq("status", "active");
+      if (error) throw error;
+      const rows = (data as { subscription_tiers?: { level: number } | null }[]) ?? [];
+      const levels = rows.map((r) => r.subscription_tiers?.level ?? 0).filter((l) => l > 0);
+      return levels.length > 0 ? Math.max(...levels) : 0;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: streak = 0 } = useStreak(user?.id);
+
+  const courseProgressList = useMemo((): EnrolledCourse[] => {
+    if (!enrollmentsWithCourses?.length || !lessonCourseMap) return [];
     const progressSet = userProgress instanceof Set ? userProgress : new Set<string>();
-    const courseProgressList: EnrolledCourse[] = enrollmentsWithCourses.map((c) => {
+    return enrollmentsWithCourses.map((c) => {
       let total = 0;
       let completed = 0;
       Object.entries(lessonCourseMap).forEach(([lessonId, courseId]) => {
@@ -86,18 +136,89 @@ export default function DashboardHome() {
           if (progressSet.has(lessonId)) completed += 1;
         }
       });
-      return { id: c.id, code: c.code, title: c.title, progress: total > 0 ? Math.round((completed / total) * 100) : 0 };
+      return {
+        id: c.id,
+        code: c.code,
+        title: c.title,
+        level: c.level,
+        progress: total > 0 ? Math.round((completed / total) * 100) : 0,
+      };
     });
-    const first = courseProgressList[0];
-    return first ?? null;
-  })();
+  }, [enrollmentsWithCourses, lessonCourseMap, userProgress]);
+
+  const learningPathStages = useMemo(() => {
+    const progressByLevel: Record<number, { total: number; completed: number }> = {};
+    STAGE_DEFS.forEach((s) => {
+      progressByLevel[s.level] = { total: 0, completed: 0 };
+    });
+    courseProgressList.forEach((c) => {
+      const level = c.level <= 3 ? c.level : 3;
+      if (!progressByLevel[level]) return;
+      const totalLessons = Object.values(lessonCourseMap ?? {}).filter((cid) => cid === c.id).length;
+      const completedLessons = totalLessons > 0 ? Math.round((c.progress / 100) * totalLessons) : 0;
+      progressByLevel[level].total += totalLessons;
+      progressByLevel[level].completed += completedLessons;
+    });
+    let foundCurrent = false;
+    return STAGE_DEFS.map((def): { id: string; title: string; subtitle: string; level: number; status: StageStatus; progress: number } => {
+      const { total, completed } = progressByLevel[def.level] ?? { total: 0, completed: 0 };
+      const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+      const status: StageStatus =
+        progress >= 100
+          ? "completed"
+          : !foundCurrent
+            ? ((foundCurrent = true), "current")
+            : "locked";
+      return {
+        ...def,
+        status,
+        progress,
+      };
+    });
+  }, [courseProgressList, lessonCourseMap]);
+
+  const continueLearningCourse: EnrolledCourse | null =
+    courseProgressList.length && courseProgressList.some((c) => c.progress < 100)
+      ? courseProgressList.find((c) => c.progress < 100) ?? courseProgressList[0] ?? null
+      : courseProgressList[0] ?? null;
 
   const lessonsCompleted = userProgress?.size ?? 0;
   const coursesEnrolled = enrollmentsWithCourses?.length ?? 0;
 
+  const { data: skillsUnlocked = 0 } = useQuery({
+    queryKey: ["dashboardSkillsUnlocked", user?.id, userProgress?.size],
+    queryFn: async () => {
+      if (!courseProgressList.length) return 0;
+      const { data: skillRows } = await supabase.from("skills").select("name").order("name");
+      const skillNames = (skillRows ?? []).map((s) => s.name);
+      const courseProgress = courseProgressList.map((c) => ({ code: c.code, progress: c.progress }));
+      const levels = getSkillLevelsFromCourseProgress(courseProgress, skillNames);
+      return Object.values(levels).filter((v) => v >= 50).length;
+    },
+    enabled: !!user?.id && courseProgressList.length > 0,
+  });
+
+  const overallPathProgress =
+    learningPathStages.length > 0
+      ? Math.round(
+          learningPathStages.reduce((a, s) => a + s.progress, 0) / learningPathStages.length
+        )
+      : 0;
+  const currentStage = learningPathStages.find((s) => s.status === "current");
+
   return (
     <div className="space-y-6">
-      {/* Learning Path Roadmap */}
+      {userTierLevel === 0 && (
+        <div className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-4 flex items-center justify-between gap-4">
+          <p className="text-sm text-foreground">
+            Subscribe to a plan to access courses and track your progress.
+          </p>
+          <Button asChild variant="default">
+            <Link to="/pricing">View plans</Link>
+          </Button>
+        </div>
+      )}
+      {/* Learning Path Roadmap - real progress */}
       <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-foreground">Your Learning Path</h2>
@@ -112,7 +233,7 @@ export default function DashboardHome() {
           <div
             className="absolute top-8 left-0 h-1 bg-primary rounded-full transition-all"
             style={{
-              width: `${learningPathStages.find((s) => s.status === "current")?.progress ?? 0}%`,
+              width: `${currentStage ? currentStage.progress : overallPathProgress}%`,
             }}
           />
           <div className="relative grid grid-cols-4 gap-2 sm:gap-4">
@@ -139,10 +260,10 @@ export default function DashboardHome() {
                     {stage.title}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">{stage.subtitle}</p>
-                  {stage.status === "current" && (
+                  {(stage.status === "current" || stage.status === "completed") && (
                     <div className="mt-2 mx-auto w-20">
                       <Progress value={stage.progress} className="h-1.5" />
-                      <p className="text-xs text-muted-foreground mt-1">{stage.progress}% complete</p>
+                      <p className="text-xs text-muted-foreground mt-1">{stage.progress}%</p>
                     </div>
                   )}
                 </div>
@@ -188,13 +309,13 @@ export default function DashboardHome() {
         </p>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - streak and skills unlocked from real data */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {[
           { label: "Lessons Completed", value: String(lessonsCompleted) },
           { label: "Courses Enrolled", value: String(coursesEnrolled) },
-          { label: "Current Streak", value: "—" },
-          { label: "Skills Unlocked", value: "—" },
+          { label: "Current Streak", value: String(streak) },
+          { label: "Skills Unlocked", value: String(skillsUnlocked) },
         ].map((stat) => (
           <div key={stat.label} className="rounded-xl border border-border bg-card p-4 text-center">
             <p className="text-2xl font-bold text-foreground">{stat.value}</p>

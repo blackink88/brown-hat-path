@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { title: "Learning Path", url: "/dashboard", icon: Map },
   { title: "My Courses", url: "/dashboard/courses", icon: BookOpen },
-  { title: "Command Center", url: "/dashboard/skills", icon: BarChart3 },
+  { title: "Skills Radar", url: "/dashboard/skills", icon: BarChart3 },
 ];
 
 const adminNavItem = { title: "Admin", url: "/dashboard/admin", icon: Settings2 };

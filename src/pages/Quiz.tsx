@@ -20,7 +20,10 @@ export default function Quiz() {
               Cybersecurity Aptitude Quiz
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Answer a few questions to discover your cybersecurity persona and find the career path that matches your natural strengths.
+              See if cybersecurity is for you. Answer a few questions to discover your cybersecurity persona and find the career path that matches your natural strengths.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              This is a discovery quiz. Course lesson quizzes are inside each course in your dashboard.
             </p>
           </div>
 

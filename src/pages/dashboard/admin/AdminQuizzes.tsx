@@ -129,8 +129,10 @@ export default function AdminQuizzes() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Quiz questions</h1>
-      <p className="text-muted-foreground text-sm">Select a lesson to manage its quiz questions.</p>
+      <h1 className="text-2xl font-bold text-foreground">Lesson quiz questions</h1>
+      <p className="text-muted-foreground text-sm">
+        These quizzes appear at the end of each lesson in the course player. Select a lesson to add or edit questions.
+      </p>
 
       <div className="flex flex-wrap items-center gap-4">
         <div className="w-64">

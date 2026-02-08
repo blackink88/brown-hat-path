@@ -35,6 +35,22 @@ export default function MyCourses() {
     },
   });
 
+  const { data: userTierLevel = 0 } = useQuery({
+    queryKey: ["userTierLevel", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("subscription_tiers(level)")
+        .eq("user_id", user!.id)
+        .eq("status", "active");
+      if (error) throw error;
+      const rows = (data as { subscription_tiers?: { level: number } | null }[]) ?? [];
+      const levels = rows.map((r) => r.subscription_tiers?.level ?? 0).filter((l) => l > 0);
+      return levels.length > 0 ? Math.max(...levels) : 0;
+    },
+    enabled: !!user?.id,
+  });
+
   const { data: enrollments, isLoading: enrollmentsLoading } = useQuery({
     queryKey: ["courseEnrollments", user?.id],
     queryFn: async () => {
@@ -136,10 +152,20 @@ export default function MyCourses() {
 
   return (
     <div className="space-y-8">
+      {userTierLevel === 0 && (
+        <div className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-4 flex items-center justify-between gap-4">
+          <p className="text-sm text-foreground">
+            Subscribe to a plan to access courses. Your access is based on your subscription tier.
+          </p>
+          <Button asChild variant="default">
+            <Link to="/pricing">View plans</Link>
+          </Button>
+        </div>
+      )}
       <div>
         <h1 className="text-2xl font-bold text-foreground">My Courses</h1>
         <p className="text-muted-foreground">
-          Track your progress across all enrolled courses.
+          Track your progress across all enrolled courses. Access is based on your subscription tier.
         </p>
       </div>
 
@@ -217,16 +243,16 @@ export default function MyCourses() {
         ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {availableCourses.map((course) => {
-              const isLocked = course.required_tier_level > 1; // Simplified check
+              const isLocked = course.required_tier_level > userTierLevel;
               return (
                 <div
                   key={course.id}
                   className={cn(
                     "rounded-xl border bg-card overflow-hidden",
-                    isLocked ? "border-border opacity-60" : "border-border hover:shadow-lg transition-shadow"
+                    isLocked ? "border-border opacity-70" : "border-border hover:shadow-lg transition-shadow"
                   )}
                 >
-                  <div className="h-32 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center relative">
+                  <div className={cn("h-32 flex items-center justify-center relative", isLocked ? "bg-muted/50" : "bg-gradient-to-br from-muted to-muted/50")}>
                     <span className="text-lg font-mono font-bold text-muted-foreground">
                       {course.code}
                     </span>
@@ -256,24 +282,26 @@ export default function MyCourses() {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                       <span>{course.duration_hours} hours</span>
                     </div>
-                    <Button
-                      variant={isLocked ? "outline" : "secondary"}
-                      className="w-full"
-                      disabled={isLocked || enrollInCourse.isPending}
-                      onClick={() => !isLocked && enrollInCourse.mutate(course.id)}
-                    >
-                      {enrollInCourse.isPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : null}
-                      {isLocked ? (
-                        <>
+                    {isLocked ? (
+                      <Button variant="outline" className="w-full" asChild>
+                        <Link to="/pricing">
                           <Lock className="h-4 w-4 mr-2" />
-                          Upgrade to Unlock
-                        </>
-                      ) : (
-                        "Enroll Now"
-                      )}
-                    </Button>
+                          Upgrade to access
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        className="w-full"
+                        disabled={enrollInCourse.isPending}
+                        onClick={() => enrollInCourse.mutate(course.id)}
+                      >
+                        {enrollInCourse.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : null}
+                        Enroll Now
+                      </Button>
+                    )}
                   </div>
                 </div>
               );
