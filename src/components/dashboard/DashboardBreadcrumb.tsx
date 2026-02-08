@@ -15,6 +15,10 @@ const pathLabels: Record<string, string> = {
   "/dashboard/skills": "Command Center",
   "/dashboard/profile": "Profile",
   "/dashboard/settings": "Settings",
+  "/dashboard/admin": "Admin",
+  "/dashboard/admin/courses": "Courses",
+  "/dashboard/admin/quizzes": "Quizzes",
+  "/dashboard/admin/users": "Users",
 };
 
 function getBreadcrumbs(pathname: string): { path: string; label: string }[] {

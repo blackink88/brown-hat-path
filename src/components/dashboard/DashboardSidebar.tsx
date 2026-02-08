@@ -7,8 +7,10 @@ import {
   LogOut,
   Shield,
   Settings,
+  Settings2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { cn } from "@/lib/utils";
 import {
   Sidebar,
@@ -31,6 +33,8 @@ const navItems = [
   { title: "Command Center", url: "/dashboard/skills", icon: BarChart3 },
 ];
 
+const adminNavItem = { title: "Admin", url: "/dashboard/admin", icon: Settings2 };
+
 const settingsItems = [
   { title: "Profile", url: "/dashboard/profile", icon: User },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
@@ -39,8 +43,10 @@ const settingsItems = [
 export function DashboardSidebar() {
   const location = useLocation();
   const { signOut } = useAuth();
+  const { isAdmin } = useUserRole();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const items = [...navItems, ...(isAdmin ? [adminNavItem] : [])];
 
   const isActive = (path: string) => {
     if (path === "/dashboard") {
@@ -74,7 +80,7 @@ export function DashboardSidebar() {
           <SidebarGroupLabel>Learn</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
+              {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
