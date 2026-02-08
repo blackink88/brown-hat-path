@@ -1,8 +1,11 @@
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { Outlet, Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardBreadcrumb } from "./DashboardBreadcrumb";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { Bell, User, Settings, LogOut, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +22,26 @@ import { GlobalSearch } from "./GlobalSearch";
 export function DashboardLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const handledSuccessRef = useRef(false);
+
+  // After Stripe checkout success, user is redirected to /dashboard?subscription=success
+  useEffect(() => {
+    if (searchParams.get("subscription") !== "success" || handledSuccessRef.current) return;
+    handledSuccessRef.current = true;
+    toast({
+      title: "Subscription active",
+      description: "Your plan is now active. You can access your courses.",
+    });
+    queryClient.invalidateQueries({ queryKey: ["userTierLevel"] });
+    queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
+    const next = new URLSearchParams(searchParams);
+    next.delete("subscription");
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams, toast, queryClient]);
+
   const displayName = (user?.user_metadata?.full_name as string) || user?.email?.split("@")[0] || "User";
   const initial = displayName.charAt(0).toUpperCase();
 

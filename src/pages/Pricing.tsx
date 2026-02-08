@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
@@ -57,8 +57,21 @@ const faqs = [
 const Pricing = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [checkoutTierId, setCheckoutTierId] = useState<string | null>(null);
   const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
+  const handledCancelledRef = useRef(false);
+
+  useEffect(() => {
+    if (searchParams.get("subscription") !== "cancelled" || handledCancelledRef.current) return;
+    handledCancelledRef.current = true;
+    toast({ title: "Checkout cancelled", description: "You can choose a plan whenever you're ready." });
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("subscription");
+      return next;
+    }, { replace: true });
+  }, [searchParams, setSearchParams, toast]);
 
   const { data: dbTiers, isLoading: tiersLoading } = useQuery({
     queryKey: ["subscription_tiers"],

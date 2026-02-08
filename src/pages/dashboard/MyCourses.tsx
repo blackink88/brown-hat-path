@@ -119,8 +119,12 @@ export default function MyCourses() {
 
   const enrollInCourse = useMutation({
     mutationFn: async (courseId: string) => {
+      if (!user?.id) throw new Error("You must be signed in to enroll.");
+      if (!canEnrollInMore) {
+        throw new Error("Finish your current course before enrolling in another.");
+      }
       const { error } = await supabase.from("course_enrollments").insert({
-        user_id: user?.id,
+        user_id: user.id,
         course_id: courseId,
       });
       if (error) throw error;
@@ -136,6 +140,12 @@ export default function MyCourses() {
   const enrolledCourseIds = new Set(enrollments ?? []);
   const enrolledCourses = courses?.filter((c) => enrolledCourseIds.has(c.id)) ?? [];
   const availableCourses = courses?.filter((c) => !enrolledCourseIds.has(c.id)) ?? [];
+
+  // User may only have one active enrollment; must finish (100%) before enrolling in another
+  const hasIncompleteEnrollment = enrolledCourses.some(
+    (c) => (courseProgress[c.id] ?? 0) < 100
+  );
+  const canEnrollInMore = !hasIncompleteEnrollment;
 
   const isLoading = coursesLoading || (!!user && enrollmentsLoading);
 
@@ -238,6 +248,18 @@ export default function MyCourses() {
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Available Courses
         </h2>
+        {hasIncompleteEnrollment && (
+          <div className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-4 mb-4 flex items-center gap-3">
+            <p className="text-sm text-foreground flex-1">
+              Finish your current course before enrolling in another. Complete all lessons to 100% to unlock the next course.
+            </p>
+            <Button variant="outline" size="sm" asChild>
+              <Link to={`/dashboard/course/${(enrolledCourses[0]?.code ?? "").toLowerCase()}`}>
+                Continue course
+              </Link>
+            </Button>
+          </div>
+        )}
         {availableCourses.length === 0 && (!courses || courses.length === 0) ? (
           <div className="rounded-xl border border-border bg-muted/30 p-8 text-center">
             <p className="text-muted-foreground">No courses available right now.</p>
@@ -297,6 +319,10 @@ export default function MyCourses() {
                           <Lock className="h-4 w-4 mr-2" />
                           Upgrade to access
                         </Link>
+                      </Button>
+                    ) : !canEnrollInMore ? (
+                      <Button variant="secondary" className="w-full" disabled>
+                        Finish current course first
                       </Button>
                     ) : (
                       <Button
