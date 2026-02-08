@@ -14,8 +14,11 @@ const certs = [
   { name: "CompTIA CySA+", level: "Practitioner", desc: "Security analytics and threat detection." },
   { name: "ISC² SSCP", level: "Practitioner", desc: "Security administration and operations." },
   { name: "CompTIA CASP+", level: "Specialisation", desc: "Advanced security practitioner." },
+  { name: "Microsoft SC-200", level: "Specialisation", desc: "Security operations with Microsoft Defender and Sentinel." },
+  { name: "AWS Security – Specialty", level: "Specialisation", desc: "Cloud security on Amazon Web Services." },
   { name: "CISSP", level: "Advanced", desc: "Security leadership and architecture." },
   { name: "CISM", level: "Advanced", desc: "Security management and governance." },
+  { name: "TOGAF", level: "Advanced", desc: "Enterprise architecture and security governance." },
 ];
 
 export default function Certifications() {

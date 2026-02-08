@@ -6,6 +6,9 @@ export const CERTIFICATION_OPTIONS = [
   { slug: "comptia-cysa-plus", name: "CompTIA CySA+", level: "Practitioner" },
   { slug: "isc2-sscp", name: "ISC² SSCP", level: "Practitioner" },
   { slug: "comptia-casp-plus", name: "CompTIA CASP+", level: "Specialisation" },
+  { slug: "microsoft-sc-200", name: "Microsoft SC-200", level: "Specialisation" },
+  { slug: "aws-security-specialty", name: "AWS Security – Specialty", level: "Specialisation" },
   { slug: "cissp", name: "CISSP", level: "Advanced" },
   { slug: "cism", name: "CISM", level: "Advanced" },
+  { slug: "togaf", name: "TOGAF", level: "Advanced" },
 ];
