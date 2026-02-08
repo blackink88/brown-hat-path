@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Loader2,
   FileText,
+  CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -28,7 +29,6 @@ import {
 } from "@/components/ui/collapsible";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { LabPanel } from "@/components/dashboard/LabPanel";
 import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
 
 export default function CoursePlayer() {
@@ -141,16 +141,7 @@ export default function CoursePlayer() {
   const progressPercent =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
-  // Handle flag submission
-  const handleFlagSubmit = async (flag: string): Promise<boolean> => {
-    // In production, validate against stored flags in database
-    // For now, accept any flag that matches pattern
-    const isValid = flag.toLowerCase().startsWith("flag{") && flag.endsWith("}");
-    if (isValid && selectedLesson) {
-      toggleCompletion.mutate({ lessonId: selectedLesson, completed: true });
-    }
-    return isValid;
-  };
+  const isLessonComplete = selectedLesson ? !!userProgress?.[selectedLesson] : false;
 
   if (isLoading) {
     return (
@@ -246,6 +237,36 @@ export default function CoursePlayer() {
                       alreadyCompleted={!!userProgress?.[currentLesson.id]}
                     />
                   )}
+
+                  {/* Mark as complete */}
+                  {currentLesson && (
+                    <div className="rounded-xl border border-border bg-card p-4">
+                      {isLessonComplete ? (
+                        <p className="text-sm text-muted-foreground flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary" />
+                          This lesson is marked complete.
+                        </p>
+                      ) : (
+                        <Button
+                          onClick={() =>
+                            toggleCompletion.mutate({
+                              lessonId: currentLesson.id,
+                              completed: true,
+                            })
+                          }
+                          disabled={toggleCompletion.isPending}
+                          className="w-full sm:w-auto"
+                        >
+                          {toggleCompletion.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <CheckCircle2 className="h-4 w-4 mr-2" />
+                          )}
+                          Mark as complete
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
             </div>
@@ -253,17 +274,9 @@ export default function CoursePlayer() {
 
           <ResizableHandle withHandle />
 
-          {/* Right Panel: Curriculum + Lab */}
+          {/* Right Panel: Curriculum */}
           <ResizablePanel defaultSize={35} minSize={25}>
             <div className="h-full flex flex-col gap-4 pl-2">
-              {/* Lab Panel */}
-              <LabPanel
-                lessonId={selectedLesson || ""}
-                labUrl="https://tryhackme.com" // Mock lab URL
-                onFlagSubmit={handleFlagSubmit}
-                isCompleted={userProgress?.[selectedLesson || ""] || false}
-              />
-
               {/* Curriculum */}
               <div className="flex-1 min-h-0 rounded-xl border border-border bg-card flex flex-col">
                 <div className="p-4 border-b border-border shrink-0">
