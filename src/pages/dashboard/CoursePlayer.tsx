@@ -90,7 +90,7 @@ export default function CoursePlayer() {
     enabled: !!user,
   });
 
-  // Toggle lesson completion
+  // Toggle lesson completion (uses RPC to avoid 409 on duplicate row)
   const toggleCompletion = useMutation({
     mutationFn: async ({
       lessonId,
@@ -99,24 +99,12 @@ export default function CoursePlayer() {
       lessonId: string;
       completed: boolean;
     }) => {
-      if (completed) {
-        const { error } = await supabase.from("user_progress").upsert(
-          {
-            user_id: user?.id,
-            lesson_id: lessonId,
-            completed: true,
-            completed_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id,lesson_id" }
-        );
-        if (error) throw error;
-      } else {
-        await supabase
-          .from("user_progress")
-          .update({ completed: false, completed_at: null })
-          .eq("user_id", user?.id)
-          .eq("lesson_id", lessonId);
-      }
+      const { error } = await supabase.rpc("upsert_user_progress", {
+        p_lesson_id: lessonId,
+        p_completed: completed,
+        p_completed_at: completed ? new Date().toISOString() : null,
+      });
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProgress"] });
