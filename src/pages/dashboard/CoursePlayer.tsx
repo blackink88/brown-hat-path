@@ -100,12 +100,16 @@ export default function CoursePlayer() {
       completed: boolean;
     }) => {
       if (completed) {
-        await supabase.from("user_progress").upsert({
-          user_id: user?.id,
-          lesson_id: lessonId,
-          completed: true,
-          completed_at: new Date().toISOString(),
-        });
+        const { error } = await supabase.from("user_progress").upsert(
+          {
+            user_id: user?.id,
+            lesson_id: lessonId,
+            completed: true,
+            completed_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id,lesson_id" }
+        );
+        if (error) throw error;
       } else {
         await supabase
           .from("user_progress")
