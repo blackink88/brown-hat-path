@@ -16,7 +16,7 @@ export function SkillsYouWillGain({
   if (compact) {
     return (
       <div className="flex flex-wrap gap-2">
-        {skills.slice(0, 4).map((skill, i) => (
+        {skills.map((skill, i) => (
           <span
             key={i}
             className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full"
@@ -25,11 +25,6 @@ export function SkillsYouWillGain({
             {skill}
           </span>
         ))}
-        {skills.length > 4 && (
-          <span className="text-xs text-muted-foreground">
-            +{skills.length - 4} more
-          </span>
-        )}
       </div>
     );
   }

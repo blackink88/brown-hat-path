@@ -200,14 +200,14 @@ export default function MyCourses() {
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-semibold text-foreground line-clamp-2">
+                    <h3 className="font-semibold text-foreground">
                       {course.title}
                     </h3>
                     <Badge variant="secondary" className="shrink-0">
                       {levelLabels[course.level]}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                  <p className="text-sm text-muted-foreground mb-2">
                     {course.description}
                   </p>
                   {/* Skills You Will Gain */}
@@ -273,7 +273,7 @@ export default function MyCourses() {
                 <div
                   key={course.id}
                   className={cn(
-                    "rounded-xl border bg-card overflow-hidden",
+                    "rounded-xl border bg-card",
                     isLocked ? "border-border opacity-70" : "border-border hover:shadow-lg transition-shadow"
                   )}
                 >
@@ -289,14 +289,14 @@ export default function MyCourses() {
                   </div>
                   <div className="p-4">
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-semibold text-foreground line-clamp-2">
+                      <h3 className="font-semibold text-foreground">
                         {course.title}
                       </h3>
                       <Badge variant="outline" className="shrink-0">
                         {levelLabels[course.level]}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       {course.description}
                     </p>
                     {/* Skills You Will Gain */}
