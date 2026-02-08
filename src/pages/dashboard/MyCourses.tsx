@@ -5,9 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Lock, Play, Loader2 } from "lucide-react";
+import { Lock, Play, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useStageProgress } from "@/hooks/useStageProgress";
+import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
 
 const levelLabels: Record<number, string> = {
   0: "Bridge",
@@ -22,6 +24,7 @@ export default function MyCourses() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { canAccessCourse, stageStatuses, currentStage } = useStageProgress();
 
   const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["courses"],
@@ -177,6 +180,12 @@ export default function MyCourses() {
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                     {course.description}
                   </p>
+                  {/* Skills You Will Gain */}
+                  {Array.isArray(course.skills) && course.skills.length > 0 && (
+                    <div className="mb-2">
+                      <SkillsYouWillGain skills={course.skills as string[]} compact />
+                    </div>
+                  )}
                   {Array.isArray(course.aligned_certifications) && course.aligned_certifications.length > 0 && (
                     <p className="text-xs text-primary mb-2">
                       Aligned to: {course.aligned_certifications.join(", ")}. Support and exam discounts available.
@@ -217,7 +226,10 @@ export default function MyCourses() {
         ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {availableCourses.map((course) => {
-              const isLocked = course.required_tier_level > 1; // Simplified check
+              // Check both tier lock AND stage progression lock
+              const isTierLocked = course.required_tier_level > 1;
+              const isStageLocked = !canAccessCourse(course.code);
+              const isLocked = isTierLocked || isStageLocked;
               return (
                 <div
                   key={course.id}
@@ -248,6 +260,12 @@ export default function MyCourses() {
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                       {course.description}
                     </p>
+                    {/* Skills You Will Gain */}
+                    {Array.isArray(course.skills) && course.skills.length > 0 && (
+                      <div className="mb-2">
+                        <SkillsYouWillGain skills={course.skills as string[]} compact />
+                      </div>
+                    )}
                     {Array.isArray(course.aligned_certifications) && course.aligned_certifications.length > 0 && (
                       <p className="text-xs text-primary mb-2">
                         Aligned to: {course.aligned_certifications.join(", ")}. Support and exam discounts available.
@@ -268,12 +286,18 @@ export default function MyCourses() {
                       {isLocked ? (
                         <>
                           <Lock className="h-4 w-4 mr-2" />
-                          Upgrade to Unlock
+                          {isStageLocked ? "Complete Previous Stage" : "Upgrade to Unlock"}
                         </>
                       ) : (
                         "Enroll Now"
                       )}
                     </Button>
+                    {isStageLocked && !isTierLocked && (
+                      <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-600 dark:text-amber-400">
+                        <AlertCircle className="h-3 w-3" />
+                        <span>Complete {currentStage?.stage_name ?? "current stage"} first</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

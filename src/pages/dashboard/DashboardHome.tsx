@@ -6,20 +6,15 @@ import { ArrowRight, CheckCircle2, Circle, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-
-type StageStatus = "completed" | "current" | "locked";
-
-const learningPathStages: { id: string; title: string; subtitle: string; level: number; status: StageStatus; progress: number }[] = [
-  { id: "bridge", title: "Bridge", subtitle: "Technical Readiness", level: 0, status: "current", progress: 35 },
-  { id: "foundations", title: "Foundations", subtitle: "Core Concepts", level: 1, status: "locked", progress: 0 },
-  { id: "core", title: "Core Cyber", subtitle: "Blue Team / GRC", level: 2, status: "locked", progress: 0 },
-  { id: "specialist", title: "Specialist", subtitle: "Advanced Tracks", level: 3, status: "locked", progress: 0 },
-];
+import { useStageProgress } from "@/hooks/useStageProgress";
+import { CareerAlignmentPanel } from "@/components/dashboard/CareerAlignmentPanel";
+import { CertificatesPanel } from "@/components/dashboard/CertificatesPanel";
 
 type EnrolledCourse = { id: string; code: string; title: string; progress: number };
 
 export default function DashboardHome() {
   const { user } = useAuth();
+  const { stageStatuses, isLoading: stagesLoading } = useStageProgress();
 
   const { data: enrollmentsWithCourses, isLoading: enrollmentsLoading } = useQuery({
     queryKey: ["dashboardEnrollments", user?.id],
@@ -112,19 +107,20 @@ export default function DashboardHome() {
           <div
             className="absolute top-8 left-0 h-1 bg-gradient-to-r from-cyber-blue to-cyber-teal rounded-full transition-all"
             style={{
-              width: `${learningPathStages.find((s) => s.status === "current")?.progress ?? 0}%`,
+              width: `${stageStatuses.find((s) => s.status === "current")?.progress ?? 0}%`,
             }}
           />
           <div className="relative grid grid-cols-4 gap-2 sm:gap-4">
-            {learningPathStages.map((stage, index) => {
+            {stageStatuses.map((stage, index) => {
               const stageColors = [
                 "border-cyber-blue bg-cyber-blue",
                 "border-cyber-teal bg-cyber-teal", 
                 "border-cyber-purple bg-cyber-purple",
                 "border-level-advanced bg-level-advanced"
               ];
+              const subtitles = ["Technical Readiness", "Core Concepts", "Blue Team / GRC", "Advanced Tracks"];
               return (
-              <div key={stage.id} className="flex flex-col items-center text-center">
+              <div key={stage.stage_key} className="flex flex-col items-center text-center">
                 <div
                   className={cn(
                     "relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-4 transition-all",
@@ -143,9 +139,9 @@ export default function DashboardHome() {
                 </div>
                 <div className="mt-3 w-full min-w-0">
                   <p className={cn("font-semibold text-sm truncate", stage.status === "locked" ? "text-muted-foreground" : "text-foreground")}>
-                    {stage.title}
+                    {stage.stage_name}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">{stage.subtitle}</p>
+                  <p className="text-xs text-muted-foreground truncate">{subtitles[index]}</p>
                   {stage.status === "current" && (
                     <div className="mt-2 mx-auto w-20">
                       <Progress value={stage.progress} className="h-1.5 [&>div]:bg-cyber-blue" />
@@ -195,13 +191,19 @@ export default function DashboardHome() {
         </p>
       </div>
 
+      {/* Career Alignment & Certificates */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <CareerAlignmentPanel />
+        <CertificatesPanel />
+      </div>
+
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {[
           { label: "Lessons Completed", value: String(lessonsCompleted) },
           { label: "Courses Enrolled", value: String(coursesEnrolled) },
-          { label: "Current Streak", value: "—" },
-          { label: "Skills Unlocked", value: "—" },
+          { label: "Current Stage", value: stageStatuses.find((s) => s.status === "current")?.stage_name ?? "—" },
+          { label: "Avg Quiz Score", value: stageStatuses.find((s) => s.status === "current")?.averageScore ? `${stageStatuses.find((s) => s.status === "current")?.averageScore}%` : "—" },
         ].map((stat) => (
           <div key={stat.label} className="rounded-xl border border-border bg-card p-4 text-center">
             <p className="text-2xl font-bold text-foreground">{stat.value}</p>
