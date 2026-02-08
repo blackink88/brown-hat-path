@@ -74,14 +74,15 @@ export default function DashboardHome() {
   });
 
   const continueLearningCourse: EnrolledCourse | null = (() => {
-    if (!enrollmentsWithCourses?.length || !userProgress || !lessonCourseMap) return null;
+    if (!enrollmentsWithCourses?.length || !lessonCourseMap) return null;
+    const progressSet = userProgress ?? new Set<string>();
     const courseProgressList: EnrolledCourse[] = enrollmentsWithCourses.map((c) => {
       let total = 0;
       let completed = 0;
       Object.entries(lessonCourseMap).forEach(([lessonId, courseId]) => {
         if (courseId === c.id) {
           total += 1;
-          if (userProgress.has(lessonId)) completed += 1;
+          if (progressSet.has(lessonId)) completed += 1;
         }
       });
       return { id: c.id, code: c.code, title: c.title, progress: total > 0 ? Math.round((completed / total) * 100) : 0 };
