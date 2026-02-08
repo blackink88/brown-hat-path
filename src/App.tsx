@@ -80,7 +80,6 @@ const App = () => (
             <Route path="/verify/:certNumber" element={<VerifyCertificate />} />
             {/* Redirect stray /course to courses list */}
             <Route path="/course" element={<Navigate to="/dashboard/courses" replace />} />
-            <Route path="/course/:courseCode" element={<Navigate to="/dashboard/course/:courseCode" replace />} />
 
             {/* Protected Dashboard Routes */}
             <Route
