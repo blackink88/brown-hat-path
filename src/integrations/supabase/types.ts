@@ -415,6 +415,7 @@ export type Database = {
           id: string
           level: number
           name: string
+          paystack_plan_code: string | null
           price_zar: number
         }
         Insert: {
@@ -423,6 +424,7 @@ export type Database = {
           id?: string
           level: number
           name: string
+          paystack_plan_code?: string | null
           price_zar: number
         }
         Update: {
@@ -431,6 +433,7 @@ export type Database = {
           id?: string
           level?: number
           name?: string
+          paystack_plan_code?: string | null
           price_zar?: number
         }
         Relationships: []
