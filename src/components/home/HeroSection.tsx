@@ -36,7 +36,7 @@ export function HeroSection() {
           {/* Headline */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
             Cybersecurity skills for the real world.{" "}
-            <span className="text-accent">No university required.</span>
+            <span className="text-cyber-teal">No university required.</span>
           </h1>
 
           {/* Sub-headline */}
