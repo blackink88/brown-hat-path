@@ -47,7 +47,7 @@ export default function Profile() {
         .from("subscriptions")
         .select(`
           *,
-          subscription_tiers (name, level)
+          subscription_tiers (name, level, features)
         `)
         .eq("user_id", user!.id)
         .eq("status", "active")
@@ -296,17 +296,30 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-            <Shield className="h-5 w-5 text-muted-foreground" />
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">Subscription</p>
-              <p className="font-medium text-foreground">
-                {subscription?.subscription_tiers?.name || "Free Tier"}
-              </p>
+          <div className="flex flex-col gap-3 p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center gap-3">
+              <Shield className="h-5 w-5 text-muted-foreground shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">Subscription</p>
+                <p className="font-medium text-foreground">
+                  {subscription?.subscription_tiers?.name || "Free Tier"}
+                </p>
+              </div>
+              {subscription?.subscription_tiers?.name && (
+                <Badge variant="default">{subscription.subscription_tiers.name}</Badge>
+              )}
             </div>
-            {subscription?.subscription_tiers?.name && (
-              <Badge variant="default">{subscription.subscription_tiers.name}</Badge>
-            )}
+            {subscription?.subscription_tiers?.features != null && (() => {
+              const raw = subscription.subscription_tiers.features;
+              const list = Array.isArray(raw) ? raw : (typeof raw === "string" ? (() => { try { const p = JSON.parse(raw); return Array.isArray(p) ? p : []; } catch { return []; } })() : []);
+              return list.length > 0 ? (
+                <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5 pl-1">
+                  {list.map((f: string, i: number) => (
+                    <li key={i}>{f}</li>
+                  ))}
+                </ul>
+              ) : null;
+            })()}
           </div>
         </CardContent>
       </Card>

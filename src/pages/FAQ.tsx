@@ -13,7 +13,7 @@ const faqs = [
   },
   {
     q: "How does pricing work?",
-    a: "We offer monthly subscription tiers: Starter (R499), Standard (R1,500), and Pro (R3,000). There's also a Custom option for teams and enterprises. You can cancel anytime. See the Pricing page for full details.",
+    a: "We offer monthly subscription tiers: Foundation (R499), Practitioner (R1,500), and Professional (R3,000). There's also a Custom option for teams and enterprises. You can cancel anytime. See the Pricing page for full details.",
   },
   {
     q: "What certifications does Brown Hat align to?",
@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     q: "Is there support or mentoring?",
-    a: "Yes. Standard and Pro tiers include mentor check-ins; Pro includes weekly 1:1 sessions. We also have community forums and email support.",
+    a: "Yes. Practitioner and Professional tiers include mentor check-ins; Professional includes 1-on-1 mentorship. We also have community forums and email support.",
   },
   {
     q: "Can I get a refund?",

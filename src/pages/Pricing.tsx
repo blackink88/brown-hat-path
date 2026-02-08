@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -6,6 +8,29 @@ import { Check, Zap, Shield, Crown, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
+
+type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown };
+
+const tierMeta: Record<string, { icon: typeof Zap; description: string; cta: string; popular: boolean }> = {
+  Foundation: {
+    icon: Zap,
+    description: "Perfect for beginners starting their cybersecurity journey.",
+    cta: "Start Foundation",
+    popular: false,
+  },
+  Practitioner: {
+    icon: Shield,
+    description: "For those ready to dive into core cybersecurity skills.",
+    cta: "Start Practitioner",
+    popular: true,
+  },
+  Professional: {
+    icon: Crown,
+    description: "Complete access for serious career advancement.",
+    cta: "Start Professional",
+    popular: false,
+  },
+};
 
 const faqs = [
   {
@@ -27,63 +52,47 @@ const faqs = [
 ];
 
 const Pricing = () => {
-  const { getPrices, currency, isLoading } = useCurrency();
-  const prices = getPrices();
+  const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
 
-  const tiers = [
-    {
-      name: "Foundation",
-      price: prices.foundation,
-      period: "/month",
-      description: "Perfect for beginners starting their cybersecurity journey.",
-      icon: Zap,
-      features: [
-        "Level 0: Technical Readiness Program",
-        "Level 1: Foundations Curriculum",
-        "Basic Skills Radar tracking",
-        "Community forum access",
-        "Email support",
-      ],
-      cta: "Start Foundation",
-      popular: false,
+  const { data: dbTiers, isLoading: tiersLoading } = useQuery({
+    queryKey: ["subscription_tiers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscription_tiers")
+        .select("id, name, price_zar, level, features")
+        .order("level");
+      if (error) throw error;
+      return (data ?? []) as TierRow[];
     },
-    {
-      name: "Practitioner",
-      price: prices.practitioner,
+  });
+
+  const tiers = (dbTiers ?? []).map((t) => {
+    const meta = tierMeta[t.name] ?? { icon: Zap, description: "", cta: `Start ${t.name}`, popular: false };
+    const features: string[] = Array.isArray(t.features)
+      ? t.features
+      : typeof t.features === "string"
+        ? (() => {
+            try {
+              const parsed = JSON.parse(t.features);
+              return Array.isArray(parsed) ? parsed : [];
+            } catch {
+              return [];
+            }
+          })()
+        : [];
+    return {
+      name: t.name,
+      price: formatPrice(t.price_zar),
       period: "/month",
-      description: "For those ready to dive into core cybersecurity skills.",
-      icon: Shield,
-      features: [
-        "Everything in Foundation, plus:",
-        "Level 2: Core Cyber curriculum",
-        "Level 3: Practitioner Core (Blue Team or GRC)",
-        "Certification path tracking",
-        "Toolbox Mastery modules",
-        "Live Q&A sessions",
-        "Priority email support",
-      ],
-      cta: "Start Practitioner",
-      popular: true,
-    },
-    {
-      name: "Professional",
-      price: prices.professional,
-      period: "/month",
-      description: "Complete access for serious career advancement.",
-      icon: Crown,
-      features: [
-        "Everything in Practitioner, plus:",
-        "Level 4: Specialisation Tracks",
-        "Level 5: Advanced & Leadership",
-        "Career coaching sessions",
-        "Verified Skills Portfolio",
-        "Employer introductions",
-        "1-on-1 mentorship",
-      ],
-      cta: "Start Professional",
-      popular: false,
-    },
-  ];
+      description: meta.description,
+      icon: meta.icon,
+      features,
+      cta: meta.cta,
+      popular: meta.popular,
+    };
+  });
+
+  const isLoading = currencyLoading || tiersLoading;
 
   return (
     <div className="min-h-screen flex flex-col">
