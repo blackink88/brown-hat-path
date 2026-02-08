@@ -5,7 +5,6 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { ThreatLevelIndicator } from "@/components/dashboard/ThreatLevelIndicator";
 import { ActiveMissions } from "@/components/dashboard/ActiveMissions";
-import { LiveActivityFeed } from "@/components/dashboard/LiveActivityFeed";
 
 const learningPathStages = [
   {
@@ -92,11 +91,7 @@ export default function DashboardHome() {
         lastLabDate={lastLabDate}
       />
 
-      {/* Two Column Layout: Missions + Activity Feed */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <ActiveMissions missions={mockMissions} />
-        <LiveActivityFeed />
-      </div>
+      <ActiveMissions missions={mockMissions} />
 
       {/* Learning Path Roadmap */}
       <div className="rounded-xl border border-border bg-card p-6">
