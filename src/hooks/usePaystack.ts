@@ -2,9 +2,7 @@ import { usePaystackPayment } from "react-paystack";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
-
-const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
+import { useState, useEffect } from "react";
 
 interface UsePaystackOptions {
   amount: number; // Amount in kobo/cents (e.g., 49900 for R499)
@@ -16,14 +14,33 @@ export function usePaystackSubscription({ amount, onSuccess, onError }: UsePayst
   const { user } = useAuth();
   const { toast } = useToast();
   const [isVerifying, setIsVerifying] = useState(false);
+  const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [isLoadingKey, setIsLoadingKey] = useState(true);
 
   const reference = `bh_${Date.now()}_${user?.id?.slice(0, 8) || "guest"}`;
+
+  // Fetch public key from edge function
+  useEffect(() => {
+    const fetchPublicKey = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("get-paystack-config");
+        if (error) throw error;
+        setPublicKey(data?.publicKey || null);
+      } catch (err) {
+        console.error("Failed to fetch Paystack config:", err);
+        setPublicKey(null);
+      } finally {
+        setIsLoadingKey(false);
+      }
+    };
+    fetchPublicKey();
+  }, []);
 
   const config = {
     reference,
     email: user?.email || "",
-    amount, // Amount in kobo/cents
-    publicKey: PAYSTACK_PUBLIC_KEY,
+    amount,
+    publicKey: publicKey || "",
     currency: "ZAR",
   };
 
@@ -80,7 +97,15 @@ export function usePaystackSubscription({ amount, onSuccess, onError }: UsePayst
       return;
     }
 
-    if (!PAYSTACK_PUBLIC_KEY) {
+    if (isLoadingKey) {
+      toast({
+        title: "Loading...",
+        description: "Please wait while we prepare the payment.",
+      });
+      return;
+    }
+
+    if (!publicKey) {
       toast({
         title: "Configuration Error",
         description: "Payment system is not configured. Please contact support.",
@@ -92,5 +117,5 @@ export function usePaystackSubscription({ amount, onSuccess, onError }: UsePayst
     initializePayment({ onSuccess: handleSuccess, onClose: handleClose });
   };
 
-  return { pay, isVerifying, reference };
+  return { pay, isVerifying: isVerifying || isLoadingKey, reference };
 }
