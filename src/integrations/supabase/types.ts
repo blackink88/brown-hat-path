@@ -167,114 +167,6 @@ export type Database = {
           },
         ]
       }
-      quiz_questions: {
-        Row: {
-          id: string
-          lesson_id: string
-          question_text: string
-          question_type: string
-          order_index: number
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          lesson_id: string
-          question_text: string
-          question_type?: string
-          order_index?: number
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          lesson_id?: string
-          question_text?: string
-          question_type?: string
-          order_index?: number
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_questions_lesson_id_fkey"
-            columns: ["lesson_id"]
-            isOneToOne: false
-            referencedRelation: "lessons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      quiz_question_options: {
-        Row: {
-          id: string
-          question_id: string
-          option_text: string
-          is_correct: boolean
-          order_index: number
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          question_id: string
-          option_text: string
-          is_correct?: boolean
-          order_index?: number
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          question_id?: string
-          option_text?: string
-          is_correct?: boolean
-          order_index?: number
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_question_options_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_quiz_attempts: {
-        Row: {
-          id: string
-          user_id: string
-          lesson_id: string
-          score_percent: number
-          passed: boolean
-          completed_at: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          lesson_id: string
-          score_percent: number
-          passed?: boolean
-          completed_at?: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          lesson_id?: string
-          score_percent?: number
-          passed?: boolean
-          completed_at?: string
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_quiz_attempts_lesson_id_fkey"
-            columns: ["lesson_id"]
-            isOneToOne: false
-            referencedRelation: "lessons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -301,6 +193,73 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      quiz_question_options: {
+        Row: {
+          id: string
+          is_correct: boolean
+          option_text: string
+          order_index: number
+          question_id: string
+        }
+        Insert: {
+          id?: string
+          is_correct?: boolean
+          option_text: string
+          order_index?: number
+          question_id: string
+        }
+        Update: {
+          id?: string
+          is_correct?: boolean
+          option_text?: string
+          order_index?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          created_at: string
+          id: string
+          lesson_id: string
+          order_index: number
+          question_text: string
+          question_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lesson_id: string
+          order_index?: number
+          question_text: string
+          question_type?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          order_index?: number
+          question_text?: string
+          question_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       skills: {
         Row: {
@@ -422,6 +381,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_quiz_attempts: {
+        Row: {
+          attempted_at: string
+          id: string
+          lesson_id: string
+          passed: boolean
+          score: number
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          attempted_at?: string
+          id?: string
+          lesson_id: string
+          passed?: boolean
+          score?: number
+          total_questions?: number
+          user_id: string
+        }
+        Update: {
+          attempted_at?: string
+          id?: string
+          lesson_id?: string
+          passed?: boolean
+          score?: number
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_quiz_attempts_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
             referencedRelation: "lessons"
