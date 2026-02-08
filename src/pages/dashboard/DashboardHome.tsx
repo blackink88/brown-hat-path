@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-const learningPathStages = [
-  { id: "bridge", title: "Bridge", subtitle: "Technical Readiness", level: 0, status: "current" as const, progress: 35 },
-  { id: "foundations", title: "Foundations", subtitle: "Core Concepts", level: 1, status: "locked" as const, progress: 0 },
-  { id: "core", title: "Core Cyber", subtitle: "Blue Team / GRC", level: 2, status: "locked" as const, progress: 0 },
-  { id: "specialist", title: "Specialist", subtitle: "Advanced Tracks", level: 3, status: "locked" as const, progress: 0 },
+type StageStatus = "completed" | "current" | "locked";
+
+const learningPathStages: { id: string; title: string; subtitle: string; level: number; status: StageStatus; progress: number }[] = [
+  { id: "bridge", title: "Bridge", subtitle: "Technical Readiness", level: 0, status: "current", progress: 35 },
+  { id: "foundations", title: "Foundations", subtitle: "Core Concepts", level: 1, status: "locked", progress: 0 },
+  { id: "core", title: "Core Cyber", subtitle: "Blue Team / GRC", level: 2, status: "locked", progress: 0 },
+  { id: "specialist", title: "Specialist", subtitle: "Advanced Tracks", level: 3, status: "locked", progress: 0 },
 ];
 
 type EnrolledCourse = { id: string; code: string; title: string; progress: number };
