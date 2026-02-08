@@ -32,7 +32,7 @@ export default function AdminQuizzes() {
   const { toast } = useToast();
   const [selectedLessonId, setSelectedLessonId] = useState<string>("");
   const [addQuestionOpen, setAddQuestionOpen] = useState(false);
-  const [newQuestion, setNewQuestion] = useState({ question_text: "", question_type: "multiple_choice" as const });
+  const [newQuestion, setNewQuestion] = useState<{ question_text: string; question_type: "multiple_choice" | "true_false" }>({ question_text: "", question_type: "multiple_choice" });
   const [newOptions, setNewOptions] = useState(["", ""]);
   const [correctIndex, setCorrectIndex] = useState(0);
 
