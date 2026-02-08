@@ -33,8 +33,8 @@ const team = [
   },
   {
     role: "Chief of Operations",
-    credentials: ["Master's in Information Systems", "CISSP", "Honours in Digital Forensics"],
-    bio: "15+ years in cybersecurity and IT. Extensive research experience in Information Security across Africa. A proven leader dedicated to building secure systems.",
+    credentials: ["Master's in Information Systems", "Honours in Digital Forensics", "CISSP", "PhD in Progress"],
+    bio: "15+ years in cybersecurity, security operations, and digital forensics. Combines academic rigour with operational leadership, translating security strategy into measurable outcomes. Focused on building secure, resilient systems that scale across Africa.",
   },
 ];
 
