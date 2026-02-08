@@ -19,7 +19,7 @@ const buttonVariants = cva(
         hero: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_16px_48px_-12px_hsl(220_25%_12%_/_0.18)] hover:shadow-[0_8px_32px_-8px_hsl(220_25%_12%_/_0.12)] text-base font-semibold",
         heroOutline: "border-2 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 backdrop-blur-sm text-base font-semibold",
         // Accent variant for CTAs
-        accent: "bg-gradient-to-r from-[hsl(175_60%_35%)] to-[hsl(190_70%_25%)] text-white hover:opacity-90 shadow-[0_8px_32px_-8px_hsl(220_25%_12%_/_0.12)] hover:shadow-[0_16px_48px_-12px_hsl(220_25%_12%_/_0.18)] font-semibold",
+        accent: "bg-gradient-to-r from-[hsl(0_100%_20%)] to-[hsl(0_100%_30%)] text-white hover:opacity-90 shadow-[0_8px_32px_-8px_hsl(0_100%_20%_/_0.25)] hover:shadow-[0_16px_48px_-12px_hsl(0_100%_20%_/_0.35)] font-semibold",
       },
       size: {
         default: "h-10 px-4 py-2",
