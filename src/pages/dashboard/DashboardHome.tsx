@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { getSkillLevelsFromCourseProgress } from "@/lib/courseSkillAlignment";
+import { CareerAlignmentPanel } from "@/components/dashboard/CareerAlignmentPanel";
+import { CertificatesPanel } from "@/components/dashboard/CertificatesPanel";
 
 type StageStatus = "completed" | "current" | "locked";
 
@@ -303,6 +305,12 @@ export default function DashboardHome() {
         <p className="text-xs text-muted-foreground mt-3">
           Start a course from <Link to="/dashboard/courses" className="text-primary hover:underline">My Courses</Link> to see your progress here.
         </p>
+      </div>
+
+      {/* Career Alignment & Certificates */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <CareerAlignmentPanel />
+        <CertificatesPanel />
       </div>
 
       {/* Quick Stats - streak and skills unlocked from real data */}

@@ -56,6 +56,7 @@ export function PortfolioExport() {
       const courseIds = (enrollments ?? []).map((e) => e.course_id);
 
       const coursesWithProgress: { code: string; title: string; progress: number }[] = [];
+      const certification_goals: string[] = [];
       let coursesData: { id: string; code: string; title: string; aligned_certifications?: string[] }[] = [];
       if (courseIds.length > 0) {
         const { data: courses } = await supabase.from("courses").select("id, code, title, aligned_certifications").in("id", courseIds);
@@ -78,6 +79,11 @@ export function PortfolioExport() {
             title: c.title,
             progress: total > 0 ? Math.round((completed / total) * 100) : 0,
           });
+          // Extract certification goals from this course
+          const certs = Array.isArray(c.aligned_certifications) ? c.aligned_certifications : [];
+          certs.forEach((cert) => {
+            if (cert && !certification_goals.includes(cert)) certification_goals.push(cert);
+          });
         });
       }
 
@@ -91,14 +97,6 @@ export function PortfolioExport() {
         name,
         level: levelsBySkill[name] ?? 0,
       }));
-
-      const certification_goals: string[] = [];
-      coursesData.forEach((c) => {
-        const certs = Array.isArray(c.aligned_certifications) ? c.aligned_certifications : [];
-        certs.forEach((cert) => {
-          if (cert && !certification_goals.includes(cert)) certification_goals.push(cert);
-        });
-      });
 
       const existing = await supabase
         .from("portfolio_snapshots")

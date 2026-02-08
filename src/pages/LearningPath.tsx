@@ -47,8 +47,6 @@ function LevelCard({
 
   return (
     <div className="relative">
-      {/* Connector line */}
-      <div className="absolute left-8 top-20 bottom-0 w-0.5 bg-border hidden md:block" />
       
       <div 
         className={cn(

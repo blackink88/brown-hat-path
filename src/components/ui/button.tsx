@@ -9,17 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_4px_20px_-4px_hsl(220_25%_12%_/_0.08)] hover:shadow-[0_8px_32px_-8px_hsl(220_25%_12%_/_0.12)]",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_4px_20px_-4px_hsl(0_0%_11%_/_0.15)] hover:shadow-[0_8px_32px_-8px_hsl(0_0%_11%_/_0.2)]",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-[0_4px_20px_-4px_hsl(220_25%_12%_/_0.08)]",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-[0_4px_20px_-4px_hsl(0_0%_11%_/_0.15)]",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         // Hero variants for landing pages
-        hero: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_16px_48px_-12px_hsl(220_25%_12%_/_0.18)] hover:shadow-[0_8px_32px_-8px_hsl(220_25%_12%_/_0.12)] text-base font-semibold",
+        hero: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_16px_48px_-12px_hsl(0_0%_11%_/_0.25)] hover:shadow-[0_8px_32px_-8px_hsl(0_0%_11%_/_0.2)] text-base font-semibold",
         heroOutline: "border-2 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 backdrop-blur-sm text-base font-semibold",
-        // Accent variant for CTAs
-        accent: "bg-gradient-to-r from-[hsl(175_60%_35%)] to-[hsl(190_70%_25%)] text-white hover:opacity-90 shadow-[0_8px_32px_-8px_hsl(220_25%_12%_/_0.12)] hover:shadow-[0_16px_48px_-12px_hsl(220_25%_12%_/_0.18)] font-semibold",
+        // Accent variant for CTAs - Burnt Sienna gradient
+        accent: "bg-gradient-to-r from-[hsl(20_57%_40%)] to-[hsl(20_50%_50%)] text-primary-foreground hover:opacity-90 shadow-[0_8px_32px_-8px_hsl(20_57%_40%_/_0.35)] hover:shadow-[0_16px_48px_-12px_hsl(20_57%_40%_/_0.45)] font-semibold",
       },
       size: {
         default: "h-10 px-4 py-2",

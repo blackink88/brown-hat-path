@@ -70,6 +70,12 @@ export default {
           specialisation: "hsl(var(--level-specialisation))",
           advanced: "hsl(var(--level-advanced))",
         },
+        cyber: {
+          blue: "hsl(var(--cyber-blue))",
+          teal: "hsl(var(--cyber-teal))",
+          purple: "hsl(var(--cyber-purple))",
+          green: "hsl(var(--cyber-green))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

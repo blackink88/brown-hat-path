@@ -33,6 +33,9 @@ export function Footer() {
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img src={bhlogo} alt="Brown Hat Academy" className="h-10 w-auto" />
             </Link>
+            <p className="text-sm font-semibold text-foreground mb-2">
+              Built in South Africa. Trusted globally.
+            </p>
             <p className="text-sm text-muted-foreground mb-4 max-w-xs">
               Cybersecurity skills for the real world. Internationally aligned. Locally affordable.
             </p>

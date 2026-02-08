@@ -26,6 +26,9 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Quiz from "./pages/Quiz";
 import PublicPortfolio from "./pages/PublicPortfolio";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import VerifyCertificate from "./pages/VerifyCertificate";
 import NotFound from "./pages/NotFound";
 
 // Dashboard pages
@@ -34,6 +37,7 @@ import DashboardHome from "./pages/dashboard/DashboardHome";
 import MyCourses from "./pages/dashboard/MyCourses";
 import CommandCenter from "./pages/dashboard/CommandCenter";
 import CoursePlayer from "./pages/dashboard/CoursePlayer";
+import Certificates from "./pages/dashboard/Certificates";
 import Profile from "./pages/dashboard/Profile";
 import Settings from "./pages/dashboard/Settings";
 import { AdminLayout } from "./components/dashboard/AdminLayout";
@@ -71,6 +75,9 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/p/:slug" element={<PublicPortfolio />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify/:certNumber" element={<VerifyCertificate />} />
 
             {/* Protected Dashboard Routes */}
             <Route
@@ -85,6 +92,7 @@ const App = () => (
               <Route path="courses" element={<MyCourses />} />
               <Route path="skills" element={<CommandCenter />} />
               <Route path="course/:courseCode" element={<CoursePlayer />} />
+              <Route path="certificates" element={<Certificates />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
               <Route path="admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

@@ -7,6 +7,7 @@ import {
   LogOut,
   Settings,
   Settings2,
+  Award,
 } from "lucide-react";
 import bhlogo from "@/assets/bhlogo.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,6 +32,7 @@ const navItems = [
   { title: "Learning Path", url: "/dashboard", icon: Map },
   { title: "My Courses", url: "/dashboard/courses", icon: BookOpen },
   { title: "Skills Radar", url: "/dashboard/skills", icon: BarChart3 },
+  { title: "Certificates", url: "/dashboard/certificates", icon: Award },
 ];
 
 const adminNavItem = { title: "Admin", url: "/dashboard/admin", icon: Settings2 };

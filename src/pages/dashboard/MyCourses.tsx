@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Lock, Play, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
 
 const levelLabels: Record<number, string> = {
   0: "Bridge",
@@ -199,6 +200,12 @@ export default function MyCourses() {
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                     {course.description}
                   </p>
+                  {/* Skills You Will Gain */}
+                  {Array.isArray(course.skills) && course.skills.length > 0 && (
+                    <div className="mb-2">
+                      <SkillsYouWillGain skills={course.skills as string[]} compact />
+                    </div>
+                  )}
                   {Array.isArray(course.aligned_certifications) && course.aligned_certifications.length > 0 && (
                     <p className="text-xs text-primary mb-2">
                       Aligned to: {course.aligned_certifications.join(", ")}. Support and exam discounts available.
@@ -270,6 +277,12 @@ export default function MyCourses() {
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                       {course.description}
                     </p>
+                    {/* Skills You Will Gain */}
+                    {Array.isArray(course.skills) && course.skills.length > 0 && (
+                      <div className="mb-2">
+                        <SkillsYouWillGain skills={course.skills as string[]} compact />
+                      </div>
+                    )}
                     {Array.isArray(course.aligned_certifications) && course.aligned_certifications.length > 0 && (
                       <p className="text-xs text-primary mb-2">
                         Aligned to: {course.aligned_certifications.join(", ")}. Support and exam discounts available.

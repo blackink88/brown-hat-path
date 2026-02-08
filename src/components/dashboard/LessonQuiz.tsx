@@ -76,7 +76,8 @@ export function LessonQuiz({
       await supabase.from("user_quiz_attempts").insert({
         user_id: user.id,
         lesson_id: lessonId,
-        score_percent: scorePercent,
+        score: scorePercent,
+        total_questions: questions?.length ?? 0,
         passed,
       });
     },
