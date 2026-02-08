@@ -651,6 +651,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_course_progress_percent: {
+        Args: { p_course_id: string; p_user_id: string }
+        Returns: number
+      }
       get_user_tier_level: { Args: { _user_id: string }; Returns: number }
       has_role: {
         Args: {
