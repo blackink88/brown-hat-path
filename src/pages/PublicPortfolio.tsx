@@ -26,7 +26,16 @@ export default function PublicPortfolio() {
         .eq("slug", slug ?? "")
         .maybeSingle();
       if (e) throw e;
-      return data as Snapshot | null;
+      if (!data) return null;
+      // Cast JSONB fields to expected types
+      return {
+        slug: data.slug,
+        display_name: data.display_name,
+        courses_completed: data.courses_completed as Snapshot["courses_completed"],
+        skills: data.skills as Snapshot["skills"],
+        certification_goals: data.certification_goals as Snapshot["certification_goals"],
+        updated_at: data.updated_at,
+      } satisfies Snapshot;
     },
     enabled: !!slug,
   });
