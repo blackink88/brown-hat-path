@@ -38,15 +38,11 @@ export default function MyCourses() {
   const { data: userTierLevel = 0 } = useQuery({
     queryKey: ["userTierLevel", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("subscriptions")
-        .select("subscription_tiers(level)")
-        .eq("user_id", user!.id)
-        .eq("status", "active");
+      const { data, error } = await supabase.rpc("get_user_tier_level", {
+        _user_id: user!.id,
+      });
       if (error) throw error;
-      const rows = (data as { subscription_tiers?: { level: number } | null }[]) ?? [];
-      const levels = rows.map((r) => r.subscription_tiers?.level ?? 0).filter((l) => l > 0);
-      return levels.length > 0 ? Math.max(...levels) : 0;
+      return typeof data === "number" ? data : 0;
     },
     enabled: !!user?.id,
   });
