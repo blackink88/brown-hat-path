@@ -94,7 +94,7 @@ export default function CoursePlayer() {
     enabled: !!user?.id,
   });
 
-  // Toggle lesson completion: try RPC first; if not deployed (404), fall back to table upsert
+  // Toggle lesson completion using direct upsert
   const toggleCompletion = useMutation({
     mutationFn: async ({
       lessonId,
@@ -110,28 +110,10 @@ export default function CoursePlayer() {
         completed,
         completed_at: completed ? new Date().toISOString() : null,
       };
-      const { error: rpcError } = await supabase.rpc("upsert_user_progress", {
-        p_lesson_id: lessonId,
-        p_completed: completed,
-        p_completed_at: completed ? new Date().toISOString() : null,
+      const { error } = await supabase.from("user_progress").upsert(payload, {
+        onConflict: "user_id,lesson_id",
       });
-      if (rpcError) {
-        const msg = rpcError.message ?? "";
-        const isNotFound =
-          rpcError.code === "PGRST202" ||
-          msg.includes("does not exist") ||
-          msg.includes("not find") ||
-          msg.includes("404") ||
-          msg.includes("Not Found");
-        if (isNotFound) {
-          const { error: upsertError } = await supabase.from("user_progress").upsert(payload, {
-            onConflict: "user_id,lesson_id",
-          });
-          if (upsertError) throw upsertError;
-          return;
-        }
-        throw rpcError;
-      }
+      if (error) throw error;
     },
     onSuccess: (_, variables) => {
       queryClient.setQueryData<Record<string, boolean>>(
