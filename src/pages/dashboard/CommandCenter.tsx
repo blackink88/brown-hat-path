@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   RadarChart,
   PolarGrid,
@@ -10,43 +11,70 @@ import {
 } from "recharts";
 import { Loader2, TrendingUp, Award, Target } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
 
 export default function CommandCenter() {
-  const { data: skills, isLoading } = useQuery({
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const { data: skills, isLoading: skillsLoading } = useQuery({
     queryKey: ["skills"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("skills").select("*");
+      const { data, error } = await supabase.from("skills").select("*").order("name");
       if (error) throw error;
       return data;
     },
   });
 
-  // Mock user skill levels - replace with real data from user_skills
-  const userSkillLevels: Record<string, number> = {
-    "Network Security": 45,
-    "Threat Analysis": 30,
-    "Incident Response": 20,
-    "Cloud Security": 15,
-    "GRC & Compliance": 35,
-    "Security Operations": 25,
-    "Penetration Testing": 10,
-    "Cryptography": 40,
-  };
+  const { data: userSkills, isLoading: userSkillsLoading } = useQuery({
+    queryKey: ["userSkills", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_skills")
+        .select("skill_id, current_level")
+        .eq("user_id", user?.id ?? "");
+      if (error) throw error;
+      return (data ?? []) as { skill_id: string; current_level: number }[];
+    },
+    enabled: !!user?.id,
+  });
+
+  const userSkillLevels: Record<string, number> = (() => {
+    const map: Record<string, number> = {};
+    skills?.forEach((s) => {
+      const row = userSkills?.find((u) => u.skill_id === s.id);
+      map[s.name] = row?.current_level ?? 0;
+    });
+    return map;
+  })();
+
+  const updateSkillLevel = useMutation({
+    mutationFn: async ({ skillId, level }: { skillId: string; level: number }) => {
+      const { error } = await supabase.from("user_skills").upsert(
+        { user_id: user?.id, skill_id: skillId, current_level: Math.round(level), updated_at: new Date().toISOString() },
+        { onConflict: "user_id,skill_id" }
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userSkills", user?.id] }),
+  });
 
   const radarData =
     skills?.map((skill) => ({
-      subject: skill.name.split(" ")[0], // Shortened name for chart
+      subject: skill.name.split(" ")[0],
       fullName: skill.name,
-      value: userSkillLevels[skill.name] || 0,
+      value: userSkillLevels[skill.name] ?? 0,
       fullMark: 100,
     })) || [];
 
-  const overallScore = Math.round(
-    Object.values(userSkillLevels).reduce((a, b) => a + b, 0) /
-      Object.values(userSkillLevels).length
-  );
+  const scoreValues = Object.values(userSkillLevels).filter((v) => v > 0);
+  const overallScore =
+    scoreValues.length > 0
+      ? Math.round(scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length)
+      : 0;
+  const domainsAbove50 = Object.values(userSkillLevels).filter((v) => v >= 50).length;
 
-  if (isLoading) {
+  if (skillsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -78,15 +106,15 @@ export default function CommandCenter() {
           <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-2">
             <TrendingUp className="h-5 w-5 text-accent" />
           </div>
-          <p className="text-2xl font-bold text-foreground">+12%</p>
-          <p className="text-xs text-muted-foreground">This Month</p>
+          <p className="text-2xl font-bold text-foreground">{scoreValues.length}</p>
+          <p className="text-xs text-muted-foreground">Skills Tracked</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4 text-center">
           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
             <Award className="h-5 w-5 text-primary" />
           </div>
-          <p className="text-2xl font-bold text-foreground">3</p>
-          <p className="text-xs text-muted-foreground">Domains Mastered</p>
+          <p className="text-2xl font-bold text-foreground">{domainsAbove50}</p>
+          <p className="text-xs text-muted-foreground">Domains 50%+</p>
         </div>
       </div>
 
@@ -138,7 +166,7 @@ export default function CommandCenter() {
         ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {skills.map((skill) => {
-            const level = userSkillLevels[skill.name] || 0;
+            const level = userSkillLevels[skill.name] ?? 0;
             return (
               <div
                 key={skill.id}
@@ -148,7 +176,13 @@ export default function CommandCenter() {
                   <span className="font-medium text-foreground">{skill.name}</span>
                   <span className="text-sm font-mono text-primary">{level}%</span>
                 </div>
-                <Progress value={level} className="h-2" />
+                <Slider
+                  value={[level]}
+                  onValueChange={([v]) => updateSkillLevel.mutate({ skillId: skill.id, level: v })}
+                  max={100}
+                  step={5}
+                  className="py-2"
+                />
                 <p className="text-xs text-muted-foreground mt-1">
                   {skill.category}
                 </p>

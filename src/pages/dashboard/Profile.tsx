@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Camera, Mail, Calendar, Shield, Loader2 } from "lucide-react";
+import { Camera, Mail, Calendar, Shield, Loader2, Award } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
+import { CERTIFICATION_OPTIONS } from "@/lib/certifications";
+import { PortfolioExport } from "@/components/dashboard/PortfolioExport";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -57,6 +61,35 @@ export default function Profile() {
       return data;
     },
     enabled: !!user?.id,
+  });
+
+  const { data: certGoals, isLoading: certGoalsLoading } = useQuery({
+    queryKey: ["userCertificationGoals", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_certification_goals")
+        .select("certification_slug")
+        .eq("user_id", user!.id);
+      if (error) throw error;
+      return (data ?? []).map((r) => r.certification_slug);
+    },
+    enabled: !!user?.id,
+  });
+
+  const addCertGoal = useMutation({
+    mutationFn: async (slug: string) => {
+      const { error } = await supabase.from("user_certification_goals").insert({ user_id: user!.id, certification_slug: slug });
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
+  });
+
+  const removeCertGoal = useMutation({
+    mutationFn: async (slug: string) => {
+      const { error } = await supabase.from("user_certification_goals").delete().eq("user_id", user!.id).eq("certification_slug", slug);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
   });
 
   // Fetch user role
@@ -268,6 +301,60 @@ export default function Profile() {
               </div>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Certification goals */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Award className="h-5 w-5" />
+            My certification goals
+          </CardTitle>
+          <CardDescription>
+            Select the exams you&apos;re working toward. Our curriculum aligns to these; we provide support and exam discounts for selected certifications.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {certGoalsLoading ? (
+            <Skeleton className="h-32 w-full" />
+          ) : (
+            <div className="space-y-2">
+              {CERTIFICATION_OPTIONS.map((cert) => {
+                const checked = certGoals?.includes(cert.slug) ?? false;
+                return (
+                  <label
+                    key={cert.slug}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer"
+                  >
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={(c) => {
+                        if (c) addCertGoal.mutate(cert.slug);
+                        else removeCertGoal.mutate(cert.slug);
+                      }}
+                      disabled={addCertGoal.isPending || removeCertGoal.isPending}
+                    />
+                    <span className="text-sm font-medium text-foreground">{cert.name}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <PortfolioExport />
+
+      {/* Support */}
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground mb-2">
+            Need help with certifications or exam discounts?
+          </p>
+          <Button variant="outline" asChild>
+            <Link to="/contact">Contact support</Link>
+          </Button>
         </CardContent>
       </Card>
 

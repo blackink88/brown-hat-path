@@ -479,6 +479,57 @@ export type Database = {
           },
         ]
       }
+      portfolio_snapshots: {
+        Row: {
+          slug: string
+          user_id: string
+          display_name: string | null
+          courses_completed: Json
+          skills: Json
+          certification_goals: string[]
+          updated_at: string
+        }
+        Insert: {
+          slug: string
+          user_id: string
+          display_name?: string | null
+          courses_completed?: Json
+          skills?: Json
+          certification_goals?: string[]
+          updated_at?: string
+        }
+        Update: {
+          slug?: string
+          user_id?: string
+          display_name?: string | null
+          courses_completed?: Json
+          skills?: Json
+          certification_goals?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_certification_goals: {
+        Row: {
+          id: string
+          user_id: string
+          certification_slug: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          certification_slug: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          certification_slug?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

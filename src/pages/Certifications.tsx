@@ -1,7 +1,12 @@
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Link } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Award } from "lucide-react";
+import { CERTIFICATION_OPTIONS } from "@/lib/certifications";
 
 const certs = [
   { name: "CompTIA A+", level: "Foundations", desc: "Core IT and hardware fundamentals." },
@@ -16,6 +21,38 @@ const certs = [
 ];
 
 export default function Certifications() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const { data: certGoals } = useQuery({
+    queryKey: ["userCertificationGoals", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_certification_goals")
+        .select("certification_slug")
+        .eq("user_id", user!.id);
+      if (error) throw error;
+      return (data ?? []).map((r) => r.certification_slug);
+    },
+    enabled: !!user?.id,
+  });
+
+  const addCertGoal = useMutation({
+    mutationFn: async (slug: string) => {
+      const { error } = await supabase.from("user_certification_goals").insert({ user_id: user!.id, certification_slug: slug });
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
+  });
+
+  const removeCertGoal = useMutation({
+    mutationFn: async (slug: string) => {
+      const { error } = await supabase.from("user_certification_goals").delete().eq("user_id", user!.id).eq("certification_slug", slug);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
+  });
+
   return (
     <PageLayout>
       <section className="py-12 md:py-20 gradient-hero relative">
@@ -31,8 +68,41 @@ export default function Certifications() {
 
       <section className="py-12 md:py-16">
         <div className="container max-w-3xl">
+          {user && (
+            <div className="p-6 rounded-xl bg-card border border-border mb-8">
+              <h2 className="text-lg font-semibold text-foreground mb-2">My certification goals</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Select the exams you&apos;re working toward. We provide support and exam discounts for these certifications; our curriculum aligns to the material.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {CERTIFICATION_OPTIONS.map((cert) => {
+                  const checked = certGoals?.includes(cert.slug) ?? false;
+                  return (
+                    <label
+                      key={cert.slug}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:bg-muted/50 cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={(c) => {
+                          if (c) addCertGoal.mutate(cert.slug);
+                          else removeCertGoal.mutate(cert.slug);
+                        }}
+                        disabled={addCertGoal.isPending || removeCertGoal.isPending}
+                      />
+                      <span className="text-sm font-medium text-foreground">{cert.name}</span>
+                    </label>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                Manage goals in <Link to="/dashboard/profile" className="text-primary hover:underline">Profile</Link>.
+              </p>
+            </div>
+          )}
+
           <p className="text-muted-foreground mb-8">
-            We don't issue these certs—you sit the exams with the vendors. Our curriculum prepares you for them.
+            We don&apos;t issue these certs—you sit the exams with the vendors. Our curriculum prepares you for them.
           </p>
           <div className="space-y-4">
             {certs.map((cert) => (

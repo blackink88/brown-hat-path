@@ -25,6 +25,7 @@ import Blog from "./pages/Blog";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Quiz from "./pages/Quiz";
+import PublicPortfolio from "./pages/PublicPortfolio";
 import NotFound from "./pages/NotFound";
 
 // Dashboard pages
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/quiz" element={<Quiz />} />
+            <Route path="/p/:slug" element={<PublicPortfolio />} />
 
             {/* Protected Dashboard Routes */}
             <Route
