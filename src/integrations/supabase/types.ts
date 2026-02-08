@@ -45,6 +45,7 @@ export type Database = {
       }
       courses: {
         Row: {
+          aligned_certifications: string[] | null
           code: string
           created_at: string
           description: string | null
@@ -56,9 +57,9 @@ export type Database = {
           thumbnail_url: string | null
           title: string
           updated_at: string
-          aligned_certifications: string[]
         }
         Insert: {
+          aligned_certifications?: string[] | null
           code: string
           created_at?: string
           description?: string | null
@@ -70,9 +71,9 @@ export type Database = {
           thumbnail_url?: string | null
           title: string
           updated_at?: string
-          aligned_certifications?: string[]
         }
         Update: {
+          aligned_certifications?: string[] | null
           code?: string
           created_at?: string
           description?: string | null
@@ -84,7 +85,6 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
-          aligned_certifications?: string[]
         }
         Relationships: []
       }
