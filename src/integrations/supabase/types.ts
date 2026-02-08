@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      certificates: {
+        Row: {
+          certificate_number: string
+          certificate_type: string
+          created_at: string
+          id: string
+          issued_at: string
+          learner_name: string
+          stage_name: string
+          user_id: string
+        }
+        Insert: {
+          certificate_number: string
+          certificate_type: string
+          created_at?: string
+          id?: string
+          issued_at?: string
+          learner_name: string
+          stage_name: string
+          user_id: string
+        }
+        Update: {
+          certificate_number?: string
+          certificate_type?: string
+          created_at?: string
+          id?: string
+          issued_at?: string
+          learner_name?: string
+          stage_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       course_enrollments: {
         Row: {
           course_id: string
@@ -46,6 +79,7 @@ export type Database = {
       courses: {
         Row: {
           aligned_certifications: string[] | null
+          career_roles: Json | null
           code: string
           created_at: string
           description: string | null
@@ -54,12 +88,14 @@ export type Database = {
           level: number
           order_index: number
           required_tier_level: number
+          skills: Json | null
           thumbnail_url: string | null
           title: string
           updated_at: string
         }
         Insert: {
           aligned_certifications?: string[] | null
+          career_roles?: Json | null
           code: string
           created_at?: string
           description?: string | null
@@ -68,12 +104,14 @@ export type Database = {
           level?: number
           order_index?: number
           required_tier_level?: number
+          skills?: Json | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           aligned_certifications?: string[] | null
+          career_roles?: Json | null
           code?: string
           created_at?: string
           description?: string | null
@@ -82,6 +120,7 @@ export type Database = {
           level?: number
           order_index?: number
           required_tier_level?: number
+          skills?: Json | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
@@ -142,6 +181,7 @@ export type Database = {
           description: string | null
           id: string
           order_index: number
+          skills: Json | null
           title: string
         }
         Insert: {
@@ -150,6 +190,7 @@ export type Database = {
           description?: string | null
           id?: string
           order_index?: number
+          skills?: Json | null
           title: string
         }
         Update: {
@@ -158,6 +199,7 @@ export type Database = {
           description?: string | null
           id?: string
           order_index?: number
+          skills?: Json | null
           title?: string
         }
         Relationships: [
@@ -321,6 +363,42 @@ export type Database = {
           id?: string
           max_level?: number
           name?: string
+        }
+        Relationships: []
+      }
+      stage_requirements: {
+        Row: {
+          career_roles: Json | null
+          created_at: string
+          id: string
+          min_assessment_score: number
+          prerequisite_stage: string | null
+          required_courses: string[] | null
+          stage_key: string
+          stage_level: number
+          stage_name: string
+        }
+        Insert: {
+          career_roles?: Json | null
+          created_at?: string
+          id?: string
+          min_assessment_score?: number
+          prerequisite_stage?: string | null
+          required_courses?: string[] | null
+          stage_key: string
+          stage_level: number
+          stage_name: string
+        }
+        Update: {
+          career_roles?: Json | null
+          created_at?: string
+          id?: string
+          min_assessment_score?: number
+          prerequisite_stage?: string | null
+          required_courses?: string[] | null
+          stage_key?: string
+          stage_level?: number
+          stage_name?: string
         }
         Relationships: []
       }
@@ -533,6 +611,38 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "skills"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_stage_completions: {
+        Row: {
+          average_score: number
+          completed_at: string
+          id: string
+          stage_key: string
+          user_id: string
+        }
+        Insert: {
+          average_score?: number
+          completed_at?: string
+          id?: string
+          stage_key: string
+          user_id: string
+        }
+        Update: {
+          average_score?: number
+          completed_at?: string
+          id?: string
+          stage_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_stage_completions_stage_key_fkey"
+            columns: ["stage_key"]
+            isOneToOne: false
+            referencedRelation: "stage_requirements"
+            referencedColumns: ["stage_key"]
           },
         ]
       }
