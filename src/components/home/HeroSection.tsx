@@ -25,10 +25,10 @@ export function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 backdrop-blur-sm mb-8 animate-fade-up">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-foreground" />
             </span>
-            <span className="text-sm font-medium text-primary-foreground/90">
+            <span className="text-sm font-medium text-primary-foreground">
               Now enrolling for 2025
             </span>
           </div>
@@ -40,7 +40,7 @@ export function HeroSection() {
           </h1>
 
           {/* Sub-headline */}
-          <p className="text-lg md:text-xl text-primary-foreground/80 mb-8 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.2s" }}>
+          <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.2s" }}>
             Internationally aligned. Locally affordable. Skills you can prove.
           </p>
 
@@ -49,10 +49,10 @@ export function HeroSection() {
             {heroPoints.map((point) => (
               <div
                 key={point}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-foreground/10 border border-primary-foreground/20"
               >
                 <CheckCircle2 className="h-4 w-4 text-accent" />
-                <span className="text-sm font-medium text-primary-foreground/90">{point}</span>
+                <span className="text-sm font-medium text-primary-foreground">{point}</span>
               </div>
             ))}
           </div>
