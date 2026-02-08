@@ -26,6 +26,8 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Quiz from "./pages/Quiz";
 import PublicPortfolio from "./pages/PublicPortfolio";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 // Dashboard pages
@@ -71,6 +73,8 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/p/:slug" element={<PublicPortfolio />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected Dashboard Routes */}
             <Route
