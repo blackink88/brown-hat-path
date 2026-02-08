@@ -75,7 +75,8 @@ export default function DashboardHome() {
 
   const continueLearningCourse: EnrolledCourse | null = (() => {
     if (!enrollmentsWithCourses?.length || !lessonCourseMap) return null;
-    const progressSet = userProgress ?? new Set<string>();
+    // Ensure progressSet is always a Set, even if userProgress is cached in wrong format
+    const progressSet = userProgress instanceof Set ? userProgress : new Set<string>();
     const courseProgressList: EnrolledCourse[] = enrollmentsWithCourses.map((c) => {
       let total = 0;
       let completed = 0;
