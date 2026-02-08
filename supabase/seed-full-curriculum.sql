@@ -12,14 +12,15 @@ DELETE FROM public.course_enrollments;
 DELETE FROM public.courses;
 
 -- ========== COURSES (all levels) ==========
-INSERT INTO public.courses (id, code, title, description, level, required_tier_level, duration_hours, order_index) VALUES
-  ('a0000000-0000-4000-8000-000000000001', 'BH-BRIDGE', 'Technical Readiness Bridge', 'Build the digital and IT foundations you need before diving into cybersecurity. No prior experience required.', 0, 1, 40, 1),
-  ('a0000000-0000-4000-8000-000000000002', 'BH-FOUND-1', 'IT & Cyber Foundations I', 'Core IT skills, hardware, and cybersecurity concepts. Aligned to CompTIA A+ and Network+.', 1, 1, 80, 2),
-  ('a0000000-0000-4000-8000-000000000003', 'BH-FOUND-2', 'IT & Cyber Foundations II', 'Networking fundamentals and security principles. Completes Foundations level for A+ and Network+ readiness.', 1, 1, 70, 3),
-  ('a0000000-0000-4000-8000-000000000004', 'BH-CYBER-2', 'Core Cyber Foundations', 'Threat landscape, security controls, and operations. Aligned to CompTIA Security+ and ISC² CC.', 2, 2, 90, 4),
-  ('a0000000-0000-4000-8000-000000000005', 'BH-OPS-2', 'Practitioner Core: Cyber Operations', 'SOC operations, incident response, and threat hunting. Aligned to CompTIA CySA+ and ISC² SSCP.', 3, 2, 100, 5),
-  ('a0000000-0000-4000-8000-000000000006', 'BH-SPEC-SOC', 'Specialisation: SOC & Incident Response', 'Advanced SOC, SIEM, and incident handling. Aligned to CASP+, Microsoft SC-200, and AWS Security.', 4, 3, 120, 6),
-  ('a0000000-0000-4000-8000-000000000007', 'BH-ADV', 'Advanced & Leadership', 'Security architecture, governance, and leadership. Aligned to CISSP, CISM, and TOGAF.', 5, 3, 150, 7);
+-- aligned_certifications: certs aligned to this course (from Learning Path); support and exam discounts offered.
+INSERT INTO public.courses (id, code, title, description, level, required_tier_level, duration_hours, order_index, aligned_certifications) VALUES
+  ('a0000000-0000-4000-8000-000000000001', 'BH-BRIDGE', 'Technical Readiness Bridge', 'Build the digital and IT foundations you need before diving into cybersecurity. No prior experience required.', 0, 1, 40, 1, '{}'),
+  ('a0000000-0000-4000-8000-000000000002', 'BH-FOUND-1', 'IT & Cyber Foundations I', 'Core IT skills, hardware, and cybersecurity concepts. Aligned to CompTIA A+ and Network+.', 1, 1, 80, 2, ARRAY['CompTIA A+']),
+  ('a0000000-0000-4000-8000-000000000003', 'BH-FOUND-2', 'IT & Cyber Foundations II', 'Networking fundamentals and security principles. Completes Foundations level for A+ and Network+ readiness.', 1, 1, 70, 3, ARRAY['CompTIA Network+']),
+  ('a0000000-0000-4000-8000-000000000004', 'BH-CYBER-2', 'Core Cyber Foundations', 'Threat landscape, security controls, and operations. Aligned to CompTIA Security+ and ISC² CC.', 2, 2, 90, 4, ARRAY['CompTIA Security+', 'ISC² CC']),
+  ('a0000000-0000-4000-8000-000000000005', 'BH-OPS-2', 'Practitioner Core: Cyber Operations', 'SOC operations, incident response, and threat hunting. Aligned to CompTIA CySA+ and ISC² SSCP.', 3, 2, 100, 5, ARRAY['CompTIA CySA+', 'ISC² SSCP']),
+  ('a0000000-0000-4000-8000-000000000006', 'BH-SPEC-SOC', 'Specialisation: SOC & Incident Response', 'Advanced SOC, SIEM, and incident handling. Aligned to CASP+, Microsoft SC-200, and AWS Security.', 4, 3, 120, 6, ARRAY['CompTIA CASP+', 'Microsoft SC-200', 'AWS Security']),
+  ('a0000000-0000-4000-8000-000000000007', 'BH-ADV', 'Advanced & Leadership', 'Security architecture, governance, and leadership. Aligned to CISSP, CISM, and TOGAF.', 5, 3, 150, 7, ARRAY['CISSP', 'CISM', 'TOGAF']);
 
 -- ========== LEVEL 0: BRIDGE — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES

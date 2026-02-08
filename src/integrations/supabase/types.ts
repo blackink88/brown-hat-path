@@ -56,6 +56,7 @@ export type Database = {
           thumbnail_url: string | null
           title: string
           updated_at: string
+          aligned_certifications: string[]
         }
         Insert: {
           code: string
@@ -69,6 +70,7 @@ export type Database = {
           thumbnail_url?: string | null
           title: string
           updated_at?: string
+          aligned_certifications?: string[]
         }
         Update: {
           code?: string
@@ -82,6 +84,7 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
+          aligned_certifications?: string[]
         }
         Relationships: []
       }

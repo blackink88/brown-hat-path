@@ -183,6 +183,11 @@ export default function CoursePlayer() {
             <Progress value={progressPercent} className="w-24 h-2" />
             <span>{progressPercent}%</span>
           </div>
+          {Array.isArray(courseData.course.aligned_certifications) && courseData.course.aligned_certifications.length > 0 && (
+            <p className="text-xs text-primary mt-1">
+              Aligned to: {courseData.course.aligned_certifications.join(", ")}. Support and exam discounts available.
+            </p>
+          )}
         </div>
       </div>
 

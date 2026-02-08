@@ -1,12 +1,10 @@
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Link } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Award } from "lucide-react";
-import { CERTIFICATION_OPTIONS } from "@/lib/certifications";
 
 const certs = [
   { name: "CompTIA A+", level: "Foundations", desc: "Core IT and hardware fundamentals." },
@@ -22,35 +20,29 @@ const certs = [
 
 export default function Certifications() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
 
-  const { data: certGoals } = useQuery({
-    queryKey: ["userCertificationGoals", user?.id],
+  const { data: certificationsInPath } = useQuery({
+    queryKey: ["certificationsInPath", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_certification_goals")
-        .select("certification_slug")
+      const { data: enrollments, error: eErr } = await supabase
+        .from("course_enrollments")
+        .select("course_id")
         .eq("user_id", user!.id);
-      if (error) throw error;
-      return (data ?? []).map((r) => r.certification_slug);
+      if (eErr) throw eErr;
+      const courseIds = (enrollments ?? []).map((r) => r.course_id);
+      if (courseIds.length === 0) return [];
+      const { data: courses, error: cErr } = await supabase
+        .from("courses")
+        .select("code, title, aligned_certifications")
+        .in("id", courseIds);
+      if (cErr) throw cErr;
+      return (courses ?? []).map((c) => ({
+        code: c.code,
+        title: c.title,
+        certs: Array.isArray(c.aligned_certifications) ? c.aligned_certifications : [],
+      }));
     },
     enabled: !!user?.id,
-  });
-
-  const addCertGoal = useMutation({
-    mutationFn: async (slug: string) => {
-      const { error } = await supabase.from("user_certification_goals").insert({ user_id: user!.id, certification_slug: slug });
-      if (error) throw error;
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
-  });
-
-  const removeCertGoal = useMutation({
-    mutationFn: async (slug: string) => {
-      const { error } = await supabase.from("user_certification_goals").delete().eq("user_id", user!.id).eq("certification_slug", slug);
-      if (error) throw error;
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
   });
 
   return (
@@ -68,35 +60,25 @@ export default function Certifications() {
 
       <section className="py-12 md:py-16">
         <div className="container max-w-3xl">
-          {user && (
+          {user && certificationsInPath && certificationsInPath.length > 0 && (
             <div className="p-6 rounded-xl bg-card border border-border mb-8">
-              <h2 className="text-lg font-semibold text-foreground mb-2">My certification goals</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-2">Certifications in your path</h2>
               <p className="text-sm text-muted-foreground mb-4">
-                Select the exams you&apos;re working toward. We provide support and exam discounts for these certifications; our curriculum aligns to the material.
+                Based on your enrolled courses. We provide support and exam discounts for these certifications.
               </p>
-              <div className="flex flex-wrap gap-3">
-                {CERTIFICATION_OPTIONS.map((cert) => {
-                  const checked = certGoals?.includes(cert.slug) ?? false;
-                  return (
-                    <label
-                      key={cert.slug}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:bg-muted/50 cursor-pointer"
-                    >
-                      <Checkbox
-                        checked={checked}
-                        onCheckedChange={(c) => {
-                          if (c) addCertGoal.mutate(cert.slug);
-                          else removeCertGoal.mutate(cert.slug);
-                        }}
-                        disabled={addCertGoal.isPending || removeCertGoal.isPending}
-                      />
-                      <span className="text-sm font-medium text-foreground">{cert.name}</span>
-                    </label>
-                  );
-                })}
+              <div className="space-y-2">
+                {certificationsInPath
+                  .filter((c) => c.certs.length > 0)
+                  .map((c) => (
+                    <div key={c.code} className="text-sm">
+                      <span className="font-mono text-primary">{c.code}</span>
+                      <span className="text-muted-foreground mx-2">→</span>
+                      <span className="text-foreground">{c.certs.join(", ")}</span>
+                    </div>
+                  ))}
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                Manage goals in <Link to="/dashboard/profile" className="text-primary hover:underline">Profile</Link>.
+                See <Link to="/dashboard/profile" className="text-primary hover:underline">Profile</Link> for full details.
               </p>
             </div>
           )}

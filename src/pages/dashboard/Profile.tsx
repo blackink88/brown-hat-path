@@ -10,11 +10,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
-import { CERTIFICATION_OPTIONS } from "@/lib/certifications";
 import { PortfolioExport } from "@/components/dashboard/PortfolioExport";
 
 export default function Profile() {
@@ -63,33 +61,28 @@ export default function Profile() {
     enabled: !!user?.id,
   });
 
-  const { data: certGoals, isLoading: certGoalsLoading } = useQuery({
-    queryKey: ["userCertificationGoals", user?.id],
+  const { data: certificationsInPath, isLoading: certPathLoading } = useQuery({
+    queryKey: ["certificationsInPath", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_certification_goals")
-        .select("certification_slug")
+      const { data: enrollments, error: eErr } = await supabase
+        .from("course_enrollments")
+        .select("course_id")
         .eq("user_id", user!.id);
-      if (error) throw error;
-      return (data ?? []).map((r) => r.certification_slug);
+      if (eErr) throw eErr;
+      const courseIds = (enrollments ?? []).map((r) => r.course_id);
+      if (courseIds.length === 0) return [];
+      const { data: courses, error: cErr } = await supabase
+        .from("courses")
+        .select("code, title, aligned_certifications")
+        .in("id", courseIds);
+      if (cErr) throw cErr;
+      return (courses ?? []).map((c) => ({
+        code: c.code,
+        title: c.title,
+        certs: Array.isArray(c.aligned_certifications) ? c.aligned_certifications : [],
+      }));
     },
     enabled: !!user?.id,
-  });
-
-  const addCertGoal = useMutation({
-    mutationFn: async (slug: string) => {
-      const { error } = await supabase.from("user_certification_goals").insert({ user_id: user!.id, certification_slug: slug });
-      if (error) throw error;
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
-  });
-
-  const removeCertGoal = useMutation({
-    mutationFn: async (slug: string) => {
-      const { error } = await supabase.from("user_certification_goals").delete().eq("user_id", user!.id).eq("certification_slug", slug);
-      if (error) throw error;
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userCertificationGoals", user?.id] }),
   });
 
   // Fetch user role
@@ -304,42 +297,37 @@ export default function Profile() {
         </CardContent>
       </Card>
 
-      {/* Certification goals */}
+      {/* Certifications in your path (from enrolled courses) */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award className="h-5 w-5" />
-            My certification goals
+            Certifications in your path
           </CardTitle>
           <CardDescription>
-            Select the exams you&apos;re working toward. Our curriculum aligns to these; we provide support and exam discounts for selected certifications.
+            Based on your enrolled courses. Each course aligns to specific certification(s); we provide support and exam discounts for these.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {certGoalsLoading ? (
-            <Skeleton className="h-32 w-full" />
-          ) : (
-            <div className="space-y-2">
-              {CERTIFICATION_OPTIONS.map((cert) => {
-                const checked = certGoals?.includes(cert.slug) ?? false;
-                return (
-                  <label
-                    key={cert.slug}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer"
-                  >
-                    <Checkbox
-                      checked={checked}
-                      onCheckedChange={(c) => {
-                        if (c) addCertGoal.mutate(cert.slug);
-                        else removeCertGoal.mutate(cert.slug);
-                      }}
-                      disabled={addCertGoal.isPending || removeCertGoal.isPending}
-                    />
-                    <span className="text-sm font-medium text-foreground">{cert.name}</span>
-                  </label>
-                );
-              })}
+          {certPathLoading ? (
+            <Skeleton className="h-24 w-full" />
+          ) : certificationsInPath && certificationsInPath.length > 0 ? (
+            <div className="space-y-3">
+              {certificationsInPath
+                .filter((c) => c.certs.length > 0)
+                .map((c) => (
+                  <div key={c.code} className="text-sm">
+                    <span className="font-mono text-primary">{c.code}</span>
+                    <span className="text-muted-foreground mx-2">→</span>
+                    <span className="text-foreground">{c.certs.join(", ")}</span>
+                  </div>
+                ))}
+              {certificationsInPath.every((c) => c.certs.length === 0) && (
+                <p className="text-sm text-muted-foreground">No certification alignment on your enrolled courses yet.</p>
+              )}
             </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">Enroll in courses to see certifications aligned to your path.</p>
           )}
         </CardContent>
       </Card>

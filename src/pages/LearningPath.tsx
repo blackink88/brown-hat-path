@@ -136,6 +136,7 @@ function LevelCard({
                         </span>
                       ))}
                     </div>
+                    <p className="text-xs text-muted-foreground mt-1">We provide support and exam discounts for these certifications.</p>
                   </div>
                 )}
 

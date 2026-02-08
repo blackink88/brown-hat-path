@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { CERTIFICATION_OPTIONS } from "@/lib/certifications";
 
 export function PortfolioExport() {
   const { user } = useAuth();
@@ -57,7 +56,7 @@ export function PortfolioExport() {
 
       const coursesWithProgress: { code: string; title: string; progress: number }[] = [];
       if (courseIds.length > 0) {
-        const { data: courses } = await supabase.from("courses").select("id, code, title").in("id", courseIds);
+        const { data: courses } = await supabase.from("courses").select("id, code, title, aligned_certifications").in("id", courseIds);
         const { data: modules } = await supabase.from("modules").select("id, course_id");
         const { data: lessons } = await supabase.from("lessons").select("id, module_id");
         const { data: progress } = await supabase
@@ -90,14 +89,13 @@ export function PortfolioExport() {
         level: u.current_level ?? 0,
       }));
 
-      const { data: certRows } = await supabase
-        .from("user_certification_goals")
-        .select("certification_slug")
-        .eq("user_id", user!.id);
-      const certSlugs = (certRows ?? []).map((r) => r.certification_slug);
-      const certification_goals = certSlugs.map(
-        (s) => CERTIFICATION_OPTIONS.find((c) => c.slug === s)?.name ?? s
-      );
+      const certification_goals: string[] = [];
+      (courses ?? []).forEach((c) => {
+        const certs = Array.isArray(c.aligned_certifications) ? c.aligned_certifications : [];
+        certs.forEach((cert) => {
+          if (cert && !certification_goals.includes(cert)) certification_goals.push(cert);
+        });
+      });
 
       const existing = await supabase
         .from("portfolio_snapshots")
