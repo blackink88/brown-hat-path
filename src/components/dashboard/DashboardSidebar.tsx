@@ -60,7 +60,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-border !bg-white dark:!bg-[hsl(25,12%,11%)] [--sidebar-background:0_0%_100%] [--sidebar-foreground:0_0%_9%] [--sidebar-accent:20_20%_96%] [--sidebar-accent-foreground:0_0%_9%] [--sidebar-primary:20_57%_40%] [--sidebar-border:20_15%_90%] dark:[--sidebar-background:25_12%_11%] dark:[--sidebar-foreground:25_55%_65%] dark:[--sidebar-accent:25_15%_16%] dark:[--sidebar-accent-foreground:25_55%_65%] dark:[--sidebar-primary:25_55%_52%] dark:[--sidebar-border:25_15%_20%]"
+      className="dashboard-sidebar border-r border-sidebar-border !bg-[hsl(var(--sidebar-background))]"
     >
       <SidebarHeader className="p-4 flex items-center justify-center">
         <Link to="/dashboard" className="flex items-center justify-center w-full">
