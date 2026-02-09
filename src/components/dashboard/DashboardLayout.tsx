@@ -68,17 +68,17 @@ export function DashboardLayout() {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2 pl-2 pr-2">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">{initial}</span>
+                <Button variant="ghost" className="group flex items-center gap-2 pl-2 pr-2">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20">
+                    <span className="text-sm font-medium text-primary group-hover:text-accent-foreground">{initial}</span>
                   </div>
-                  <span className="hidden sm:inline text-sm text-muted-foreground max-w-[120px] truncate">
+                  <span className="hidden sm:inline text-sm text-muted-foreground group-hover:text-accent-foreground max-w-[120px] truncate">
                     {displayName}
                   </span>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground">
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
                     <span className="font-medium">{displayName}</span>
@@ -101,7 +101,7 @@ export function DashboardLayout() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="text-muted-foreground">
+                <DropdownMenuItem onClick={handleSignOut} className="text-muted-foreground hover:text-accent-foreground">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
                 </DropdownMenuItem>
