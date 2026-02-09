@@ -87,7 +87,7 @@ function TeamCard({ member }: { member: typeof team[number] }) {
         </p>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-cyber-teal hover:text-cyber-teal/80 transition-colors"
+          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
         >
           {expanded ? (
             <>
@@ -109,43 +109,45 @@ const About = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        {/* Hero */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 gradient-hero" />
+        {/* Hero - consistent with homepage */}
+        <section className="relative bg-background border-b border-border overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-[0.4] pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)",
+            }}
+          />
           <div className="container relative py-20 md:py-28">
-            <div className="max-w-3xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 backdrop-blur-sm mb-6">
-                <Shield className="h-4 w-4 text-accent" />
-                <span className="text-sm font-medium text-primary-foreground/90">Our Story</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
-                Building Africa's Cybersecurity Workforce
+            <div className="max-w-2xl">
+              <div className="h-1 w-12 rounded-full bg-primary mb-8" aria-hidden />
+              <p className="text-sm font-medium text-muted-foreground mb-4 flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Our story
+              </p>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground tracking-tight mb-5">
+                Building Africa's cybersecurity workforce
               </h1>
-              <p className="text-lg text-primary-foreground/80 mb-4">
+              <p className="text-lg text-muted-foreground max-w-xl">
                 Brown Hat Academy was founded on a simple belief: talent is everywhere, but opportunity isn't. We're changing that.
               </p>
-              <p className="text-sm font-semibold text-accent tracking-wide uppercase">
+              <p className="mt-6 text-sm font-medium text-primary">
                 Built in South Africa. Trusted globally.
               </p>
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 60" fill="none" className="w-full">
-              <path d="M0 60V30C240 10 480 0 720 10C960 20 1200 40 1440 30V60H0Z" fill="hsl(var(--background))" />
-            </svg>
-          </div>
         </section>
 
-        {/* Why Brown Hat */}
-        <section className="py-16 md:py-24 bg-secondary">
+        {/* Why Brown Hat - light section to match homepage */}
+        <section className="py-16 md:py-24 bg-muted/30">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-secondary-foreground mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
                 Why Brown Hat?
               </h2>
-              <div className="space-y-6 text-lg text-secondary-foreground/90">
-                <p className="font-semibold text-xl">
-                  Black Hats break. White Hats fix. <span className="text-accent">Brown Hats build and defend.</span>
+              <div className="space-y-6 text-lg text-muted-foreground">
+                <p className="font-semibold text-xl text-foreground">
+                  Black Hats break. White Hats fix. <span className="text-primary">Brown Hats build and defend.</span>
                 </p>
                 <p>
                   We are the practitioners who understand the foundations of the network.

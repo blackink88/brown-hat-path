@@ -173,14 +173,22 @@ export default function LearningPath() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        {/* Hero */}
-        <section className="py-12 md:py-20 gradient-hero relative">
-          <div className="container relative">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-                Your Learning Path
+        {/* Hero - consistent with homepage */}
+        <section className="relative bg-background border-b border-border overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-[0.4] pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)",
+            }}
+          />
+          <div className="container relative py-20 md:py-28">
+            <div className="max-w-2xl">
+              <div className="h-1 w-12 rounded-full bg-primary mb-8" aria-hidden />
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground tracking-tight mb-5">
+                Your learning path
               </h1>
-              <p className="text-lg text-primary-foreground/80 mb-6">
+              <p className="text-lg text-muted-foreground max-w-xl">
                 One clear road from beginner to cybersecurity professional. No confusion, no wasted time.
               </p>
             </div>

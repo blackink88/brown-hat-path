@@ -145,30 +145,31 @@ const Pricing = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        {/* Hero */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 gradient-hero" />
+        {/* Hero - consistent with homepage */}
+        <section className="relative bg-background border-b border-border overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-[0.4] pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)",
+            }}
+          />
           <div className="container relative py-20 md:py-28">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
-                Simple, Transparent Pricing
+            <div className="max-w-2xl">
+              <div className="h-1 w-12 rounded-full bg-primary mb-8" aria-hidden />
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground tracking-tight mb-5">
+                Simple, transparent pricing
               </h1>
-              <p className="text-lg text-primary-foreground/80">
+              <p className="text-lg text-muted-foreground max-w-xl mb-6">
                 Invest in your future with locally affordable, internationally recognized training.
               </p>
-              {/* Currency indicator */}
-              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 backdrop-blur-sm">
-                <Globe className="h-4 w-4 text-accent" />
-                <span className="text-sm font-medium text-primary-foreground/90">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border">
+                <Globe className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">
                   {isLoading ? "Detecting your region..." : `Prices shown in ${currency}`}
                 </span>
               </div>
             </div>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 60" fill="none" className="w-full">
-              <path d="M0 60V30C240 10 480 0 720 10C960 20 1200 40 1440 30V60H0Z" fill="hsl(var(--background))" />
-            </svg>
           </div>
         </section>
 
