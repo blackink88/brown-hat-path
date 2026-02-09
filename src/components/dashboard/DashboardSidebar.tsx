@@ -60,15 +60,15 @@ export function DashboardSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-border !bg-white [--sidebar-background:0_0%_100%] [--sidebar-foreground:0_0%_9%] [--sidebar-accent:20_20%_96%] [--sidebar-accent-foreground:0_0%_9%] [--sidebar-primary:20_57%_40%] [--sidebar-border:20_15%_90%] dark:!bg-white dark:[--sidebar-foreground:0_0%_9%] dark:[--sidebar-accent-foreground:0_0%_9%]"
+      className="border-r border-border !bg-white [--sidebar-background:0_0%_100%] [--sidebar-foreground:0_0%_9%] [--sidebar-accent:20_20%_96%] [--sidebar-accent-foreground:0_0%_9%] [--sidebar-primary:20_57%_40%] [--sidebar-border:20_15%_90%] dark:!bg-white dark:[--sidebar-foreground:0_0%_9%] dark:[--sidebar-accent-foreground:0_0%_9%] [&_[data-sidebar]]:!text-foreground [&_[data-sidebar]_button]:!text-foreground [&_[data-sidebar]_a]:!text-foreground [&_[data-sidebar]_span]:!text-foreground"
     >
-      <SidebarHeader className="p-4">
-        <Link to="/dashboard" className="flex items-center justify-center md:justify-start">
+      <SidebarHeader className="p-4 flex items-center justify-center">
+        <Link to="/dashboard" className="flex items-center justify-center w-full">
           <img src={bhlogo} alt="Brown Hat" className="h-9 w-auto shrink-0" />
         </Link>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="[&_[data-sidebar=group-label]]:!text-muted-foreground [&_[data-sidebar=menu-button]]:!text-foreground [&_button]:!text-foreground [&_span]:!text-foreground">
         <SidebarGroup>
           <SidebarGroupLabel>Learn</SidebarGroupLabel>
           <SidebarGroupContent>
