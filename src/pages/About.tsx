@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Shield, Target, Users, Globe, Award, Heart, ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Shield, Target, Users, Globe, Award, Heart, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
 
 const values = [
   {
@@ -216,6 +218,37 @@ const About = () => {
                   <div className="text-sm text-muted-foreground">{stat.label}</div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-16 md:py-24 bg-muted/40 border-t border-border">
+          <div className="container">
+            <div className="max-w-2xl mx-auto overflow-hidden rounded-xl border border-border bg-card shadow-card">
+              <div className="h-1 w-full bg-primary" aria-hidden />
+              <div className="p-8 md:p-10 text-center">
+                <h2 className="text-2xl font-semibold text-foreground tracking-tight mb-2">
+                  Ready to start your journey?
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  Join learners building real-world cybersecurity skills.
+                </p>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
+                  <Button size="lg" className="gap-2 font-medium shrink-0 w-full sm:w-auto" asChild>
+                    <Link to="/enroll" className="group">
+                      Get started
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </Button>
+                  <Link
+                    to="/pricing"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    See pricing
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </section>

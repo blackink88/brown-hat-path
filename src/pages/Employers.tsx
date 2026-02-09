@@ -14,6 +14,7 @@ import {
   Building2,
   Briefcase,
   GraduationCap,
+  ArrowRight,
 } from "lucide-react";
 
 const benefits = [
@@ -76,8 +77,11 @@ const Employers = () => {
               <p className="text-lg text-primary-foreground/80 mb-8">
                 Partner with Brown Hat to access Africa's most rigorously trained cybersecurity talent.
               </p>
-              <Button variant="accent" size="xl" asChild>
-                <a href="#contact">Partner With Us</a>
+              <Button variant="default" size="lg" className="gap-2 font-medium" asChild>
+                <a href="#contact" className="group inline-flex items-center">
+                  Partner with us
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </a>
               </Button>
             </div>
           </div>

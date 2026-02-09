@@ -350,24 +350,30 @@ export default function LearningPath() {
             </div>
 
             {/* CTA */}
-            <div className="mt-16 text-center">
-              <div className="p-8 rounded-2xl gradient-hero text-center">
-                <h2 className="text-2xl font-bold text-primary-foreground mb-4">
-                  Ready to start your journey?
-                </h2>
-                <p className="text-primary-foreground/80 mb-6">
-                  Pick your entry point and begin building real cybersecurity skills today.
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <Button variant="accent" size="lg" asChild>
-                    <Link to="/enroll" className="group">
-                      Enroll Now
-                      <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <div className="mt-16">
+              <div className="max-w-2xl mx-auto overflow-hidden rounded-xl border border-border bg-card shadow-card">
+                <div className="h-1 w-full bg-primary" aria-hidden />
+                <div className="p-8 md:p-10 text-center">
+                  <h2 className="text-2xl font-semibold text-foreground tracking-tight mb-2">
+                    Ready to start your journey?
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    Pick your entry point and begin building real cybersecurity skills today.
+                  </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
+                    <Button size="lg" className="gap-2 font-medium shrink-0 w-full sm:w-auto" asChild>
+                      <Link to="/enroll" className="group">
+                        Get started
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                    </Button>
+                    <Link
+                      to="/pricing"
+                      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      See pricing
                     </Link>
-                  </Button>
-                  <Button variant="heroOutline" size="lg" asChild>
-                    <Link to="/pricing">View Pricing</Link>
-                  </Button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Check, Zap, Shield, Crown, Globe, Loader2 } from "lucide-react";
+import { Check, Zap, Shield, Crown, Globe, Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -221,8 +221,11 @@ const Pricing = () => {
                       popular={tier.popular}
                     />
                   ) : (
-                    <Button variant={tier.popular ? "accent" : "outline"} className="w-full" asChild>
-                      <Link to="/enroll">{tier.cta}</Link>
+                    <Button variant={tier.popular ? "default" : "outline"} size="lg" className="w-full gap-2 font-medium" asChild>
+                      <Link to="/enroll" className="group">
+                        {tier.cta}
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
                     </Button>
                   )}
                 </div>
@@ -241,8 +244,11 @@ const Pricing = () => {
               <p className="text-muted-foreground mb-8">
                 Need to upskill your security team or build an internal cybersecurity capability? We offer custom corporate packages with dedicated support.
               </p>
-              <Button variant="default" size="lg" asChild>
-                <Link to="/employers">Contact for Corporate Pricing</Link>
+              <Button variant="default" size="lg" className="gap-2 font-medium" asChild>
+                <Link to="/employers" className="group">
+                  Contact for corporate pricing
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </Link>
               </Button>
             </div>
           </div>
