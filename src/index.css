@@ -156,6 +156,28 @@
 }
 
 @layer components {
+  .dashboard-sidebar {
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 20 20% 25%;
+    --sidebar-accent: 20 20% 96%;
+    --sidebar-accent-foreground: 20 57% 40%;
+    --sidebar-primary: 20 57% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-border: 20 15% 90%;
+    --sidebar-ring: 20 57% 40%;
+  }
+
+  .dark .dashboard-sidebar {
+    --sidebar-background: 25 12% 11%;
+    --sidebar-foreground: 25 40% 65%;
+    --sidebar-accent: 25 15% 16%;
+    --sidebar-accent-foreground: 25 55% 70%;
+    --sidebar-primary: 25 55% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-border: 25 15% 20%;
+    --sidebar-ring: 25 55% 52%;
+  }
+
   .gradient-hero {
     background: var(--gradient-hero);
   }
