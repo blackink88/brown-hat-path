@@ -91,6 +91,7 @@ export type Database = {
           skills: Json | null
           thumbnail_url: string | null
           title: string
+          track: string | null
           updated_at: string
         }
         Insert: {
@@ -107,6 +108,7 @@ export type Database = {
           skills?: Json | null
           thumbnail_url?: string | null
           title: string
+          track?: string | null
           updated_at?: string
         }
         Update: {
@@ -123,6 +125,7 @@ export type Database = {
           skills?: Json | null
           thumbnail_url?: string | null
           title?: string
+          track?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -252,6 +255,8 @@ export type Database = {
           full_name: string | null
           id: string
           is_enrolled: boolean
+          practitioner_track: string | null
+          specialisation_track: string | null
           subscription_status: string
           updated_at: string
           user_id: string
@@ -262,6 +267,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_enrolled?: boolean
+          practitioner_track?: string | null
+          specialisation_track?: string | null
           subscription_status?: string
           updated_at?: string
           user_id: string
@@ -272,6 +279,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_enrolled?: boolean
+          practitioner_track?: string | null
+          specialisation_track?: string | null
           subscription_status?: string
           updated_at?: string
           user_id?: string

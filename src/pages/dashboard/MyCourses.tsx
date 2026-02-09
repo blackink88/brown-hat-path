@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +10,7 @@ import { Lock, Play, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
+import { TrackPickerDialog } from "@/components/dashboard/TrackPickerDialog";
 
 const levelLabels: Record<number, string> = {
   0: "Bridge",
@@ -34,6 +36,20 @@ export default function MyCourses() {
       if (error) throw error;
       return data;
     },
+  });
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, practitioner_track, specialisation_track")
+        .eq("user_id", user!.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
   });
 
   const { data: userTierLevel = 0 } = useQuery({
@@ -139,7 +155,79 @@ export default function MyCourses() {
 
   const enrolledCourseIds = new Set(enrollments ?? []);
   const enrolledCourses = courses?.filter((c) => enrolledCourseIds.has(c.id)) ?? [];
-  const availableCourses = courses?.filter((c) => !enrolledCourseIds.has(c.id)) ?? [];
+  let availableCourses = courses?.filter((c) => !enrolledCourseIds.has(c.id)) ?? [];
+
+  // Filter by track: once practitioner_track or specialisation_track is set, only show the matching course(s)
+  availableCourses = availableCourses.filter((c) => {
+    if (c.level === 3 && profile?.practitioner_track) return (c as { track?: string | null }).track === profile.practitioner_track;
+    if (c.level === 4 && profile?.specialisation_track) return (c as { track?: string | null }).track === profile.specialisation_track;
+    return true;
+  });
+
+  const [trackPickerOpen, setTrackPickerOpen] = useState(false);
+  const [trackPickerLevel, setTrackPickerLevel] = useState<3 | 4>(3);
+
+  const updateProfileTrack = useMutation({
+    mutationFn: async ({
+      profileId,
+      level,
+      track,
+    }: { profileId: string; level: 3 | 4; track: string }) => {
+      const col = level === 3 ? "practitioner_track" : "specialisation_track";
+      const { error } = await supabase.from("profiles").update({ [col]: track }).eq("id", profileId);
+      if (error) throw error;
+    },
+    onSuccess: (_, { level }) => {
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+      if (level === 3) queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+    onError: (e) =>
+      toast({ title: "Could not save track", description: String(e.message), variant: "destructive" }),
+  });
+
+  const enrollInCourseWithTrack = useMutation({
+    mutationFn: async ({ courseId, profileId, level, track }: { courseId?: string; profileId: string; level: 3 | 4; track: string }) => {
+      if (!user?.id) throw new Error("You must be signed in to enroll.");
+      if (!canEnrollInMore) throw new Error("Finish your current course before enrolling in another.");
+      const col = level === 3 ? "practitioner_track" : "specialisation_track";
+      const { error: updateErr } = await supabase.from("profiles").update({ [col]: track }).eq("id", profileId);
+      if (updateErr) throw updateErr;
+      const courseToEnroll = courseId ?? courses?.find((c) => c.level === level && (c as { track?: string | null }).track === track)?.id;
+      if (!courseToEnroll) throw new Error("Course not found for this track.");
+      const { error } = await supabase.from("course_enrollments").insert({
+        user_id: user.id,
+        course_id: courseToEnroll,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courseEnrollments", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+      setTrackPickerOpen(false);
+      toast({ title: "Enrolled", description: "You can start the course now." });
+    },
+    onError: (e) =>
+      toast({ title: "Enrollment failed", description: String(e.message), variant: "destructive" }),
+  });
+
+  const handleEnrollClick = (course: { id: string; level: number; track?: string | null }) => {
+    if (course.level === 3 && !profile?.practitioner_track) {
+      setTrackPickerLevel(3);
+      setTrackPickerOpen(true);
+      return;
+    }
+    if (course.level === 4 && !profile?.specialisation_track) {
+      setTrackPickerLevel(4);
+      setTrackPickerOpen(true);
+      return;
+    }
+    enrollInCourse.mutate(course.id);
+  };
+
+  const handleTrackSelect = (track: string) => {
+    if (!profile?.id) return;
+    enrollInCourseWithTrack.mutate({ profileId: profile.id, level: trackPickerLevel, track });
+  };
 
   // User may only have one active enrollment; must finish (100%) before enrolling in another
   const hasIncompleteEnrollment = enrolledCourses.some(
@@ -328,10 +416,10 @@ export default function MyCourses() {
                       <Button
                         variant="secondary"
                         className="w-full"
-                        disabled={enrollInCourse.isPending}
-                        onClick={() => enrollInCourse.mutate(course.id)}
+                        disabled={enrollInCourse.isPending || enrollInCourseWithTrack.isPending}
+                        onClick={() => handleEnrollClick(course)}
                       >
-                        {enrollInCourse.isPending ? (
+                        {(enrollInCourse.isPending || enrollInCourseWithTrack.isPending) ? (
                           <Loader2 className="h-4 w-4 animate-spin mr-2" />
                         ) : null}
                         Enroll Now
@@ -344,6 +432,14 @@ export default function MyCourses() {
         </div>
         )}
       </div>
+
+      <TrackPickerDialog
+        open={trackPickerOpen}
+        onOpenChange={setTrackPickerOpen}
+        level={trackPickerLevel}
+        onSelect={handleTrackSelect}
+        isLoading={enrollInCourseWithTrack.isPending}
+      />
     </div>
   );
 }

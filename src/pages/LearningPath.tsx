@@ -9,7 +9,9 @@ import {
   CheckCircle2, 
   Clock,
   Award,
-  Briefcase
+  Briefcase,
+  Shield,
+  FileCheck
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -298,13 +300,23 @@ export default function LearningPath() {
                 jobRoles={["SOC Analyst L1", "GRC Analyst", "Security Operations"]}
               >
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-lg border border-level-practitioner/30 bg-level-practitioner/5">
-                    <h5 className="font-semibold text-foreground mb-2">🛡️ Track A: Cyber Operations</h5>
-                    <p className="text-sm text-muted-foreground">SOC, SIEM, Incident Response. For those who want to defend networks in real-time.</p>
+                  <div className="p-4 rounded-lg border border-level-practitioner/30 bg-level-practitioner/5 flex gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-level-practitioner/20 flex items-center justify-center shrink-0">
+                      <Shield className="h-5 w-5 text-level-practitioner" />
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-foreground mb-2">Track A: Cyber Operations</h5>
+                      <p className="text-sm text-muted-foreground">SOC, SIEM, Incident Response. For those who want to defend networks in real-time.</p>
+                    </div>
                   </div>
-                  <div className="p-4 rounded-lg border border-level-practitioner/30 bg-level-practitioner/5">
-                    <h5 className="font-semibold text-foreground mb-2">📋 Track B: GRC</h5>
-                    <p className="text-sm text-muted-foreground">Risk, Policies, Compliance. For those who prefer strategy and governance.</p>
+                  <div className="p-4 rounded-lg border border-level-practitioner/30 bg-level-practitioner/5 flex gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-level-practitioner/20 flex items-center justify-center shrink-0">
+                      <FileCheck className="h-5 w-5 text-level-practitioner" />
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-foreground mb-2">Track B: GRC</h5>
+                      <p className="text-sm text-muted-foreground">Risk, Policies, Compliance. For those who prefer strategy and governance.</p>
+                    </div>
                   </div>
                 </div>
               </LevelCard>
