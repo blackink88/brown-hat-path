@@ -256,4 +256,27 @@
       transform: scale(1);
     }
   }
+
+  /* Cyber grid background */
+  .cyber-grid {
+    --grid-color: hsl(var(--primary) / 0.07);
+    --glow-color: hsl(var(--primary) / 0.12);
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+    animation: gridPulse 6s ease-in-out infinite;
+  }
+
+  .dark .cyber-grid {
+    --grid-color: hsl(var(--primary) / 0.1);
+    --glow-color: hsl(var(--primary) / 0.18);
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
 }
