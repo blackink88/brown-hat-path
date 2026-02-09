@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export function HeroSection() {
   return (
     <section className="relative bg-background border-b border-border overflow-hidden">
-      {/* Subtle warm tint band for depth - no image */}
+      {/* Subtle warm tint band for depth */}
       <div
         className="absolute inset-0 opacity-[0.4] pointer-events-none"
         style={{
@@ -13,6 +13,10 @@ export function HeroSection() {
             "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)",
         }}
       />
+      {/* Animated cyber grid */}
+      <div className="absolute inset-0 cyber-grid pointer-events-none" />
+      {/* Security doodle wallpaper */}
+      <div className="absolute inset-0 security-doodle pointer-events-none" />
       <div className="container relative py-20 md:py-28">
         <div className="max-w-2xl">
           {/* Accent line - industry standard visual anchor */}
