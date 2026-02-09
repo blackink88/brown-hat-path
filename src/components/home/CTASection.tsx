@@ -1,41 +1,36 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Shield } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function CTASection() {
   return (
-    <section className="py-16 md:py-24 gradient-hero relative overflow-hidden">
-      {/* Pattern overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-      
+    <section className="py-16 md:py-20 bg-muted/40 relative border-t border-border">
+      {/* Thin brown accent bar */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
+
       <div className="container relative">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="h-16 w-16 rounded-2xl bg-primary-foreground/10 border border-primary-foreground/20 flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
-            <Shield className="h-8 w-8 text-primary-foreground" />
-          </div>
-          
-          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-            Ready to start your cybersecurity journey?
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+            Build skills that get you hired
           </h2>
-          <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Join hundreds of learners building real-world security skills. No degree required.
+          <p className="text-muted-foreground mb-8">
+            Join learners building real-world cybersecurity skills. No degree required.
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button variant="accent" size="xl" asChild>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Button size="lg" className="gap-2 font-semibold" asChild>
               <Link to="/enroll" className="group">
-                Start Learning Today
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                Start learning
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </Button>
-            <Button variant="heroOutline" size="xl" asChild>
-              <Link to="/pricing">View Pricing</Link>
-            </Button>
+            <Link
+              to="/pricing"
+              className="text-sm font-medium text-primary hover:underline underline-offset-4"
+            >
+              View pricing
+            </Link>
           </div>
-
-          <p className="text-sm text-primary-foreground/60 mt-6">
-            Monthly subscription • Cancel anytime • No hidden fees
-          </p>
         </div>
       </div>
     </section>

@@ -43,8 +43,8 @@ export function ValuePropsSection() {
               className="group p-6 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-card transition-all duration-300 animate-fade-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="h-12 w-12 rounded-lg gradient-cyber flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <prop.icon className="h-6 w-6 text-accent-foreground" />
+              <div className="h-12 w-12 rounded-lg bg-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <prop.icon className="h-6 w-6 text-primary-foreground" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 {prop.title}
