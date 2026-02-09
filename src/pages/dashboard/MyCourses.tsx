@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
 import { TrackPickerDialog } from "@/components/dashboard/TrackPickerDialog";
+import { AlignedToCerts } from "@/components/dashboard/AlignedToCerts";
 
 const levelLabels: Record<number, string> = {
   0: "Bridge",
@@ -304,11 +305,7 @@ export default function MyCourses() {
                       <SkillsYouWillGain skills={course.skills as string[]} compact />
                     </div>
                   )}
-                  {Array.isArray(course.aligned_certifications) && course.aligned_certifications.length > 0 && (
-                    <p className="text-xs text-primary mb-2">
-                      Aligned to: {course.aligned_certifications.join(", ")}. Support and exam discounts available.
-                    </p>
-                  )}
+                  <AlignedToCerts certifications={course.aligned_certifications ?? []} className="mb-2" />
                   <div className="mb-3">
                     <div className="flex items-center justify-between text-xs mb-1">
                       <span className="text-muted-foreground">Progress</span>
@@ -393,11 +390,7 @@ export default function MyCourses() {
                         <SkillsYouWillGain skills={course.skills as string[]} compact />
                       </div>
                     )}
-                    {Array.isArray(course.aligned_certifications) && course.aligned_certifications.length > 0 && (
-                      <p className="text-xs text-primary mb-2">
-                        Aligned to: {course.aligned_certifications.join(", ")}. Support and exam discounts available.
-                      </p>
-                    )}
+                    <AlignedToCerts certifications={course.aligned_certifications ?? []} className="mb-2" />
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                       <span>{course.duration_hours} hours</span>
                     </div>

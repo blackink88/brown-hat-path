@@ -23,6 +23,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AlignedToCerts } from "@/components/dashboard/AlignedToCerts";
 import {
   Collapsible,
   CollapsibleContent,
@@ -198,11 +199,7 @@ export default function CoursePlayer() {
             <Progress value={progressPercent} className="w-24 h-2" />
             <span>{progressPercent}%</span>
           </div>
-          {Array.isArray(courseData.course.aligned_certifications) && courseData.course.aligned_certifications.length > 0 && (
-            <p className="text-xs text-primary mt-1">
-              Aligned to: {courseData.course.aligned_certifications.join(", ")}. Support and exam discounts available.
-            </p>
-          )}
+          <AlignedToCerts certifications={courseData.course.aligned_certifications ?? []} className="mt-1" />
         </div>
       </div>
 

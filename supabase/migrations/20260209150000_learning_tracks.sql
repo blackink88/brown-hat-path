@@ -34,7 +34,7 @@ INSERT INTO public.lessons (module_id, title, description, content_markdown, dur
 INSERT INTO public.courses (id, code, title, description, level, required_tier_level, duration_hours, order_index, aligned_certifications, track) VALUES
   ('a0000000-0000-4000-8000-000000000009', 'BH-SPEC-IAM', 'Specialisation: IAM', 'Identity and Access Management. Content in development.', 4, 3, 120, 7, ARRAY['CISSP'], 'iam'),
   ('a0000000-0000-4000-8000-00000000000a', 'BH-SPEC-CLOUD', 'Specialisation: Cloud Security', 'Cloud security (AWS, Azure, GCP). Content in development.', 4, 3, 120, 8, ARRAY['AWS Security', 'Microsoft SC-200'], 'cloud'),
-  ('a0000000-0000-4000-8000-00000000000b', 'BH-SPEC-GRC', 'Specialisation: Advanced GRC', 'Advanced governance, risk, and compliance. Content in development.', 4, 3, 120, 9, ARRAY['CISSP', 'CISM'], 'grc')
+  ('a0000000-0000-4000-8000-00000000000b', 'BH-SPEC-GRC', 'Specialisation: Advanced GRC', 'Advanced governance, risk, and compliance. Content in development. Aligned to CRISC.', 4, 3, 120, 9, ARRAY['CRISC'], 'grc')
 ON CONFLICT (code) DO NOTHING;
 
 -- Modules and lessons for placeholder spec courses (deterministic UUIDs)
