@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Mail, Linkedin, Twitter, Github } from "lucide-react";
-import bhlogo from "@/assets/bhlogo.png";
 
 const footerLinks = {
   learning: [
@@ -30,9 +29,6 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <img src={bhlogo} alt="Brown Hat Academy" className="h-10 w-auto" />
-            </Link>
             <p className="text-sm font-semibold text-foreground mb-2">
               Built in South Africa. Trusted globally.
             </p>
