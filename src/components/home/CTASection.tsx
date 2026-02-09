@@ -1,28 +1,55 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, Award, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+
+const trustItems = [
+  { icon: Clock, label: "Self-paced" },
+  { icon: Award, label: "Certification-aligned" },
+  { icon: CreditCard, label: "No credit card to start" },
+];
 
 export function CTASection() {
   return (
-    <section className="relative py-14 md:py-20 border-t border-border bg-muted/50">
+    <section className="py-16 md:py-24 bg-muted/40 border-t border-border">
       <div className="container">
-        <div className="max-w-2xl mx-auto text-center md:text-left">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold text-foreground tracking-tight mb-2">
+        <div className="max-w-2xl mx-auto">
+          <Card className="overflow-hidden border-border shadow-card bg-card hover:shadow-elevated transition-shadow duration-300">
+            {/* Accent bar */}
+            <div className="h-1 w-full bg-primary" aria-hidden />
+            <CardHeader className="pb-4 pt-8 px-8 md:px-10">
+              <h2 className="text-2xl md:text-3xl font-semibold text-foreground tracking-tight">
                 Ready to build in-demand skills?
               </h2>
-              <p className="text-muted-foreground text-sm md:text-base">
-                Join learners preparing for real-world security roles.
+              <p className="text-muted-foreground mt-2 text-base">
+                Join learners on a structured path to real-world security roles. Start when you’re ready.
               </p>
-            </div>
-            <Button size="lg" className="gap-2 font-medium shrink-0 w-fit mx-auto md:mx-0" asChild>
-              <Link to="/enroll" className="group">
-                Get started
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </CardHeader>
+            <CardContent className="px-8 md:px-10 pt-0">
+              <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                {trustItems.map(({ icon: Icon, label }) => (
+                  <li key={label} className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary shrink-0" aria-hidden />
+                    <span>{label}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+            <CardFooter className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-8 md:px-10 pb-8 pt-2">
+              <Button size="lg" className="gap-2 font-medium w-full sm:w-auto" asChild>
+                <Link to="/enroll" className="group">
+                  Get started
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </Button>
+              <Link
+                to="/pricing"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-center sm:text-left"
+              >
+                See pricing
               </Link>
-            </Button>
-          </div>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </section>
