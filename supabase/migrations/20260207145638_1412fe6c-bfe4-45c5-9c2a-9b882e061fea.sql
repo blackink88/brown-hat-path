@@ -297,7 +297,7 @@ CREATE TRIGGER update_lessons_updated_at
 INSERT INTO public.subscription_tiers (name, price_zar, level, features) VALUES
   ('Foundation', 499, 1, '["Level 0: Technical Readiness", "Level 1: Foundations", "Basic Skills Radar", "Community Access"]'::jsonb),
   ('Practitioner', 1500, 2, '["All Foundation features", "Level 2: Core Cyber", "Level 3: Practitioner Core", "Certification Tracking", "Live Q&A"]'::jsonb),
-  ('Professional', 3000, 3, '["All Practitioner features", "Level 4: Specialisation", "Level 5: Advanced", "Amajoni Eligibility", "1-on-1 Mentorship"]'::jsonb);
+  ('Professional', 3000, 3, '["All Practitioner features", "Level 4: Specialisation", "Level 5: Advanced", "1-on-1 Mentorship"]'::jsonb);
 
 -- Seed the 8 cyber domains for skill radar
 INSERT INTO public.skills (name, category, icon) VALUES
