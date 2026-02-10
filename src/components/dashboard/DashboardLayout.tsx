@@ -8,22 +8,19 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Bell, User, Settings, LogOut, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { GlobalSearch } from "./GlobalSearch";
-
 export function DashboardLayout() {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const queryClient = useQueryClient();
   const handledSuccessRef = useRef(false);
 
@@ -33,25 +30,27 @@ export function DashboardLayout() {
     handledSuccessRef.current = true;
     toast({
       title: "Subscription active",
-      description: "Your plan is now active. You can access your courses.",
+      description: "Your plan is now active. You can access your courses."
     });
-    queryClient.invalidateQueries({ queryKey: ["userTierLevel"] });
-    queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
+    queryClient.invalidateQueries({
+      queryKey: ["userTierLevel"]
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["subscriptions"]
+    });
     const next = new URLSearchParams(searchParams);
     next.delete("subscription");
-    setSearchParams(next, { replace: true });
+    setSearchParams(next, {
+      replace: true
+    });
   }, [searchParams, setSearchParams, toast, queryClient]);
-
-  const displayName = (user?.user_metadata?.full_name as string) || user?.email?.split("@")[0] || "User";
+  const displayName = user?.user_metadata?.full_name as string || user?.email?.split("@")[0] || "User";
   const initial = displayName.charAt(0).toUpperCase();
-
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
   };
-
-  return (
-    <SidebarProvider>
+  return <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <DashboardSidebar />
         <SidebarInset className="flex-1">
@@ -110,11 +109,10 @@ export function DashboardLayout() {
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-6 text-primary">
             <Outlet />
           </main>
         </SidebarInset>
       </div>
-    </SidebarProvider>
-  );
+    </SidebarProvider>;
 }
