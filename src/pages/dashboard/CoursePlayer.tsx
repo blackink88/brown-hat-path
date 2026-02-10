@@ -21,6 +21,7 @@ import {
   Loader2,
   FileText,
   CheckCircle2,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AlignedToCerts } from "@/components/dashboard/AlignedToCerts";
