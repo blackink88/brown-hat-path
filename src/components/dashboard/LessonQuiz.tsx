@@ -225,7 +225,7 @@ export function LessonQuiz({
             <div>
               <p className="font-semibold">
                 {score !== null && score >= passThreshold
-                  ? `You passed — ${score}% (${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct)`}
+                  ? `You passed — ${score}% (${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct)`
                   : `${score}% — ${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct`}
               </p>
               <p className="text-sm mt-0.5 opacity-90">
