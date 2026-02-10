@@ -147,6 +147,7 @@ const Pricing = () => {
       <main className="flex-1">
         {/* Hero - consistent with homepage */}
         <section className="relative bg-background border-b border-border overflow-hidden">
+          {/* Gradient wash */}
           <div
             className="absolute inset-0 opacity-[0.4] pointer-events-none"
             style={{
@@ -154,6 +155,9 @@ const Pricing = () => {
                 "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)",
             }}
           />
+          {/* Animated cyber grid */}
+          <div className="absolute inset-0 cyber-grid pointer-events-none" />
+          <div className="absolute inset-0 security-doodle pointer-events-none" />
           <div className="container relative py-20 md:py-28">
             <div className="max-w-2xl">
               <div className="h-1 w-12 rounded-full bg-primary mb-8" aria-hidden />
