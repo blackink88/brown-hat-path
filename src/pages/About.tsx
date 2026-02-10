@@ -45,9 +45,9 @@ As CEO, leads with a clear mandate: build scalable cybersecurity capability, clo
     role: "Chief of Operations",
     credentials: ["Master's in Information Systems", "Honours in Digital Forensics", "CISSP", "PhD in Progress"],
     shortBio: "A seasoned cybersecurity professional with over 15 years of experience across information systems, security operations, and digital forensics.",
-    fullBio: `A seasoned cybersecurity professional with over 15 years of experience across information systems, security operations, and digital forensics. Holds Master's degree in Information Systems and an Honours degree specialising in Digital Forensics from a leading global university, and is currently completing a PhD in Information Systems.
+    fullBio: `A seasoned cybersecurity professional with over 15 years of experience across information technology, security operations, digital forensics, research and teaching. Holds Master's degree in Information Systems and an Honours degree specialising in Digital Forensics and Information Security from a leading global university, and is currently completing a PhD in Information Systems with research focused on Information Security.
 
-Brings deep technical and strategic expertise in information security, with a strong background in research and applied cybersecurity within the African context. Combines academic rigour with real-world operational leadership, ensuring that security strategy translates into practical, measurable outcomes. Focused on building secure, resilient systems and operational models that scale.`,
+Brings deep technical, academic and strategic expertise in information security, with a strong background in research and applied cybersecurity within the African context. Combines academic rigour with real-world operational leadership, ensuring that security strategy translates into practical, measurable outcomes. Focused on building secure, resilient systems and operational models that scale.`,
   },
 ];
 
