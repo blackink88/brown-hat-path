@@ -109,7 +109,7 @@ export function DashboardLayout() {
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-6 text-destructive">
+          <main className="flex-1 p-6 text-primary">
             <Outlet />
           </main>
         </SidebarInset>
