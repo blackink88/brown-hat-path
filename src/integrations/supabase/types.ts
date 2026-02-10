@@ -136,6 +136,7 @@ export type Database = {
           created_at: string
           description: string | null
           duration_minutes: number | null
+          exam_alignment: string | null
           id: string
           module_id: string
           order_index: number
@@ -148,6 +149,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           duration_minutes?: number | null
+          exam_alignment?: string | null
           id?: string
           module_id: string
           order_index?: number
@@ -160,6 +162,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           duration_minutes?: number | null
+          exam_alignment?: string | null
           id?: string
           module_id?: string
           order_index?: number

@@ -221,6 +221,27 @@ export default function CoursePlayer() {
                         {currentLesson.description}
                       </p>
                     )}
+                    {currentLesson?.exam_alignment && (
+                      <div className="mt-3 flex flex-wrap items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2">
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-primary">
+                          <Award className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          <span>Exam relevance</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {(currentLesson.exam_alignment
+                            .split(/;\s*/)
+                            .map((s) => s.trim())
+                            .filter(Boolean) as string[]).map((objective) => (
+                            <span
+                              key={objective}
+                              className="inline-flex rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                            >
+                              {objective}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="rounded-xl border border-border bg-card p-4">
