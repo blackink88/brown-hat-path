@@ -76,8 +76,7 @@ export function LessonQuiz({
       await supabase.from("user_quiz_attempts").insert({
         user_id: user.id,
         lesson_id: lessonId,
-        score: scorePercent,
-        total_questions: questions?.length ?? 0,
+        score_percent: scorePercent,
         passed,
       });
     },
@@ -128,9 +127,9 @@ export function LessonQuiz({
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-border bg-card p-4 flex items-center justify-center gap-2 text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        <span>Loading quiz…</span>
+      <div className="rounded-xl border border-border bg-card p-6 flex items-center justify-center gap-3 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin shrink-0" />
+        <span className="text-sm">Loading quiz…</span>
       </div>
     );
   }
@@ -143,12 +142,21 @@ export function LessonQuiz({
   const passThreshold = PASS_THRESHOLD;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-4">
-      <div className="flex items-center gap-2">
-        <HelpCircle className="h-4 w-4 text-muted-foreground" />
-        <h3 className="font-medium text-foreground">Lesson quiz</h3>
+    <div className="rounded-xl border border-border bg-card p-5 sm:p-6 space-y-5">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+            <HelpCircle className="h-4 w-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-foreground">Check your understanding</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              A few questions to reinforce what matters in this lesson.
+            </p>
+          </div>
+        </div>
         {alreadyCompleted && (
-          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-md font-medium">
             Lesson completed
           </span>
         )}
@@ -157,12 +165,13 @@ export function LessonQuiz({
       {!submitted ? (
         <>
           <p className="text-sm text-muted-foreground">
-            Answer the questions below to check your understanding. You need {passThreshold}% to pass.
+            You need {passThreshold}% to pass. Take your time — you can retry if you need to.
           </p>
           <div className="space-y-6">
-            {questions.map((q) => (
+            {questions.map((q, idx) => (
               <div key={q.id} className="space-y-2">
                 <Label className="text-sm font-medium text-foreground">
+                  <span className="text-muted-foreground font-normal mr-1">{idx + 1}.</span>
                   {q.question_text}
                 </Label>
                 <RadioGroup
@@ -195,34 +204,41 @@ export function LessonQuiz({
             disabled={!allAnswered}
             className="w-full sm:w-auto"
           >
-            Submit quiz
+            Submit answers
           </Button>
         </>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div
             className={cn(
-              "flex items-center gap-2 rounded-lg px-3 py-2",
+              "flex items-center gap-3 rounded-xl px-4 py-3",
               score !== null && score >= passThreshold
-                ? "bg-green-500/10 text-green-700 dark:text-green-400"
-                : "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                ? "bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20"
+                : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
             )}
           >
             {score !== null && score >= passThreshold ? (
-              <CheckCircle2 className="h-5 w-5 shrink-0" />
+              <CheckCircle2 className="h-6 w-6 shrink-0" />
             ) : (
-              <XCircle className="h-5 w-5 shrink-0" />
+              <XCircle className="h-6 w-6 shrink-0" />
             )}
-            <span className="font-medium">
-              {score !== null && score >= passThreshold
-                ? `Passed — ${score}%`
-                : `Score: ${score}%. You need ${passThreshold}% to pass.`}
-            </span>
+            <div>
+              <p className="font-semibold">
+                {score !== null && score >= passThreshold
+                  ? `You passed — ${score}% (${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct)`}
+                  : `${score}% — ${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct`}
+              </p>
+              <p className="text-sm mt-0.5 opacity-90">
+                {score !== null && score >= passThreshold
+                  ? "You've got the key ideas from this lesson."
+                  : `You need ${passThreshold}% to pass. Review the correct answers below and try again when ready.`}
+              </p>
+            </div>
           </div>
 
           <div className="space-y-3">
-            <p className="text-sm font-medium text-foreground">Review</p>
-            {questions.map((q) => {
+            <p className="text-sm font-semibold text-foreground">What to remember</p>
+            {questions.map((q, idx) => {
               const chosenId = selected[q.id];
               const chosen = q.quiz_question_options.find((o) => o.id === chosenId);
               const correctOpt = q.quiz_question_options.find((o) => o.is_correct);
@@ -231,35 +247,43 @@ export function LessonQuiz({
                 <div
                   key={q.id}
                   className={cn(
-                    "rounded-lg border p-3 text-sm",
+                    "rounded-xl border p-3.5 text-sm",
                     isCorrect
                       ? "border-green-500/30 bg-green-500/5"
-                      : "border-red-500/30 bg-red-500/5"
+                      : "border-amber-500/30 bg-amber-500/5"
                   )}
                 >
-                  <p className="font-medium text-foreground">{q.question_text}</p>
+                  <p className="font-medium text-foreground">
+                    <span className="text-muted-foreground mr-1">{idx + 1}.</span>
+                    {q.question_text}
+                  </p>
                   {!isCorrect && chosen && (
-                    <p className="mt-1 text-muted-foreground">
-                      Your answer: <span className="text-red-600 dark:text-red-400">{chosen.option_text}</span>
+                    <p className="mt-1.5 text-muted-foreground">
+                      Your answer: <span className="text-amber-700 dark:text-amber-400 font-medium">{chosen.option_text}</span>
                     </p>
                   )}
                   {!isCorrect && correctOpt && (
                     <p className="mt-1 text-foreground">
-                      Correct: <span className="text-green-600 dark:text-green-400">{correctOpt.option_text}</span>
+                      Correct: <span className="text-green-600 dark:text-green-400 font-medium">{correctOpt.option_text}</span>
                     </p>
                   )}
-                  {isCorrect && (
-                    <p className="mt-1 text-green-600 dark:text-green-400">
-                      Correct: {correctOpt?.option_text}
+                  {isCorrect && correctOpt && (
+                    <p className="mt-1.5 text-green-600 dark:text-green-400">
+                      ✓ {correctOpt.option_text}
                     </p>
                   )}
                 </div>
               );
             })}
           </div>
-          <Button variant="outline" onClick={handleRetry}>
-            Try again
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={handleRetry} className="min-w-[120px]">
+              Try again
+            </Button>
+            {score !== null && score >= passThreshold && (
+              <span className="text-sm text-muted-foreground self-center">You can mark this lesson complete and continue.</span>
+            )}
+          </div>
         </div>
       )}
     </div>
