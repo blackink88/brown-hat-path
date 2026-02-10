@@ -28,7 +28,7 @@ INSERT INTO public.modules (id, course_id, title, description, order_index) VALU
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-  ('c0000000-0000-4000-8000-000000000001', 'Welcome to GRC', 'Placeholder lesson.', '# Welcome to GRC\n\nContent for this track is being developed. You are on the Governance, Risk & Compliance practitioner path.', 5, 1);
+  ('c0000000-0000-4000-8000-000000000001', 'Welcome to GRC', 'Placeholder lesson.', '# Welcome to GRC\n\n## Introduction\n\nContent for this track is being developed. You are on the Governance, Risk & Compliance practitioner path.\n\n## Key takeaway\n\nFull curriculum will follow the same lesson structure as other tracks.\n\n## Exam alignment\n\nISC² SSCP (GRC focus). Content in development.', 5, 1);
 
 -- 5. Placeholder specialisation courses (IAM, Cloud, GRC) - one module + one lesson each
 INSERT INTO public.courses (id, code, title, description, level, required_tier_level, duration_hours, order_index, aligned_certifications, track) VALUES
@@ -45,9 +45,9 @@ INSERT INTO public.modules (id, course_id, title, description, order_index) VALU
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-  ('c0000000-0000-4000-8000-000000000002', 'Coming soon', 'Placeholder.', '# IAM Specialisation\n\nContent for this track is being developed.', 5, 1),
-  ('c0000000-0000-4000-8000-000000000003', 'Coming soon', 'Placeholder.', '# Cloud Security Specialisation\n\nContent for this track is being developed.', 5, 1),
-  ('c0000000-0000-4000-8000-000000000004', 'Coming soon', 'Placeholder.', '# Advanced GRC Specialisation\n\nContent for this track is being developed.', 5, 1);
+  ('c0000000-0000-4000-8000-000000000002', 'Coming soon', 'Placeholder.', '# IAM Specialisation\n\n## Introduction\n\nContent for this track is being developed. You are on the Identity and Access Management specialisation path.\n\n## Key takeaway\n\nFull curriculum will follow the same lesson structure as other tracks.\n\n## Exam alignment\n\nCISSP (Identity and Access Management). Content in development.', 5, 1),
+  ('c0000000-0000-4000-8000-000000000003', 'Coming soon', 'Placeholder.', '# Cloud Security Specialisation\n\n## Introduction\n\nContent for this track is being developed. You are on the Cloud Security specialisation path.\n\n## Key takeaway\n\nFull curriculum will follow the same lesson structure as other tracks.\n\n## Exam alignment\n\nAWS Security, Microsoft SC-200. Content in development.', 5, 1),
+  ('c0000000-0000-4000-8000-000000000004', 'Coming soon', 'Placeholder.', '# Advanced GRC Specialisation\n\n## Introduction\n\nContent for this track is being developed. You are on the Advanced GRC specialisation path.\n\n## Key takeaway\n\nFull curriculum will follow the same lesson structure as other tracks.\n\n## Exam alignment\n\nCRISC. Content in development.', 5, 1);
 
 -- 6. Move BH-ADV order_index to 10 so spec courses (6,7,8,9) sit before it
 UPDATE public.courses SET order_index = 10 WHERE code = 'BH-ADV';
