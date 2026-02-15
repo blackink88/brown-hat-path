@@ -2,6 +2,14 @@
 
 BEGIN;
 
+-- ========== Ensure the four migration courses exist (idempotent) ==========
+INSERT INTO public.courses (id, code, title, description, level, required_tier_level, duration_hours, order_index, aligned_certifications) VALUES
+  ('a0000000-0000-4000-8000-000000000008', 'BH-GRC-2',      'Practitioner Core: GRC',          'Governance, risk, and compliance.',          3, 2, 100, 5, ARRAY['ISC² SSCP']),
+  ('a0000000-0000-4000-8000-000000000009', 'BH-SPEC-IAM',    'Specialisation: IAM',             'Identity and Access Management.',            4, 3, 120, 7, ARRAY['CISSP']),
+  ('a0000000-0000-4000-8000-00000000000a', 'BH-SPEC-CLOUD',  'Specialisation: Cloud Security',  'Cloud security (AWS, Azure, GCP).',          4, 3, 120, 8, ARRAY['AWS Security','Microsoft SC-200']),
+  ('a0000000-0000-4000-8000-00000000000b', 'BH-SPEC-GRC',    'Specialisation: Advanced GRC',    'Advanced governance, risk, and compliance.', 4, 3, 120, 9, ARRAY['CRISC'])
+ON CONFLICT (code) DO NOTHING;
+
 -- ========== Add response_text column for practical text submissions ==========
 ALTER TABLE public.capstone_submissions ADD COLUMN IF NOT EXISTS response_text TEXT;
 
