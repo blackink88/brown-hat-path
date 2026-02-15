@@ -147,7 +147,7 @@ This creates a direct link from technical evidence → compliance requirement �
 - The hardening index gives a quick overall assessment; warnings and suggestions provide detail.
 - Map Lynis findings to NIST CSF and ISO 27001 for compliance evidence.
 - Lynis output serves as both technical evidence and a remediation roadmap.
-$md$, 30, 5);
+$md$, 10, 5);
 
 -- =====================================================================
 -- ========== BH-SPEC-IAM: New Lessons ==========
@@ -231,7 +231,7 @@ Best practice is to integrate physical and logical access control:
 - Biometric accuracy is measured by FAR, FRR, and CER (lower CER = better).
 - Iris scan and retina scan are the most accurate biometrics; fingerprint is the most common.
 - Integrating physical and logical access controls improves security and anomaly detection.
-$md$, 30, 5),
+$md$, 10, 5),
 
 -- Module 4: IAM in Practice — Linux Access Control Mechanics
 ('d0000000-0000-4000-8000-000000000014', 'Linux Access Control Mechanics',
@@ -378,7 +378,7 @@ Unexpected SUID files are a common privilege escalation vector. Review any unfam
 - File permissions use owner/group/others with read(4)/write(2)/execute(1).
 - sudo configuration in `/etc/sudoers` controls privilege escalation — edit with `visudo`.
 - `chage` manages password policies; SUID/SGID files need regular auditing.
-$md$, 35, 5);
+$md$, 15, 5);
 
 -- =====================================================================
 -- ========== BH-SPEC-CLOUD: New Lessons ==========
@@ -489,7 +489,7 @@ The Microsoft SC-200 exam covers three areas:
 - Sentinel is a cloud-native SIEM/SOAR that ingests from 200+ sources and uses KQL for analytics and hunting.
 - Together they provide detection (Defender) + correlation and automation (Sentinel).
 - SC-200 focuses heavily on Sentinel (~50-55%) — know KQL, analytics rules, and playbooks.
-$md$, 35, 5),
+$md$, 10, 5),
 
 -- Module 3: Cloud Infrastructure and Network Security — TLS and Web Security
 ('d0000000-0000-4000-8000-000000000023', 'TLS, Certificates, and Web Security Fundamentals',
@@ -584,7 +584,7 @@ Root CA → Intermediate CA → End-entity (server) certificate. Browsers trust 
 - Know the certificate types (DV, OV, EV) and the chain of trust model.
 - Web security headers (HSTS, CSP, X-Frame-Options) are critical complementary controls.
 - Common misconfigurations: expired certs, weak ciphers, missing HSTS, supporting legacy TLS.
-$md$, 30, 5),
+$md$, 10, 5),
 
 -- Module 3: Cloud Infrastructure — Cloud and Web Assessment Tools
 ('d0000000-0000-4000-8000-000000000023', 'Cloud and Web Assessment Tools',
@@ -699,7 +699,7 @@ A typical web/cloud security assessment follows these steps:
 - curl -I quickly shows HTTP security headers.
 - openssl s_client inspects certificates, expiry, and chain from the command line.
 - nmap complements with service detection and scripted checks.
-$md$, 30, 6),
+$md$, 10, 6),
 
 -- Module 4: Cloud Security Operations — AWS Security Services
 ('d0000000-0000-4000-8000-000000000024', 'AWS Security Services',
@@ -783,7 +783,7 @@ By the end of this lesson you will be able to:
 - KMS manages encryption keys; Macie discovers sensitive data; WAF/Shield protect against web attacks and DDoS.
 - CloudTrail is the foundation of cloud security — it logs all API activity.
 - Security Hub aggregates findings from all services into one prioritised dashboard.
-$md$, 35, 5);
+$md$, 15, 5);
 
 -- =====================================================================
 -- ========== BH-SPEC-CLOUD: Replace Capstone Content ==========
@@ -1021,7 +1021,7 @@ CRISC Domain 4 (Information Technology and Security) covers:
 - BCP covers the entire business; DRP covers IT specifically.
 - Test plans regularly — untested plans are unreliable.
 - Change management prevents unplanned outages — a top IT operations risk.
-$md$, 35, 5),
+$md$, 10, 5),
 
 -- Module 4: Governance and Reporting — COBIT Framework
 ('d0000000-0000-4000-8000-000000000034', 'COBIT Framework and IT Governance',
@@ -1111,7 +1111,7 @@ Each domain has specific processes with activities, inputs, outputs, and RACI ch
 - COBIT 2019 uses design factors to tailor the governance system to the organisation.
 - APO12 (Managed Risk) and EDM03 (Ensured Risk Optimisation) directly support IT risk management.
 - COBIT maps to ISO 27001, NIST, ITIL, and CRISC for integrated governance.
-$md$, 30, 5),
+$md$, 10, 5),
 
 -- Module 4: Governance and Reporting — System Evidence Gathering Tool Lesson
 ('d0000000-0000-4000-8000-000000000034', 'System Evidence Gathering on Linux',
@@ -1230,7 +1230,87 @@ Example summary table:
 - Map each finding to a framework control for compliance evidence.
 - Document the evidence collection process for audit trail.
 - An evidence summary table bridges technical findings and compliance requirements.
-$md$, 30, 6);
+$md$, 15, 6);
+
+-- =====================================================================
+-- ========== RECALIBRATE LESSON DURATIONS (content-based) ==========
+-- =====================================================================
+
+-- Theory lessons (400-700 words each → 5 min realistic study time at 150 wpm)
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'What is GRC?';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'The Role of Security in the Organisation';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Ethics and Professional Conduct';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Identification';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Assessment';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Treatment and Monitoring';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Policies, Standards, and Procedures';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Control Frameworks';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Security Controls and Control Types';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Compliance Programmes';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Internal and External Audit';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Reporting and Metrics';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Identity, Authentication, and Authorization';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Directory Services and Identity Stores';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Federation and Trust';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Access Control Models';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Multi-Factor and Strong Authentication';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Privileged Access Management';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Identity Lifecycle';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Single Sign-On and Access Aggregation';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Federation in Practice';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'IAM in Zero Trust';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Cloud and Hybrid IAM';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'IAM Monitoring and Incident Response';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Shared Responsibility Model';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Cloud Threats and Attack Vectors';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Cloud Security Posture and Governance';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Cloud IAM and Roles';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Conditional Access and Zero Trust in Cloud';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Securing Cloud Data';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Network Security in the Cloud';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Logging and Monitoring in the Cloud';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Containers and Serverless Security';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Cloud Incident Response';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Compliance and Assurance in the Cloud';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Security Automation and DevSecOps in the Cloud';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Enterprise Risk Management Frameworks';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Appetite and Tolerance';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Board and Executive Risk Reporting';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'IT Risk Scenarios and Threat Modelling';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Quantitative Risk Analysis';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Control Design and Effectiveness';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Response Strategies';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Key Risk Indicators and Monitoring';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Register and Lifecycle';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Governance and Committees';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Assurance and Third-Party Risk';
+UPDATE public.lessons SET duration_minutes = 5 WHERE title = 'Risk Culture and Communication';
+
+-- Practicals (scenario reading + 3-4 tasks → 15 min with thinking/writing time)
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Map the GRC Structure';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Build a Risk Register';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Control Mapping Exercise';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Prepare for Audit';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Identity and Access Analysis';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Design an RBAC Model';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Access Review and Offboarding';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Respond to a Credential Compromise';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Shared Responsibility Worksheet';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Review a Cloud IAM Policy';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Design Cloud Network Security';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Cloud Incident Triage';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Enterprise Risk Heat Map';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Quantitative Risk Assessment';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: KRI Dashboard Design';
+UPDATE public.lessons SET duration_minutes = 15 WHERE title = 'Practical: Draft a Board Risk Report';
+
+-- =====================================================================
+-- ========== UPDATE COURSE DURATION_HOURS (calculated from lesson totals) ==========
+-- =====================================================================
+UPDATE public.courses SET duration_hours = 4 WHERE code = 'BH-GRC-2';
+UPDATE public.courses SET duration_hours = 4 WHERE code = 'BH-SPEC-IAM';
+UPDATE public.courses SET duration_hours = 5 WHERE code = 'BH-SPEC-CLOUD';
+UPDATE public.courses SET duration_hours = 6 WHERE code = 'BH-SPEC-GRC';
 
 -- =====================================================================
 -- ========== POPULATE courses.skills FOR "Skills You Will Gain" ==========

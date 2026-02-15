@@ -14,13 +14,13 @@ DELETE FROM public.courses;
 -- ========== COURSES (all levels) ==========
 -- aligned_certifications: certs aligned to this course (from Learning Path); support and exam discounts offered.
 INSERT INTO public.courses (id, code, title, description, level, required_tier_level, duration_hours, order_index, aligned_certifications) VALUES
-  ('a0000000-0000-4000-8000-000000000001', 'BH-BRIDGE', 'Technical Readiness Bridge', 'Build the digital and IT foundations you need before diving into cybersecurity. No prior experience required.', 0, 1, 40, 1, '{}'),
-  ('a0000000-0000-4000-8000-000000000002', 'BH-FOUND-1', 'IT & Cyber Foundations I', 'Core IT skills, hardware, and cybersecurity concepts. Aligned to CompTIA A+ and Network+.', 1, 1, 80, 2, ARRAY['CompTIA A+']),
-  ('a0000000-0000-4000-8000-000000000003', 'BH-FOUND-2', 'IT & Cyber Foundations II', 'Networking fundamentals and security principles. Completes Foundations level for A+ and Network+ readiness.', 1, 1, 70, 3, ARRAY['CompTIA Network+']),
-  ('a0000000-0000-4000-8000-000000000004', 'BH-CYBER-2', 'Core Cyber Foundations', 'Threat landscape, security controls, and operations. Aligned to CompTIA Security+ and ISC² CC.', 2, 2, 90, 4, ARRAY['CompTIA Security+', 'ISC² CC']),
-  ('a0000000-0000-4000-8000-000000000005', 'BH-OPS-2', 'Practitioner Core: Cyber Operations', 'SOC operations, incident response, and threat hunting. Aligned to CompTIA CySA+ and ISC² SSCP.', 3, 2, 100, 5, ARRAY['CompTIA CySA+', 'ISC² SSCP']),
-  ('a0000000-0000-4000-8000-000000000006', 'BH-SPEC-SOC', 'Specialisation: SOC & Incident Response', 'Advanced SOC, SIEM, and incident handling. Aligned to CompTIA CySA+.', 4, 3, 120, 6, ARRAY['CompTIA CySA+']),
-  ('a0000000-0000-4000-8000-000000000007', 'BH-ADV', 'Advanced & Leadership', 'Security architecture, governance, and leadership. Aligned to CISSP and CISM.', 5, 3, 150, 7, ARRAY['CISSP', 'CISM']);
+  ('a0000000-0000-4000-8000-000000000001', 'BH-BRIDGE', 'Technical Readiness Bridge', 'Build the digital and IT foundations you need before diving into cybersecurity. No prior experience required.', 0, 1, 3, 1, '{}'),
+  ('a0000000-0000-4000-8000-000000000002', 'BH-FOUND-1', 'IT & Cyber Foundations I', 'Core IT skills, hardware, and cybersecurity concepts. Aligned to CompTIA A+ and Network+.', 1, 1, 4, 2, ARRAY['CompTIA A+']),
+  ('a0000000-0000-4000-8000-000000000003', 'BH-FOUND-2', 'IT & Cyber Foundations II', 'Networking fundamentals and security principles. Completes Foundations level for A+ and Network+ readiness.', 1, 1, 4, 3, ARRAY['CompTIA Network+']),
+  ('a0000000-0000-4000-8000-000000000004', 'BH-CYBER-2', 'Core Cyber Foundations', 'Threat landscape, security controls, and operations. Aligned to CompTIA Security+ and ISC² CC.', 2, 2, 5, 4, ARRAY['CompTIA Security+', 'ISC² CC']),
+  ('a0000000-0000-4000-8000-000000000005', 'BH-OPS-2', 'Practitioner Core: Cyber Operations', 'SOC operations, incident response, and threat hunting. Aligned to CompTIA CySA+ and ISC² SSCP.', 3, 2, 4, 5, ARRAY['CompTIA CySA+', 'ISC² SSCP']),
+  ('a0000000-0000-4000-8000-000000000006', 'BH-SPEC-SOC', 'Specialisation: SOC & Incident Response', 'Advanced SOC, SIEM, and incident handling. Aligned to CompTIA CySA+.', 4, 3, 4, 6, ARRAY['CompTIA CySA+']),
+  ('a0000000-0000-4000-8000-000000000007', 'BH-ADV', 'Advanced & Leadership', 'Security architecture, governance, and leadership. Aligned to CISSP and CISM.', 5, 3, 5, 7, ARRAY['CISSP', 'CISM']);
 
 -- ========== LEVEL 0: BRIDGE — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -68,7 +68,7 @@ Every device you will secure or defend is built from these same building blocks.
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 18, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000001', 'Hardware vs Software', 'The difference between physical components and programs.', $md$
 # Hardware vs Software
 
@@ -105,7 +105,7 @@ Hardware is the physical equipment; software is the instructions that run on it.
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 20, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000001', 'Storage and Memory (RAM)', 'How data is stored and used while the computer is on.', $md$
 # Storage and Memory (RAM)
 
@@ -136,7 +136,7 @@ Storage is permanent; RAM is temporary working memory. Both are relevant to how 
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 18, 3),
+$md$, 5, 3),
   ('b0000000-0000-4000-8000-000000000001', 'Input and Output Devices', 'How we interact with computers and how they communicate results.', $md$
 # Input and Output Devices
 
@@ -167,7 +167,7 @@ Input and output devices are how we interact with computers; they can also be en
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 12, 4);
+$md$, 5, 4);
 
 -- ========== BRIDGE: LESSONS (Module 2 — Basic Networking) ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -201,7 +201,7 @@ Networks connect devices to share data; protocols define how they communicate. N
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 15, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000002', 'IP Addresses and the Internet', 'How devices are identified and how traffic finds its way.', $md$
 # IP Addresses and the Internet
 
@@ -228,7 +228,7 @@ IP addresses identify devices; DNS maps names to addresses. Both are used by def
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 20, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000002', 'Wi-Fi and Safe Connectivity', 'How wireless networks work and how to connect safely.', $md$
 # Wi-Fi and Safe Connectivity
 
@@ -255,7 +255,7 @@ Secure Wi-Fi with strong encryption and passwords; treat public Wi-Fi as untrust
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 18, 3);
+$md$, 5, 3);
 
 -- ========== BRIDGE: LESSONS (Module 3 — Operating Systems) ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -285,7 +285,7 @@ The OS is the layer between hardware and applications; securing it is foundation
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 18, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000003', 'Windows and macOS Basics', 'Everyday use and file management on the most common OSs.', $md$
 # Windows and macOS Basics
 
@@ -312,7 +312,7 @@ Fluency in both Windows and macOS supports user support, incident analysis, and 
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 20, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000003', 'Introduction to Linux', 'Why Linux matters in cybersecurity and how to get started.', $md$
 # Introduction to Linux
 
@@ -339,7 +339,7 @@ Linux is widespread in infrastructure and security; learning distributions, the 
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 22, 3);
+$md$, 5, 3);
 
 -- ========== BRIDGE: LESSONS (Module 4 — Professional Communication) ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -369,7 +369,7 @@ Clear, structured communication builds trust and ensures actions are understood 
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 15, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000004', 'Study Skills and Time Management', 'How to learn effectively and stay on track.', $md$
 # Study Skills and Time Management
 
@@ -396,7 +396,7 @@ Active practice, spaced review, and clear priorities make learning stick and kee
 ## Exam alignment
 
 Foundational; no certification exam.
-$md$, 18, 2);
+$md$, 5, 2);
 
 -- ========== LEVEL 1: BH-FOUND-1 — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -426,7 +426,7 @@ Work through each module in order. Complete the lessons and take notes; later co
 ## Exam alignment
 
 A+ 220-1102 Operational Procedures; course overview.
-$md$, 10, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000011', 'The Threat Landscape', 'Types of threats, actors, and attack vectors.', $md$
 # The Threat Landscape
 
@@ -455,7 +455,7 @@ Threat actors use many vectors; phishing and malware are common. Understanding t
 ## Exam alignment
 
 A+ 220-1102 2.0 (Security); threat types and attack vectors.
-$md$, 22, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000012', 'Motherboard and Internal Components', 'Motherboard, CPU, RAM, and expansion.', $md$
 # Motherboard and Internal Components
 
@@ -468,7 +468,7 @@ You should be able to identify components, understand compatibility (e.g. RAM ty
 ## Exam alignment
 
 A+ 220-1101 3.0 (Hardware).
-$md$, 22, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000012', 'Mobile Devices and Connectivity', 'Laptops, smartphones, and wireless connectivity.', $md$
 # Mobile Devices and Connectivity
 
@@ -481,7 +481,7 @@ Foundation exams include mobile device hardware (e.g. display types, batteries),
 ## Exam alignment
 
 A+ 220-1101 1.0 (Mobile Devices).
-$md$, 20, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000013', 'TCP/IP and the OSI Model', 'How data moves across networks.', $md$
 # TCP/IP and the OSI Model
 
@@ -494,7 +494,7 @@ TCP/IP, subnetting, and the OSI model are core networking topics. Security contr
 ## Exam alignment
 
 Network+ 1.0; A+ 220-1101 2.0 (Networking).
-$md$, 25, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000013', 'Network Types and Cabling', 'LAN, WAN, wireless, and physical media.', $md$
 # Network Types and Cabling
 
@@ -503,7 +503,7 @@ $md$, 25, 1),
 ## Exam alignment
 
 Network+ 1.0, 2.0 (Networking Fundamentals, Implementations).
-$md$, 20, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000014', 'CIA Triad and Security Controls', 'Confidentiality, integrity, availability, and control types.', $md$
 # CIA Triad and Security Controls
 
@@ -526,7 +526,7 @@ Apply defence in depth (multiple layers of controls), least privilege (minimum a
 ## Exam alignment
 
 A+ 220-1102 2.0 (Security); Network+ 4.0.
-$md$, 25, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000014', 'Physical Security and Authentication', 'Access control and authentication methods.', $md$
 # Physical Security and Authentication
 
@@ -539,7 +539,7 @@ You will be expected to recommend MFA, strong password policies, and physical se
 ## Exam alignment
 
 A+ 220-1102 2.0 (Physical security, authentication).
-$md$, 18, 2);
+$md$, 5, 2);
 
 -- ========== LEVEL 1: BH-FOUND-2 — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -557,7 +557,7 @@ INSERT INTO public.lessons (module_id, title, description, content_markdown, dur
 ## Exam alignment
 
 Network+ 1.0, 3.0 (Network services).
-$md$, 20, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000021', 'Application Protocols and Ports', 'HTTP/HTTPS, SSH, FTP, and well-known ports.', $md$
 # Application Protocols and Ports
 
@@ -566,7 +566,7 @@ $md$, 20, 1),
 ## Exam alignment
 
 Network+ 1.0, 3.0 (Protocols and ports).
-$md$, 22, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000022', 'Firewalls and Network Segmentation', 'How firewalls work and why we segment networks.', $md$
 # Firewalls and Network Segmentation
 
@@ -587,7 +587,7 @@ You will need to explain why segmentation matters (containment, compliance) and 
 ## Exam alignment
 
 Network+ 4.0 (Network Security).
-$md$, 30, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000022', 'Intrusion Detection and Prevention', 'IDS vs IPS and how they fit into security operations.', $md$
 # Intrusion Detection and Prevention
 
@@ -596,7 +596,7 @@ $md$, 30, 1),
 ## Exam alignment
 
 Network+ 4.0 (Network Security).
-$md$, 20, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000023', 'Windows Security Basics', 'Updates, user accounts, and local security.', $md$
 # Windows Security Basics
 
@@ -605,7 +605,7 @@ Keep Windows updated (security patches), use strong passwords or Windows Hello, 
 ## Exam alignment
 
 A+ 220-1102 1.0 (Windows); Security+ secure host configuration.
-$md$, 22, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000023', 'Linux Security Basics', 'Users, permissions, and basic hardening.', $md$
 # Linux Security Basics
 
@@ -614,7 +614,7 @@ Linux uses **users and groups** and **file permissions** (read, write, execute f
 ## Exam alignment
 
 A+ 220-1102 1.0 (Linux); Security+ secure host configuration.
-$md$, 25, 2);
+$md$, 5, 2);
 
 -- ========== LEVEL 2: BH-CYBER-2 — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -670,7 +670,7 @@ Security controls mitigate risk through prevention, detection, correction, deter
 ## Exam alignment
 
 Security+ 1.1–1.2 (General Security Concepts); ISC² CC Security Principles.
-$md$, 28, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000031', 'Identity and Access Management', 'Authentication, authorization, and access models.', $md$
 # Identity and Access Management
 
@@ -679,7 +679,7 @@ $md$, 28, 1),
 ## Exam alignment
 
 Security+ 1.3–1.4 (Identity, access); ISC² CC Access Control Concepts.
-$md$, 25, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000032', 'Threat Actors and Attack Types', 'Who attacks and how: malware, phishing, and exploits.', $md$
 # Threat Actors and Attack Types
 
@@ -715,7 +715,7 @@ Threat actors vary by motive and capability. Malware, phishing, social engineeri
 ## Exam alignment
 
 Security+ 2.1–2.2 (Threats, attacks); ISC² CC Security Operations.
-$md$, 28, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000032', 'Vulnerability Assessment and Response', 'Scanning, prioritisation, and incident response basics.', $md$
 # Vulnerability Assessment and Response
 
@@ -756,7 +756,7 @@ Vulnerability scanning and penetration testing find and validate weaknesses; pri
 ## Exam alignment
 
 Security+ 2.3, 4.x (Vulnerability management, IR); ISC² CC BC/DR, Security Operations.
-$md$, 25, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000033', 'Security Architecture and Resilience', 'Secure design, zero trust, and resilience.', $md$
 # Security Architecture and Resilience
 
@@ -796,7 +796,7 @@ Security architecture uses segmentation and defence in depth. Zero trust verifie
 ## Exam alignment
 
 Security+ 3.0 (Security Architecture); ISC² CC Security Principles.
-$md$, 26, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000033', 'Monitoring and Security Operations', 'Logging, SIEM, and operational security.', $md$
 # Monitoring and Security Operations
 
@@ -832,7 +832,7 @@ Logging and monitoring provide visibility; a SIEM aggregates and analyses logs f
 ## Exam alignment
 
 Security+ 4.1–4.3 (Security Operations); ISC² CC Security Operations.
-$md$, 24, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000031', 'Cryptography in Practice', 'Symmetric, asymmetric, TLS, and certificates in the real world.', $md$
 # Cryptography in Practice
 
@@ -868,7 +868,7 @@ TLS combines asymmetric key exchange with symmetric bulk encryption. Certificate
 ## Exam alignment
 
 Security+ 1.2; ISC² CC Security Principles.
-$md$, 26, 3),
+$md$, 5, 3),
   ('b0000000-0000-4000-8000-000000000032', 'Vulnerability Types and Prioritisation', 'CVE, CVSS, and how to prioritise remediation.', $md$
 # Vulnerability Types and Prioritisation
 
@@ -907,7 +907,7 @@ CVE provides standard identifiers; CVSS provides severity scores. Use severity, 
 ## Exam alignment
 
 Security+ 2.3–2.4.
-$md$, 22, 3),
+$md$, 5, 3),
   ('b0000000-0000-4000-8000-000000000033', 'Secure Deployment and Hardening', 'Baselines, hardening, and secure development lifecycle basics.', $md$
 # Secure Deployment and Hardening
 
@@ -943,7 +943,7 @@ Baselines and hardening reduce attack surface for deployed systems. A secure lif
 ## Exam alignment
 
 Security+ 3.x, 4.x.
-$md$, 25, 3),
+$md$, 5, 3),
   ('b0000000-0000-4000-8000-000000000034', 'Security Policies and Compliance', 'Policies, standards, and compliance.', $md$
 # Security Policies and Compliance
 
@@ -979,7 +979,7 @@ Policies set expectations; standards and procedures implement them. Compliance f
 ## Exam alignment
 
 Security+ 5.1–5.2; ISC² CC (governance).
-$md$, 24, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000034', 'Security Awareness and Third-Party Risk', 'Training, phishing simulation, and vendor risk.', $md$
 # Security Awareness and Third-Party Risk
 
@@ -1015,7 +1015,7 @@ Awareness training and phishing simulations reduce human error. Third-party risk
 ## Exam alignment
 
 Security+ 5.3–5.4; ISC² CC (Security Program).
-$md$, 22, 2);
+$md$, 5, 2);
 
 -- ========== LEVEL 3: BH-OPS-2 — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -1059,7 +1059,7 @@ Security operations centre on monitoring, triage, investigation, and response. D
 ## Exam alignment
 
 CySA+ 1.0 (Security Operations); SSCP Security Operations, Risk Identification.
-$md$, 28, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000041', 'Vulnerability Management Lifecycle', 'Scanning, prioritisation, and remediation.', $md$
 # Vulnerability Management Lifecycle
 
@@ -1096,7 +1096,7 @@ Vulnerability management is a continuous cycle: discover, prioritise, remediate,
 ## Exam alignment
 
 CySA+ 2.0 (Vulnerability Management); SSCP Risk Identification, Monitoring, and Analysis.
-$md$, 26, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000042', 'Incident Response Process', 'Detection, containment, eradication, recovery.', $md$
 # Incident Response Process
 
@@ -1128,7 +1128,7 @@ Incident response follows preparation, detection, containment, eradication, reco
 ## Exam alignment
 
 CySA+ 3.0 (Incident Response and Management); SSCP Incident Response and Recovery.
-$md$, 30, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000042', 'Reporting and Communication', 'Reporting to stakeholders.', $md$
 # Reporting and Communication
 
@@ -1160,7 +1160,7 @@ Good reporting translates technical work into decisions and accountability. Duri
 ## Exam alignment
 
 CySA+ 4.0 (Reporting and Communication); SSCP Security Operations.
-$md$, 22, 2);
+$md$, 5, 2);
 
 -- ========== LEVEL 4: BH-SPEC-SOC — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -1177,7 +1177,7 @@ INSERT INTO public.lessons (module_id, title, description, content_markdown, dur
 ## Exam alignment
 
 CySA+ 1.0 (Security Operations — tooling).
-$md$, 30, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000051', 'Defender XDR and Cloud Security', 'Microsoft Defender and cloud workload protection.', $md$
 # Defender XDR and Cloud Security
 
@@ -1186,7 +1186,7 @@ $md$, 30, 1),
 ## Exam alignment
 
 CySA+ 1.0 (Security Operations — XDR, cloud).
-$md$, 28, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000052', 'Threat Hunting Methodologies', 'Proactive hunting for threats.', $md$
 # Threat Hunting Methodologies
 
@@ -1195,7 +1195,7 @@ $md$, 28, 2),
 ## Exam alignment
 
 CySA+ 3.0 (Incident Response and Management); threat hunting.
-$md$, 28, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000052', 'Advanced Incident Handling', 'Complex incidents and coordination.', $md$
 # Advanced Incident Handling
 
@@ -1204,7 +1204,7 @@ $md$, 28, 1),
 ## Exam alignment
 
 CySA+ 3.0 (Incident Response and Management).
-$md$, 26, 2);
+$md$, 5, 2);
 
 -- ========== LEVEL 5: BH-ADV — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -1221,7 +1221,7 @@ INSERT INTO public.lessons (module_id, title, description, content_markdown, dur
 ## Exam alignment
 
 CISSP Domain 1 (Security and Risk Management); CISM (Governance, Risk Management).
-$md$, 32, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000061', 'Security Program Development', 'Building and managing the security program.', $md$
 # Security Program Development
 
@@ -1230,7 +1230,7 @@ A **security program** encompasses policies, standards, procedures, awareness tr
 ## Exam alignment
 
 CISM Domain 3 (Information Security Program); CISSP Domain 5 (Security Program Management).
-$md$, 30, 2),
+$md$, 5, 2),
   ('b0000000-0000-4000-8000-000000000062', 'Security Architecture and Engineering', 'Design and engineering for security architects.', $md$
 # Security Architecture and Engineering
 
@@ -1239,7 +1239,7 @@ $md$, 30, 2),
 ## Exam alignment
 
 CISSP Domain 3 (Security Architecture and Engineering); TOGAF (security architecture in EA).
-$md$, 30, 1),
+$md$, 5, 1),
   ('b0000000-0000-4000-8000-000000000062', 'Leadership and Communication', 'Leading teams and communicating with the board.', $md$
 # Leadership and Communication
 
@@ -1248,7 +1248,7 @@ $md$, 30, 1),
 ## Exam alignment
 
 CISM (Program, Incident Management); CISSP (leadership across domains).
-$md$, 28, 2);
+$md$, 5, 2);
 
 -- ==================================================================================
 -- PRACTICAL CHALLENGE LESSONS — All seed-file courses
@@ -1289,7 +1289,7 @@ Your manager asks you to set up a new workstation for an employee. Before orderi
 - Option B: 16 GB RAM, 512 GB SSD, dedicated GPU
 - Option C: 8 GB RAM, 256 GB SSD, integrated graphics
 
-$md$, 20, 5),
+$md$, 15, 5),
 
 -- Module 2: Basic Networking (practical at order 4)
 ('b0000000-0000-4000-8000-000000000002', 'Practical: Trace a Network Path',
@@ -1316,7 +1316,7 @@ A colleague asks: "What actually happens when I type www.example.com into my bro
 
 **Task 3 — What could go wrong?** Describe two problems that could prevent the page from loading and what you would check first for each.
 
-$md$, 20, 4),
+$md$, 10, 4),
 
 -- Module 3: Operating Systems (practical at order 4)
 ('b0000000-0000-4000-8000-000000000003', 'Practical: Compare Operating Systems',
@@ -1343,7 +1343,7 @@ You work at a small IT consultancy. Three clients ask for your recommendation on
 
 **Task 3 — Security comparison.** Name one security advantage that Linux has over Windows and one security advantage that Windows has over Linux in a corporate environment.
 
-$md$, 20, 4),
+$md$, 10, 4),
 
 -- Module 4: Professional Communication (practical at order 3)
 ('b0000000-0000-4000-8000-000000000004', 'Practical: Write a Technical Email',
@@ -1367,7 +1367,7 @@ You are a junior IT support analyst. During a routine check you discover that a 
 
 **Task 3 — Follow-up.** After the fix, you need to confirm it worked. Write a one-sentence status update for your manager.
 
-$md$, 20, 3);
+$md$, 10, 3);
 
 -- ========== BH-FOUND-1: PRACTICALS ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -1402,7 +1402,7 @@ Read this simplified breach report:
 
 **Task 3 — One control.** Name one security control that could have prevented or detected this breach earlier. Explain how.
 
-$md$, 25, 3),
+$md$, 15, 3),
 
 -- Module 2: Hardware and Mobile Devices (practical at order 3)
 ('b0000000-0000-4000-8000-000000000012', 'Practical: Hardware Troubleshooting',
@@ -1426,7 +1426,7 @@ You are tier-1 IT support. Three tickets arrive:
 
 **Task 3 — Mobile security.** For Ticket 3, the user is a sales rep who uses the phone for company email and customer data. Name two mobile security risks if the device is malfunctioning and one policy you would recommend.
 
-$md$, 20, 3),
+$md$, 10, 3),
 
 -- Module 3: Networking Fundamentals (practical at order 3)
 ('b0000000-0000-4000-8000-000000000013', 'Practical: TCP/IP Packet Analysis',
@@ -1477,7 +1477,7 @@ Payload:     (empty — handshake)
 | ? | RDP |
 | ? | SMTP |
 
-$md$, 25, 3),
+$md$, 15, 3),
 
 -- Module 4: Security Concepts and Best Practices (practical at order 3)
 ('b0000000-0000-4000-8000-000000000014', 'Practical: Map Controls to CIA',
@@ -1507,7 +1507,7 @@ You are helping a small accounting firm improve its security. The firm owner ask
 
 **Task 3 — Scenario.** An employee leaves their laptop (encrypted) in a taxi. Walk through the impact on Confidentiality, Integrity, and Availability.
 
-$md$, 25, 3);
+$md$, 15, 3);
 
 -- ========== BH-FOUND-2: PRACTICALS ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -1547,7 +1547,7 @@ www.example.com.   IN  CNAME   example.com.
 | FTP (control) | ? |
 | DHCP (server) | ? |
 
-$md$, 25, 3),
+$md$, 15, 3),
 
 -- Module 2: Network Security and Hardening (practical at order 3)
 ('b0000000-0000-4000-8000-000000000022', 'Practical: Firewall Rule Review',
@@ -1575,7 +1575,7 @@ You are auditing the perimeter firewall of a small company. The firewall process
 
 **Task 3 — IDS vs IPS.** The company also asks about intrusion detection. In two sentences each, explain the difference between IDS and IPS and state where each would sit relative to the firewall.
 
-$md$, 25, 3),
+$md$, 15, 3),
 
 -- Module 3: Operating System Security (practical at order 3)
 ('b0000000-0000-4000-8000-000000000023', 'Practical: System Hardening Checklist',
@@ -1597,7 +1597,7 @@ Your company is deploying two new servers: one **Windows Server** for file shari
 
 **Task 4 — Spot the mistake.** A colleague's hardening notes say: "Disable the firewall because the application doesn't work with it on." What would you say?
 
-$md$, 25, 3);
+$md$, 10, 3);
 
 -- ========== BH-CYBER-2: PRACTICALS ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -1625,7 +1625,7 @@ You are a security analyst at a healthcare company. The IT director presents thr
 
 **Task 3 — Control selection.** The hospital's lobby has a public Wi-Fi kiosk. Patients use it to access the internet. Name three controls you would implement to protect the hospital network from this kiosk.
 
-$md$, 30, 4),
+$md$, 10, 4),
 
 -- Module 2: Threats and Vulnerabilities (practical at order 4)
 ('b0000000-0000-4000-8000-000000000032', 'Practical: Vulnerability Triage Exercise',
@@ -1655,7 +1655,7 @@ Your vulnerability scanner returned these results for a production e-commerce en
 
 **Task 4 — CVSS interpretation.** Explain in plain English what a CVSS score of 9.8 means and why it matters for prioritisation.
 
-$md$, 30, 4),
+$md$, 15, 4),
 
 -- Module 3: Security Architecture and Operations (practical at order 4)
 ('b0000000-0000-4000-8000-000000000033', 'Practical: Secure Architecture Review',
@@ -1682,7 +1682,7 @@ A startup, **QuickLend** (online lending), presents this architecture for securi
 
 **Task 3 — Zero trust.** The CTO asks: "What is zero trust and should we adopt it?" Write a 3-sentence answer.
 
-$md$, 30, 4),
+$md$, 10, 4),
 
 -- Module 4: Security Program Management (practical at order 3)
 ('b0000000-0000-4000-8000-000000000034', 'Practical: Design a Security Awareness Programme',
@@ -1707,7 +1707,7 @@ $md$
 
 **Task 4 — Measuring effectiveness.** Name three metrics you would report to the CISO after 12 months to show the programme is working.
 
-$md$, 30, 3);
+$md$, 10, 3);
 
 -- ========== BH-OPS-2: PRACTICALS ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -1740,7 +1740,7 @@ You are a Tier 1 SOC analyst starting your Monday shift. The SIEM shows these fi
 
 **Task 4 — Escalation.** Write a 3-sentence escalation note to the Tier 2 analyst for alert #3.
 
-$md$, 30, 3),
+$md$, 15, 3),
 
 -- Module 2: Incident Response and Recovery (practical at order 3)
 ('b0000000-0000-4000-8000-000000000042', 'Practical: Incident Response Walkthrough',
@@ -1775,7 +1775,7 @@ Key facts:
 
 **Task 3 — Communication.** Draft a 3-sentence internal announcement to all employees about the incident.
 
-$md$, 35, 3);
+$md$, 15, 3);
 
 -- ========== BH-SPEC-SOC: PRACTICALS ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -1807,7 +1807,7 @@ As a SOC engineer, you are tasked with creating detection rules for three attack
 
 **Task 3 — MITRE ATT&CK mapping.** Map each of the three attacks to a MITRE ATT&CK tactic and technique.
 
-$md$, 30, 3),
+$md$, 10, 3),
 
 -- Module 2: Threat Hunting and Incident Handling (practical at order 3)
 ('b0000000-0000-4000-8000-000000000052', 'Practical: Threat Hunting Exercise',
@@ -1846,7 +1846,7 @@ Action: Created C:\Temp\data_export.zip (2.1 GB)
 
 **Task 4 — Respond.** If confirmed, write the first 4 containment actions.
 
-$md$, 35, 3);
+$md$, 15, 3);
 
 -- ========== BH-ADV: PRACTICALS ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -1879,7 +1879,7 @@ You are the Head of Information Security at **TrustBank**, a mid-size retail ban
 
 **Task 3 — Objection handling.** A board member asks: "Why can't existing staff handle third-party risk?" Write your response (3–4 sentences).
 
-$md$, 35, 3),
+$md$, 10, 3),
 
 -- Module 2: Security Architecture and Leadership (practical at order 3)
 ('b0000000-0000-4000-8000-000000000062', 'Practical: Security Strategy Roadmap',
@@ -1918,7 +1918,7 @@ Budget: $500,000 in Year 1, $400,000 in Year 2, $350,000 in Year 3.
 
 **Task 4 — Success metrics.** Define 3 metrics you would track over the 3 years to measure the programme's success.
 
-$md$, 40, 3);
+$md$, 15, 3);
 
 -- ==================================================================================
 -- CERTIFICATION GAP-FILL LESSONS — Additional theory lessons for cert alignment
@@ -1971,7 +1971,7 @@ A structured troubleshooting method saves time, avoids unnecessary changes, and 
 ## Exam alignment
 
 CompTIA A+ Core 2 (220-1102): Domain 3 — Software Troubleshooting; Domain 4 — Operational Procedures (documentation, change management).
-$md$, 18, 4),
+$md$, 5, 4),
 
 ('b0000000-0000-4000-8000-000000000011', 'Virtualisation and Cloud Concepts',
  'Basics of virtual machines, hypervisors, and cloud service models for A+ alignment.',
@@ -2013,7 +2013,7 @@ Virtualisation lets one machine do the work of many; cloud computing lets organi
 ## Exam alignment
 
 CompTIA A+ Core 1 (220-1101): Domain 4.1 — Cloud computing concepts; virtualisation (hypervisor types, resource allocation).
-$md$, 20, 3);
+$md$, 5, 3);
 
 -- ========== BH-FOUND-2: CompTIA Network+ gap-fill ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -2067,7 +2067,7 @@ Subnetting divides networks for performance, organisation, and security. Know ho
 ## Exam alignment
 
 CompTIA Network+ (N10-009): Domain 1.4 — IP addressing and subnetting.
-$md$, 25, 4),
+$md$, 5, 4),
 
 ('b0000000-0000-4000-8000-000000000022', 'Wireless Standards and VPN Types',
  'Wi-Fi standards (802.11) and VPN technologies for Network+ alignment.',
@@ -2112,7 +2112,7 @@ Know the wireless standards (speed, frequency, security), and understand VPN typ
 ## Exam alignment
 
 CompTIA Network+ (N10-009): Domain 2.3 — Wireless standards; Domain 3.3 — Remote access and VPN.
-$md$, 22, 4);
+$md$, 5, 4);
 
 -- ========== BH-CYBER-2: Security+ / ISC² CC gap-fill ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -2162,7 +2162,7 @@ Social engineering targets people, not systems. Defence requires a combination o
 ## Exam alignment
 
 CompTIA Security+ (SY0-701): Domain 2.2 — Social engineering techniques. ISC² CC: Domain 1 — Security threats (social engineering).
-$md$, 22, 5),
+$md$, 5, 5),
 
 ('b0000000-0000-4000-8000-000000000034', 'Business Continuity and Disaster Recovery',
  'BCP/DRP planning essentials aligned to Security+ and ISC² CC.',
@@ -2218,7 +2218,7 @@ BCP/DRP ensures the organisation survives disruptions. Know the metrics (RTO, RP
 ## Exam alignment
 
 CompTIA Security+ (SY0-701): Domain 3.4 — Resilience and recovery. ISC² CC: Domain 4 — Business continuity.
-$md$, 25, 3);
+$md$, 10, 3);
 
 -- ========== BH-OPS-2: CySA+ gap-fill ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -2271,7 +2271,7 @@ Threat intelligence provides context; frameworks like MITRE ATT&CK provide struc
 ## Exam alignment
 
 CompTIA CySA+ (CS0-003): Domain 1.2 — Threat intelligence concepts; MITRE ATT&CK. SSCP: Domain 7 — Systems and application security (threat frameworks).
-$md$, 25, 4),
+$md$, 5, 4),
 
 ('b0000000-0000-4000-8000-000000000042', 'Digital Forensics and Evidence Handling',
  'Forensic process, evidence integrity, and chain of custody for CySA+ alignment.',
@@ -2321,7 +2321,7 @@ Forensics is about finding the truth while preserving the evidence. Follow the p
 ## Exam alignment
 
 CompTIA CySA+ (CS0-003): Domain 4.3 — Forensic concepts; evidence handling. SSCP: Domain 7 — Incident response and recovery.
-$md$, 22, 4);
+$md$, 5, 4);
 
 -- ========== BH-SPEC-SOC: CySA+ / SC-200 gap-fill ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -2372,7 +2372,7 @@ SOAR automates the routine so analysts can focus on the complex. Effective SOAR 
 ## Exam alignment
 
 CompTIA CySA+ (CS0-003): Domain 4 — Incident response automation. Microsoft SC-200: Automate responses with Microsoft Sentinel.
-$md$, 24, 4),
+$md$, 5, 4),
 
 ('b0000000-0000-4000-8000-000000000052', 'Malware Analysis Fundamentals',
  'Static and dynamic malware analysis techniques for threat hunters.',
@@ -2417,7 +2417,7 @@ Static analysis tells you what the malware looks like; dynamic analysis tells yo
 ## Exam alignment
 
 CompTIA CySA+ (CS0-003): Domain 2 — Malware analysis concepts. Microsoft SC-200: Investigate threats using Microsoft Defender.
-$md$, 24, 4);
+$md$, 5, 4);
 
 -- ==================================================================================
 -- KALI LINUX SETUP GUIDE + CAPSTONE PROJECTS
@@ -2666,7 +2666,7 @@ Safe targets for capstones:
 - Any system where you have **written permission** from the owner.
 
 **Never** scan your school, employer, ISP, or any public server without explicit authorisation.
-$md$, 45, 5);
+$md$, 15, 5);
 
 -- ========== NEW CURRICULUM EXPANSION MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -2806,7 +2806,7 @@ Windows has two interfaces for configuration. **Settings** (modern, touch-friend
 - Task Manager, Event Viewer, and Device Manager are the three most-tested management tools.
 - Command Prompt and PowerShell are essential for troubleshooting — practise the common commands.
 - Both Control Panel and Settings paths may appear on the exam.
-$md$, 35, 1),
+$md$, 15, 1),
 
 ('b0000000-0000-4000-8000-000000000015', 'Software and Application Troubleshooting',
  'Diagnose and resolve common software problems including OS boot failures, BSODs, and application crashes.',
@@ -2905,7 +2905,7 @@ The CompTIA A+ exam tests this specific order:
 - BSOD stop codes point to the cause — drivers are the most common culprit.
 - Application issues: check Event Viewer, Task Manager, and disk space first.
 - The malware removal process has a specific order the A+ exam expects.
-$md$, 30, 2),
+$md$, 10, 2),
 
 ('b0000000-0000-4000-8000-000000000015', 'Operational Procedures, Safety, and Documentation',
  'ESD protection, environmental controls, documentation, ticketing, change management, and scripting basics.',
@@ -3012,7 +3012,7 @@ You do not need to write scripts from scratch — you need to **recognise** what
 - Document everything: tickets, changes, and resolutions.
 - Change management = plan, test, approve, implement, document, rollback plan.
 - Recognise basic scripting syntax for Bash, PowerShell, batch, and Python.
-$md$, 25, 3),
+$md$, 10, 3),
 
 ('b0000000-0000-4000-8000-000000000015', 'Hardware Deep-Dive: Power, Storage, and Display',
  'Power supplies, storage technologies, display types, printers, and BIOS/UEFI for CompTIA A+ Core 1.',
@@ -3112,7 +3112,7 @@ Key settings:
 - NVMe SSDs are 10–40x faster than HDDs; RAID 5 offers speed + redundancy.
 - Know the laser printing process (Processing through Cleaning) for the A+ exam.
 - Secure Boot and TPM are security-critical BIOS/UEFI settings.
-$md$, 35, 4),
+$md$, 20, 4),
 
 ('b0000000-0000-4000-8000-000000000015', 'Reconnaissance Tools: nmap, dig, and whois',
  'Hands-on introduction to network reconnaissance tools used in the capstone project.',
@@ -3256,7 +3256,7 @@ This is useful for:
 - dig queries DNS for A, MX, NS, TXT, and other record types.
 - whois reveals domain ownership and registration details.
 - Always have written permission before scanning.
-$md$, 30, 5);
+$md$, 10, 5);
 
 -- ========== BH-FOUND-2: Module 4 — Routing, Switching, and Network Operations ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -3348,7 +3348,7 @@ The **default gateway** is the router that a device sends packets to when the de
 - Routers use routing tables; static routing is manual; dynamic routing uses protocols.
 - OSPF (link state, cost-based) and BGP (internet routing) are the most important for Network+.
 - 802.1Q trunking carries multiple VLANs over a single link.
-$md$, 35, 1),
+$md$, 10, 1),
 
 ('b0000000-0000-4000-8000-000000000024', 'IPv6 and Network Address Translation',
  'IPv6 addressing, NAT/PAT operation, and transition mechanisms.',
@@ -3430,7 +3430,7 @@ When device 192.168.1.10 sends a request to a web server, the router:
 - IPv6 has no broadcast — it uses multicast instead.
 - PAT (NAT overload) is the most common NAT type — shares one public IP using port numbers.
 - Dual stack is the primary IPv4-to-IPv6 transition strategy.
-$md$, 30, 2),
+$md$, 10, 2),
 
 ('b0000000-0000-4000-8000-000000000024', 'Network Troubleshooting Tools and Methodology',
  'Command-line diagnostic tools and systematic troubleshooting for Network+.',
@@ -3548,7 +3548,7 @@ pathping google.com
 - ping tests connectivity; tracert finds where it breaks; ipconfig shows your configuration.
 - If ping by IP works but by name fails = DNS issue.
 - APIPA address (169.254.x.x) = DHCP server unreachable.
-$md$, 30, 3),
+$md$, 10, 3),
 
 ('b0000000-0000-4000-8000-000000000024', 'Network Operations: SNMP, Syslog, and Documentation',
  'Network monitoring protocols, logging infrastructure, and documentation standards.',
@@ -3635,7 +3635,7 @@ A baseline records what "normal" looks like. Without a baseline, you cannot dete
 - Syslog centralises logs; severity 0 (Emergency) is most critical, 7 (Debug) is least.
 - NTP keeps clocks synchronised — critical for log correlation, authentication, and compliance.
 - Always maintain network diagrams, IP plans, baselines, and configuration backups.
-$md$, 25, 4),
+$md$, 10, 4),
 
 ('b0000000-0000-4000-8000-000000000024', 'Network Analysis Tools: ss and Wireshark',
  'Hands-on introduction to socket statistics and Wireshark packet capture for the capstone.',
@@ -3738,7 +3738,7 @@ Analysis workflow:
 - Display filters are essential — learn the common ones (dns, http, tcp.port, ip.addr).
 - Protocol Hierarchy and Conversations views give quick situational awareness.
 - Follow TCP Stream reconstructs full conversations for analysis.
-$md$, 35, 5);
+$md$, 5, 5);
 
 -- ========== BH-CYBER-2: Module 5 — Application Security and Automation ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -3863,7 +3863,7 @@ The Open Web Application Security Project publishes the ten most critical web ap
 - CSRF tricks browsers into making unauthorised requests — prevent with anti-CSRF tokens.
 - Command injection passes input to system commands — never pass user input to OS commands.
 - The OWASP Top 10 is the industry standard for web application risk awareness.
-$md$, 35, 1),
+$md$, 10, 1),
 
 ('b0000000-0000-4000-8000-000000000035', 'Automation and Scripting for Security',
  'Using Python, PowerShell, and Bash for security automation — a key Security+ SY0-701 domain.',
@@ -3958,7 +3958,7 @@ SOAR platforms (e.g. Splunk SOAR, Palo Alto XSOAR, IBM QRadar SOAR) combine:
 - Know what Bash, PowerShell, and Python scripts look like and common security use cases.
 - SOAR platforms orchestrate tools and automate incident response playbooks.
 - Security+ SY0-701 tests scripting recognition, not writing.
-$md$, 30, 2),
+$md$, 10, 2),
 
 ('b0000000-0000-4000-8000-000000000035', 'Email Security and Data Classification',
  'SPF, DKIM, DMARC, data classification levels, and data loss prevention (DLP).',
@@ -4058,7 +4058,7 @@ DLP systems monitor, detect, and prevent unauthorised transmission of sensitive 
 - Data classification drives handling requirements — know the four levels.
 - Data owners decide policy; custodians implement controls.
 - DLP monitors data in motion (network), at rest (endpoint), and in the cloud.
-$md$, 30, 3),
+$md$, 10, 3),
 
 ('b0000000-0000-4000-8000-000000000035', 'Vulnerability Scanning Tools: nmap, nikto, and Docker',
  'Hands-on introduction to vulnerability scanning tools used in the capstone project.',
@@ -4185,7 +4185,7 @@ Automated scanners report anything that **might** be an issue. Not everything is
 - `nmap --script vuln` runs NSE vulnerability scripts — useful but may produce false positives.
 - nikto scans web servers for misconfigurations, outdated software, and missing headers.
 - Always verify automated findings — not every scanner result is a real vulnerability.
-$md$, 30, 4);
+$md$, 10, 4);
 
 -- ========== BH-OPS-2: Module 3 — Security Monitoring and Analysis ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -4274,7 +4274,7 @@ Any single event looks normal. Together, they tell a story: someone on workstati
 - Sysmon provides process, network, and file activity that default Windows logging misses.
 - Firewall logs show network allow/deny; proxy logs show web requests.
 - Correlation across multiple log sources is how analysts detect complex attacks.
-$md$, 35, 1),
+$md$, 10, 1),
 
 ('b0000000-0000-4000-8000-000000000043', 'SIEM Correlation and Use Cases',
  'SIEM architecture, correlation rules, use case development, and alert tuning.',
@@ -4346,7 +4346,7 @@ The goal is not zero false positives — it is an acceptable ratio where analyst
 - Correlation rules match patterns: single events, thresholds, sequences, aggregations, and absences.
 - Good use cases specify the threat, data sources, logic, priority, and response.
 - Alert tuning (whitelisting, threshold adjustment, context enrichment) is essential to reduce noise.
-$md$, 30, 2),
+$md$, 5, 2),
 
 ('b0000000-0000-4000-8000-000000000043', 'Network Traffic Analysis',
  'NetFlow, packet capture as a SOC activity, and baseline deviation detection.',
@@ -4412,7 +4412,7 @@ A baseline represents normal network behaviour. Deviations from the baseline are
 - Full packet capture is needed for deep investigation but generates massive data volumes.
 - Baseline deviations (volume, frequency, destinations) are primary indicators of compromise.
 - C2 beaconing, DNS tunnelling, and lateral movement are detectable through network analysis.
-$md$, 30, 3),
+$md$, 10, 3),
 
 ('b0000000-0000-4000-8000-000000000043', 'Packet Forensics with Wireshark',
  'Using Wireshark for incident investigation, stream analysis, and IOC extraction.',
@@ -4492,7 +4492,7 @@ Build a timeline from packet timestamps:
 - Follow TCP Stream reconstructs full conversations for analysis.
 - Extract and document IOCs: IPs, domains, URLs, user agents, file hashes.
 - Build a timeline from packet timestamps to understand the attack sequence.
-$md$, 35, 4);
+$md$, 5, 4);
 
 -- ========== BH-OPS-2: Module 4 — Vulnerability and Endpoint Management ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -4568,7 +4568,7 @@ Scanning without remediation is pointless. A mature programme tracks:
 - Credentialed scans find more issues than uncredentialed scans.
 - Scan policies control what is tested and how aggressively.
 - Remediation tracking with SLAs ensures vulnerabilities are actually fixed.
-$md$, 30, 1),
+$md$, 10, 1),
 
 ('b0000000-0000-4000-8000-000000000044', 'Endpoint Detection and Response',
  'EDR concepts, behavioural detection, process monitoring, and response actions.',
@@ -4628,7 +4628,7 @@ When a threat is detected, analysts can:
 - Behavioural detection catches threats that signature-based tools miss.
 - Response actions (isolate, kill, quarantine, collect) let analysts contain threats remotely.
 - EDR telemetry (processes, connections, file changes) is essential for investigation.
-$md$, 25, 2),
+$md$, 5, 2),
 
 ('b0000000-0000-4000-8000-000000000044', 'Patch Management and Configuration Compliance',
  'Patch lifecycle, CIS benchmarks, configuration baselines, and compliance scanning.',
@@ -4690,7 +4690,7 @@ Output: a compliance score (e.g. 85% compliant) with specific failed checks and 
 - CIS Benchmarks provide specific, tested configuration recommendations.
 - Configuration compliance scanning automates the verification of security baselines.
 - Patching critical vulnerabilities within 48–72 hours is industry best practice.
-$md$, 25, 3),
+$md$, 5, 3),
 
 ('b0000000-0000-4000-8000-000000000044', 'Access Controls for Security Operations',
  'Access control models, AAA, 802.1X, and NAC in an operational context.',
@@ -4770,7 +4770,7 @@ Devices that fail health checks can be placed in a **quarantine VLAN** with limi
 - RADIUS handles network access; TACACS+ handles device administration; Kerberos handles Windows domain auth.
 - 802.1X + NAC ensures only authenticated, healthy devices access the network.
 - SOC analysts should monitor for unusual logon patterns, privilege changes, and MFA anomalies.
-$md$, 30, 4);
+$md$, 10, 4);
 
 -- ========== BH-SPEC-SOC: Module 3 — Advanced Detection and Analysis ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -4841,7 +4841,7 @@ Attackers use legitimate Windows tools to avoid detection:
 - Event 4648 + Event 4624 Type 3 on a target = lateral movement.
 - Sysmon Event 1 with full command line is the most valuable detection data source.
 - LOLBin abuse is a top technique — monitor certutil, mshta, regsvr32, wmic for unusual usage.
-$md$, 35, 1),
+$md$, 5, 1),
 
 ('b0000000-0000-4000-8000-000000000053', 'Email Header Analysis and Phishing Investigation',
  'Analyse email headers to trace origins, identify spoofing, and investigate phishing campaigns.',
@@ -4913,7 +4913,7 @@ If any of these show `fail`, the email may be spoofed.
 - SPF/DKIM/DMARC failures in Authentication-Results indicate potential spoofing.
 - Phishing analysis: check sender, headers, URLs, attachments, urgency, and scope.
 - Use sandboxes and reputation services — never interact with suspicious content on production systems.
-$md$, 30, 2),
+$md$, 5, 2),
 
 ('b0000000-0000-4000-8000-000000000053', 'Endpoint Detection and Response in Practice',
  'EDR workflows, investigation techniques, and response playbooks for SOC analysts.',
@@ -4990,7 +4990,7 @@ This scoping determines whether an incident is isolated or widespread.
 - Suspicious patterns: Office apps spawning cmd/powershell, services running recon commands.
 - Cross-endpoint hunting determines incident scope — search by hash, domain, or behaviour.
 - Response follows: isolate → kill → quarantine → collect → search → block → investigate → remediate.
-$md$, 30, 3),
+$md$, 5, 3),
 
 ('b0000000-0000-4000-8000-000000000053', 'Malware Triage and Sandboxing',
  'Static and dynamic malware analysis, sandbox tools, and IOC extraction.',
@@ -5065,7 +5065,7 @@ Execute the malware in an isolated virtual environment and observe:
 - Sandboxes safely execute malware to observe behaviour.
 - Extract IOCs from both static and dynamic analysis to feed back into detection.
 - Never execute suspicious files outside of an isolated sandbox environment.
-$md$, 30, 4);
+$md$, 10, 4);
 
 -- ========== BH-SPEC-SOC: Module 4 — Cloud SOC and Detection Engineering ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -5128,7 +5128,7 @@ Once in the SIEM, cloud events are correlated with on-premises events for unifie
 - CloudTrail (AWS), Activity Log (Azure), and Cloud Audit Logs (GCP) are the primary cloud log sources.
 - Forward cloud logs to SIEM for unified correlation with on-premises events.
 - Monitor for credential compromise, privilege escalation, data exposure, and logging tampering.
-$md$, 30, 1),
+$md$, 5, 1),
 
 ('b0000000-0000-4000-8000-000000000054', 'Detection Engineering Fundamentals',
  'Detection lifecycle, Sigma rule syntax, rule testing, and detection coverage mapping.',
@@ -5233,7 +5233,7 @@ A gap analysis reveals which techniques you cannot detect — then you prioritis
 - Sigma is the vendor-neutral standard for detection rules — write once, convert to any SIEM.
 - Know the Sigma YAML structure: logsource, detection (selection + condition), level, tags.
 - Map detections to ATT&CK to identify gaps in your detection coverage.
-$md$, 35, 2),
+$md$, 10, 2),
 
 ('b0000000-0000-4000-8000-000000000054', 'Detection Tools: tshark and Sigma Rules',
  'Hands-on introduction to tshark packet analysis and Sigma rule authoring for the capstone.',
@@ -5368,7 +5368,7 @@ tags:
 - `-q -z conv,tcp` gives a conversation summary; `-q -z io,phs` gives protocol hierarchy.
 - Sigma rules follow a specific YAML structure: title, logsource, detection, condition, level, tags.
 - Write detection logic in the selection block; combine with condition; document false positives.
-$md$, 35, 3);
+$md$, 10, 3);
 
 -- ========== BH-ADV: Module 3 — Asset Security and Cryptography ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -5456,7 +5456,7 @@ Retention policies define how long data must be kept. Drivers: legal requirement
 - Data owners decide policy; custodians implement controls.
 - Know the data lifecycle: create → store → use → share → archive → destroy.
 - Secure disposal must match the media type — crypto-shredding for SSDs.
-$md$, 35, 1),
+$md$, 10, 1),
 
 ('b0000000-0000-4000-8000-000000000063', 'Security Models and Evaluation Criteria',
  'Bell-LaPadula, Biba, Clark-Wilson, Common Criteria, and trusted computing for CISSP Domain 3.',
@@ -5536,7 +5536,7 @@ An international framework for evaluating the security of IT products. Key conce
 - Clark-Wilson enforces integrity through controlled access to data via authorised procedures.
 - Common Criteria EAL levels rate the assurance of IT product security (EAL4 is the commercial standard).
 - TPM, Secure Boot, and HSM provide hardware-based security foundations.
-$md$, 30, 2),
+$md$, 5, 2),
 
 ('b0000000-0000-4000-8000-000000000063', 'Cryptographic Systems and PKI',
  'Cryptography at CISSP depth: algorithms, PKI, key management, and digital signatures.',
@@ -5616,7 +5616,7 @@ Process:
 - PKI trust chain: Root CA → Intermediate CA → End certificate. Revocation via CRL or OCSP.
 - Key management lifecycle: generate → distribute → store → use → rotate → revoke → destroy.
 - Digital signatures use the sender's private key for signing and public key for verification.
-$md$, 35, 3);
+$md$, 10, 3);
 
 -- ========== BH-ADV: Module 4 — Network Security and Software Security ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -5698,7 +5698,7 @@ Security implications:
 - IPSec tunnel mode for VPNs; ESP provides encryption; TLS 1.3 is the web standard.
 - Know the common attacks (DDoS, ARP spoofing, DNS poisoning, MITM) and their mitigations.
 - SDN centralises network control — benefits automation but introduces single-point-of-failure risk.
-$md$, 35, 1),
+$md$, 5, 1),
 
 ('b0000000-0000-4000-8000-000000000064', 'Software Development Security',
  'SDLC, secure coding, OWASP, API security, and DevSecOps for CISSP Domain 8.',
@@ -5771,7 +5771,7 @@ APIs are the backbone of modern applications. Security considerations:
 - SAST analyses code; DAST tests the running app; SCA checks dependencies.
 - API security requires authentication, authorisation, rate limiting, and input validation.
 - DevSecOps automates security testing in CI/CD pipelines (shift-left).
-$md$, 35, 2);
+$md$, 10, 2);
 
 -- ========== BH-ADV: Module 5 — Security Assessment, Operations, and Incident Management ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -5845,7 +5845,7 @@ Type II = design and **operating effectiveness** over a period (usually 6–12 m
 - Rules of engagement define scope, methods, and boundaries before testing begins.
 - SOC 2 Type II is the gold standard for third-party assurance.
 - Track MTTD, MTTR, and dwell time as key security effectiveness metrics.
-$md$, 30, 1),
+$md$, 10, 1),
 
 ('b0000000-0000-4000-8000-000000000065', 'Security Operations Management',
  'Investigations, evidence handling, DR, change management, and resource protection at CISSP level.',
@@ -5921,7 +5921,7 @@ By the end of this lesson you will be able to:
 - RPO = acceptable data loss; RTO = acceptable downtime. Hot site = fastest recovery.
 - DR tests range from tabletop (no disruption) to full interruption (maximum realism).
 - Change management controls modifications; configuration management maintains baselines.
-$md$, 35, 2),
+$md$, 10, 2),
 
 ('b0000000-0000-4000-8000-000000000065', 'Incident Management from a Leadership Perspective',
  'IR planning, communication, regulatory notification, and post-incident review for CISM.',
@@ -6002,7 +6002,7 @@ Translate technical details into business language:
 - Communication plans must address all audiences: internal team, executives, board, regulators, customers, media.
 - Know the major regulatory notification deadlines: GDPR 72h, HIPAA 60d, NIS2 24h.
 - Post-incident reviews improve the programme — focus on root cause and action items, not blame.
-$md$, 30, 3);
+$md$, 10, 3);
 
 -- ========== BH-ADV: Module 6 — Information Security Programme and Governance ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
@@ -6087,7 +6087,7 @@ Most organisations start at Level 1–2. Level 3 is a good medium-term target. L
 - Personnel is typically the largest budget item (60-70%).
 - Frame security budgets as risk reduction, compliance, or efficiency to gain executive buy-in.
 - Use maturity models (CMMI) to measure and communicate programme progress.
-$md$, 30, 1),
+$md$, 10, 1),
 
 ('b0000000-0000-4000-8000-000000000066', 'Governance Frameworks: COBIT and ISO 27001',
  'COBIT 2019 and ISO 27001 implementation at management level for CISSP and CISM.',
@@ -6175,7 +6175,7 @@ The Statement of Applicability (SoA) lists all 93 controls and states which are 
 - COBIT has 40 processes across 5 domains (EDM, APO, BAI, DSS, MEA).
 - ISO 27001 uses Plan-Do-Check-Act with 93 Annex A controls.
 - ISO 27001 certification requires Stage 1 (design) and Stage 2 (effectiveness) audits.
-$md$, 35, 2);
+$md$, 10, 2);
 
 -- ========== STANDALONE CAPSTONE MODULES (updated order_index) ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
