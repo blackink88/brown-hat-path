@@ -3145,11 +3145,21 @@ Safe targets for capstones:
 **Never** scan your school, employer, ISP, or any public server without explicit authorisation.
 $md$, 45, 5);
 
+-- ========== STANDALONE CAPSTONE MODULES ==========
+INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
+  ('b0000000-0000-4000-8000-000000000071', 'a0000000-0000-4000-8000-000000000001', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
+  ('b0000000-0000-4000-8000-000000000072', 'a0000000-0000-4000-8000-000000000002', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
+  ('b0000000-0000-4000-8000-000000000073', 'a0000000-0000-4000-8000-000000000003', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 4),
+  ('b0000000-0000-4000-8000-000000000074', 'a0000000-0000-4000-8000-000000000004', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
+  ('b0000000-0000-4000-8000-000000000075', 'a0000000-0000-4000-8000-000000000005', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 3),
+  ('b0000000-0000-4000-8000-000000000076', 'a0000000-0000-4000-8000-000000000006', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 3),
+  ('b0000000-0000-4000-8000-000000000077', 'a0000000-0000-4000-8000-000000000007', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 3);
+
 -- ========== CAPSTONE PROJECTS — ONE PER COURSE ==========
 
--- ========== BH-BRIDGE: CAPSTONE (Module 4, order 4) ==========
+-- ========== BH-BRIDGE: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000004', 'Capstone: Your First Linux Lab',
+('b0000000-0000-4000-8000-000000000071', 'Capstone: Your First Linux Lab',
  'Demonstrate essential Linux skills on Kali Linux. Submit screenshots as a PDF.',
 $md$
 # Capstone: Your First Linux Lab
@@ -3288,11 +3298,11 @@ Take a screenshot of the output. Count how many accounts have bash and write the
 1. Compile all screenshots into a single PDF using LibreOffice Writer (see the Kali Setup Guide for instructions).
 2. Name your file: **`BH-BRIDGE-capstone-[FirstName]-[LastName].pdf`**
 3. Upload using the **Upload Capstone** button below.
-$md$, 60, 4);
+$md$, 60, 1);
 
--- ========== BH-FOUND-1: CAPSTONE (Module 4, order 4) ==========
+-- ========== BH-FOUND-1: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000014', 'Capstone: Reconnaissance Report',
+('b0000000-0000-4000-8000-000000000072', 'Capstone: Reconnaissance Report',
  'Conduct network reconnaissance using Kali Linux tools and write a findings report.',
 $md$
 # Capstone: Reconnaissance Report
@@ -3408,11 +3418,11 @@ Write a **one-page findings summary** as the last page of your PDF. Structure it
 1. Compile into a PDF with all screenshots and the findings report.
 2. Name: **`BH-FOUND1-capstone-[FirstName]-[LastName].pdf`**
 3. Upload using the **Upload Capstone** button below.
-$md$, 90, 4);
+$md$, 90, 1);
 
--- ========== BH-FOUND-2: CAPSTONE (Module 3, order 4) ==========
+-- ========== BH-FOUND-2: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000023', 'Capstone: Network Security Audit',
+('b0000000-0000-4000-8000-000000000073', 'Capstone: Network Security Audit',
  'Analyse network traffic and listening services on Kali Linux, then write firewall rules.',
 $md$
 # Capstone: Network Security Audit
@@ -3513,11 +3523,11 @@ Explain each rule in the "Reason" column.
 1. Compile into PDF.
 2. Name: **`BH-FOUND2-capstone-[FirstName]-[LastName].pdf`**
 3. Upload using the **Upload Capstone** button below.
-$md$, 90, 4);
+$md$, 90, 1);
 
--- ========== BH-CYBER-2: CAPSTONE (Module 4, order 4) ==========
+-- ========== BH-CYBER-2: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000034', 'Capstone: Vulnerability Assessment',
+('b0000000-0000-4000-8000-000000000074', 'Capstone: Vulnerability Assessment',
  'Scan a deliberately vulnerable target, rate findings, and produce an assessment report.',
 $md$
 # Capstone: Vulnerability Assessment
@@ -3645,11 +3655,11 @@ sudo docker stop dvwa && sudo docker rm dvwa
 1. Compile into PDF.
 2. Name: **`BH-CYBER2-capstone-[FirstName]-[LastName].pdf`**
 3. Upload using the **Upload Capstone** button below.
-$md$, 120, 4);
+$md$, 120, 1);
 
--- ========== BH-OPS-2: CAPSTONE (Module 2, order 4) ==========
+-- ========== BH-OPS-2: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000042', 'Capstone: Incident Investigation Lab',
+('b0000000-0000-4000-8000-000000000075', 'Capstone: Incident Investigation Lab',
  'Analyse a packet capture, extract indicators of compromise, and write an incident report.',
 $md$
 # Capstone: Incident Investigation Lab
@@ -3762,11 +3772,11 @@ Write an incident report as the final section of your PDF:
 1. Compile into PDF.
 2. Name: **`BH-OPS2-capstone-[FirstName]-[LastName].pdf`**
 3. Upload using the **Upload Capstone** button below.
-$md$, 120, 4);
+$md$, 120, 1);
 
--- ========== BH-SPEC-SOC: CAPSTONE (Module 2, order 4) ==========
+-- ========== BH-SPEC-SOC: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000052', 'Capstone: Detection Engineering Lab',
+('b0000000-0000-4000-8000-000000000076', 'Capstone: Detection Engineering Lab',
  'Analyse traffic with tshark, write Sigma detection rules, and map to MITRE ATT&CK.',
 $md$
 # Capstone: Detection Engineering Lab
@@ -3884,11 +3894,11 @@ Write a one-page **Detection Gap Analysis**:
 1. Compile into PDF.
 2. Name: **`BH-SPEC-SOC-capstone-[FirstName]-[LastName].pdf`**
 3. Upload using the **Upload Capstone** button below.
-$md$, 120, 4);
+$md$, 120, 1);
 
--- ========== BH-ADV: CAPSTONE (Module 2, order 4) ==========
+-- ========== BH-ADV: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000062', 'Capstone: Executive Penetration Test Report',
+('b0000000-0000-4000-8000-000000000077', 'Capstone: Executive Penetration Test Report',
  'Conduct a full reconnaissance and vulnerability assessment, then write an executive-level report.',
 $md$
 # Capstone: Executive Penetration Test Report
@@ -4011,6 +4021,6 @@ sudo docker stop dvwa && sudo docker rm dvwa
 1. Compile into PDF.
 2. Name: **`BH-ADV-capstone-[FirstName]-[LastName].pdf`**
 3. Upload using the **Upload Capstone** button below.
-$md$, 180, 4);
+$md$, 180, 1);
 
 COMMIT;

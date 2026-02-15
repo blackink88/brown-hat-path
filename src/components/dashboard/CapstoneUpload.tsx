@@ -38,8 +38,13 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Fetch existing submission
-  const { data: submission, isLoading } = useQuery({
+  // Fetch existing submission — gracefully handle missing table
+  const {
+    data: submission,
+    isLoading,
+    isError,
+    error: queryError,
+  } = useQuery({
     queryKey: ["capstoneSubmission", user?.id, lessonId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -53,6 +58,7 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
       return data;
     },
     enabled: !!user?.id && !!lessonId,
+    retry: 1,
   });
 
   const handleUpload = async (file: File) => {
@@ -155,6 +161,51 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
         <div className="flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           <span className="text-sm text-muted-foreground">Loading submission status…</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6 space-y-4">
+        <div className="flex items-center gap-2">
+          <Upload className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold text-foreground">Upload Capstone</h3>
+        </div>
+        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+          <AlertCircle className="h-4 w-4" />
+          <span className="text-sm">
+            Submission tracking is being set up. You can still upload your PDF below.
+          </span>
+        </div>
+        <div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="application/pdf"
+            className="hidden"
+            onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
+          />
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Uploading…
+              </>
+            ) : (
+              <>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Capstone PDF
+              </>
+            )}
+          </Button>
+          <p className="text-xs text-muted-foreground mt-2">
+            PDF only, max 20 MB. Name: <code>{courseCode}-capstone-FirstName-LastName.pdf</code>
+          </p>
         </div>
       </div>
     );

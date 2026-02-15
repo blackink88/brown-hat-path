@@ -35,6 +35,7 @@ import remarkGfm from "remark-gfm";
 import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
 import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
 import { CapstoneUpload } from "@/components/dashboard/CapstoneUpload";
+import { PracticalSubmission } from "@/components/dashboard/PracticalSubmission";
 
 export default function CoursePlayer() {
   const { courseCode } = useParams<{ courseCode: string }>();
@@ -43,6 +44,23 @@ export default function CoursePlayer() {
   const { toast } = useToast();
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+
+  // Fetch user role to control rubric visibility
+  const { data: userRole } = useQuery({
+    queryKey: ["userRole", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user!.id)
+        .single();
+      if (error) return null;
+      return data?.role as string | null;
+    },
+    enabled: !!user?.id,
+  });
+
+  const isInstructor = userRole === "admin" || userRole === "tutor";
 
   // Fetch course with modules and lessons
   const { data: courseData, isLoading } = useQuery({
@@ -254,7 +272,15 @@ export default function CoursePlayer() {
                     <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-semibold prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">
                       {currentLesson?.content_markdown ? (
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {currentLesson.content_markdown}
+                          {(() => {
+                            const md = currentLesson.content_markdown;
+                            // Hide "## Marking Rubric" section from students
+                            if (!isInstructor) {
+                              const rubricIdx = md.indexOf("## Marking Rubric");
+                              if (rubricIdx !== -1) return md.slice(0, rubricIdx).trimEnd();
+                            }
+                            return md;
+                          })()}
                         </ReactMarkdown>
                       ) : (
                         <p className="text-muted-foreground italic">
@@ -283,7 +309,12 @@ export default function CoursePlayer() {
                     />
                   )}
 
-                  {/* Capstone upload — shown for lessons with "Capstone:" title prefix */}
+                  {/* Practical submission — text answers for "Practical:" lessons */}
+                  {currentLesson?.title?.startsWith("Practical:") && (
+                    <PracticalSubmission lessonId={currentLesson.id} />
+                  )}
+
+                  {/* Capstone upload — PDF upload for "Capstone:" lessons */}
                   {currentLesson?.title?.startsWith("Capstone:") && courseCode && (
                     <CapstoneUpload
                       lessonId={currentLesson.id}
