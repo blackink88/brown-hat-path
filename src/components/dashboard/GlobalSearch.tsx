@@ -109,7 +109,7 @@ export function GlobalSearch() {
                   <BookOpen className="mr-2 h-4 w-4" />
                   <div className="flex flex-col">
                     <span>{course.title}</span>
-                    <span className="text-xs text-primary-foreground">{course.code}</span>
+                    <span className="text-xs text-secondary">{course.code}</span>
                   </div>
                 </CommandItem>
             )}
