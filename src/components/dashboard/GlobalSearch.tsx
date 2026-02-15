@@ -133,7 +133,7 @@ export function GlobalSearch() {
                   <Layers className="mr-2 h-4 w-4" />
                   <div className="flex flex-col">
                     <span>{module.title}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-primary-foreground">
                       {(module.courses as any)?.code}
                     </span>
                   </div>
