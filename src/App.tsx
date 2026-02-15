@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { EnrolledRoute } from "@/components/auth/EnrolledRoute";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // Public pages
 import Index from "./pages/Index";
@@ -57,6 +58,7 @@ const App = () => (
           <Toaster />
           <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
