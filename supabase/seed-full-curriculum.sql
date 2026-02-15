@@ -1289,25 +1289,6 @@ Your manager asks you to set up a new workstation for an employee. Before orderi
 - Option B: 16 GB RAM, 512 GB SSD, dedicated GPU
 - Option C: 8 GB RAM, 256 GB SSD, integrated graphics
 
----
-
-## Model Answer
-
-**Task 1:**
-
-| Component | Category |
-|-----------|----------|
-| Keyboard | **Input** |
-| Monitor | **Output** |
-| CPU | **Processing** |
-| SSD (500 GB) | **Storage** (long-term) |
-| RAM (16 GB) | **Storage** (short-term / working memory) |
-| Mouse | **Input** |
-| Printer | **Output** |
-
-**Task 2:** The operating system reads the Word file from the **SSD** (storage) and copies it into **RAM** (working memory) so the CPU can process it quickly. The **CPU** interprets the file data, formats the text and images, and sends the visual output to the **GPU / display adapter**. The display adapter converts the data into a signal the **monitor** (output) can display on screen.
-
-**Task 3:** **Option B.** Graphic design software (e.g. Photoshop, Illustrator) is resource-intensive: it needs 16 GB RAM for large files, a dedicated GPU for rendering, and an SSD for fast load times. Option A is too weak. Option C would work for basic tasks but the integrated graphics would struggle with heavy design work.
 $md$, 20, 5),
 
 -- Module 2: Basic Networking (practical at order 4)
@@ -1335,23 +1316,6 @@ A colleague asks: "What actually happens when I type www.example.com into my bro
 
 **Task 3 — What could go wrong?** Describe two problems that could prevent the page from loading and what you would check first for each.
 
----
-
-## Model Answer
-
-**Task 1:**
-1. You type www.example.com and press Enter.
-2. Your computer contacts the DNS server to translate the domain name to an IP address.
-3. The DNS server responds with the IP address (e.g. 93.184.216.34).
-4. Your browser sends an HTTP request to the web server's IP address.
-5. The web server sends the HTML page back to your browser.
-6. The browser renders the HTML and displays the page on screen.
-
-**Task 2:** (1) Home router / default gateway, (2) ISP router(s), (3) DNS server, (4) possibly a firewall or proxy on the corporate network, (5) the destination web server. Content delivery networks (CDNs) may also serve the content from a closer location.
-
-**Task 3:**
-- **DNS failure:** The domain cannot be resolved to an IP. Check: can you ping an IP address directly (e.g. 8.8.8.8)? If yes, the issue is DNS — try a different DNS server.
-- **Firewall blocking traffic:** A firewall between you and the server drops the request. Check: can you access other websites? If no, check your firewall settings or proxy configuration.
 $md$, 20, 4),
 
 -- Module 3: Operating Systems (practical at order 4)
@@ -1379,23 +1343,6 @@ You work at a small IT consultancy. Three clients ask for your recommendation on
 
 **Task 3 — Security comparison.** Name one security advantage that Linux has over Windows and one security advantage that Windows has over Linux in a corporate environment.
 
----
-
-## Model Answer
-
-**Task 1:**
-1. **Windows.** Microsoft Office, Active Directory, and most legal software are designed for Windows. The firm needs Group Policy and domain management, which Windows + AD provides natively.
-2. **Linux.** Developers using containers (Docker), open-source tools, and SSH work most naturally on Linux. It is free, highly customisable, and most servers run Linux.
-3. **macOS.** Final Cut Pro runs only on macOS. The Apple ecosystem (AirDrop, iCloud, Handoff) also benefits their workflow.
-
-**Task 2:**
-- **Owner** can read and write.
-- **Group** members can read only.
-- **Others** have no access at all (no permissions set).
-
-**Task 3:**
-- **Linux advantage:** Smaller attack surface by default (fewer services running), open-source code for audit, and faster patching through package managers.
-- **Windows advantage:** Mature enterprise management tools (Active Directory, Group Policy, Intune, Defender for Endpoint) that make it easier to manage and secure thousands of corporate devices centrally.
 $md$, 20, 4),
 
 -- Module 4: Professional Communication (practical at order 3)
@@ -1420,27 +1367,6 @@ You are a junior IT support analyst. During a routine check you discover that a 
 
 **Task 3 — Follow-up.** After the fix, you need to confirm it worked. Write a one-sentence status update for your manager.
 
----
-
-## Model Answer
-
-**Task 1 (example):**
-
-Subject: Urgent — File server backups not running for 14 days
-
-Hi [Manager],
-
-During a routine check today I found that our file server backup has not been running for the past 14 days due to a configuration issue. No data has been lost yet, but if the server experiences a hardware failure before we fix this, we could lose up to two weeks of work for the whole team.
-
-I recommend I fix the backup configuration today — it should take about one hour. Once complete, I will run a manual backup and confirm everything is working. May I go ahead?
-
-Best regards,
-[Your name]
-
-**Task 2 (corrected):**
-"Hi [Manager], I have identified an issue with our file server backups — they have not been running for 14 days due to a configuration change after a recent update. I can fix this within an hour and would like your approval to proceed."
-
-**Task 3:** "The backup configuration has been fixed and a full backup completed successfully this afternoon — I have confirmed the data is intact."
 $md$, 20, 3);
 
 -- ========== BH-FOUND-1: PRACTICALS ==========
@@ -1476,27 +1402,6 @@ Read this simplified breach report:
 
 **Task 3 — One control.** Name one security control that could have prevented or detected this breach earlier. Explain how.
 
----
-
-## Model Answer
-
-**Task 1:**
-
-| Element | Answer |
-|---------|--------|
-| Threat actor type | External / cybercriminal (financially motivated) |
-| Initial attack vector | Phishing email with credential-harvesting link |
-| Vulnerability exploited | Lack of MFA on VPN; employee susceptibility to phishing |
-| Asset compromised | Payment processing server; 2.1M customer credit card records |
-| Impact | Data breach, financial fraud, regulatory penalties, reputational damage |
-| How was it detected? | External notification from a bank (not internal detection) |
-
-**Task 2:**
-- **Confidentiality** — violated: credit card data was stolen and exfiltrated to an unauthorised party.
-- **Integrity** — potentially violated: the attacker had 3 days of access and could have modified data.
-- **Availability** — not directly impacted in this scenario (systems stayed online).
-
-**Task 3:** **MFA on the VPN** — even with stolen credentials, the attacker could not have logged in without the second factor. Alternatively: email security gateway with anti-phishing (blocks the malicious link), or network detection to flag unusual data exfiltration.
 $md$, 25, 3),
 
 -- Module 2: Hardware and Mobile Devices (practical at order 3)
@@ -1521,28 +1426,6 @@ You are tier-1 IT support. Three tickets arrive:
 
 **Task 3 — Mobile security.** For Ticket 3, the user is a sales rep who uses the phone for company email and customer data. Name two mobile security risks if the device is malfunctioning and one policy you would recommend.
 
----
-
-## Model Answer
-
-**Task 1:**
-
-| Ticket | Most likely cause | Alternative cause |
-|--------|------------------|-------------------|
-| 1 | Insufficient RAM or failing hard drive (HDD) | Malware consuming resources |
-| 2 | Dead power supply (PSU) or unplugged power cable | Faulty motherboard or dead battery (if laptop) |
-| 3 | Faulty Wi-Fi/Bluetooth radio or antenna | Software/driver issue; interference from other devices |
-
-**Task 2 (Ticket 1):**
-1. Check Task Manager / Activity Monitor for processes using high CPU or memory.
-2. Run a disk health check (e.g. SMART test) to rule out a failing drive.
-3. Check RAM usage — if consistently at 95%+, the machine may need more RAM or has a memory leak.
-4. Run a malware scan to rule out malicious software consuming resources.
-
-**Task 3:**
-- **Risk 1:** If Wi-Fi keeps dropping, the user might connect to an unsecured public network, exposing company email and customer data.
-- **Risk 2:** Bluetooth malfunction could indicate a compromised radio; an attacker could exploit Bluetooth to access the device (e.g. BlueBorne-type attack).
-- **Policy:** Require mobile device management (MDM) on all company phones, enforcing encryption, remote wipe capability, and VPN for data access.
 $md$, 20, 3),
 
 -- Module 3: Networking Fundamentals (practical at order 3)
@@ -1594,35 +1477,6 @@ Payload:     (empty — handshake)
 | ? | RDP |
 | ? | SMTP |
 
----
-
-## Model Answer
-
-**Task 1:**
-1. The **source** (192.168.1.50) initiated the connection — it sent the SYN.
-2. **HTTPS** (HTTP over TLS) runs on port 443.
-3. SYN means "synchronise" — the first step of the TCP three-way handshake to establish a connection.
-4. **Private** address — 192.168.x.x is in the RFC 1918 private range (192.168.0.0/16).
-
-**Task 2:**
-
-| Data | OSI Layer |
-|------|-----------|
-| Source/Destination IP | Layer 3 (Network) |
-| Source/Destination Port | Layer 4 (Transport) |
-| SYN flag | Layer 4 (Transport) |
-| Ethernet MAC address | Layer 2 (Data Link) |
-| HTTP request | Layer 7 (Application) |
-
-**Task 3:**
-
-| Port | Service |
-|------|---------|
-| 22 | **SSH** |
-| 53 | **DNS** |
-| 80 | **HTTP** |
-| **3389** | RDP |
-| **25** | SMTP |
 $md$, 25, 3),
 
 -- Module 4: Security Concepts and Best Practices (practical at order 3)
@@ -1653,28 +1507,6 @@ You are helping a small accounting firm improve its security. The firm owner ask
 
 **Task 3 — Scenario.** An employee leaves their laptop (encrypted) in a taxi. Walk through the impact on Confidentiality, Integrity, and Availability.
 
----
-
-## Model Answer
-
-**Task 1:**
-
-| Control | CIA | Type |
-|---------|-----|------|
-| Full-disk encryption | **Confidentiality** | Technical |
-| Nightly backup | **Availability** | Technical |
-| Hashing reports | **Integrity** | Technical |
-| Security awareness training | **Confidentiality** (also Integrity) | Administrative |
-| Locked server room | **Confidentiality** (also Availability) | Physical |
-| Firewall | **Confidentiality** (also Availability) | Technical |
-| Acceptable use policy | **Confidentiality** (also Integrity) | Administrative |
-
-**Task 2:** **Integrity** is the least covered — only hashing addresses it directly. Recommend: file integrity monitoring (FIM) on critical financial files, or digital signatures on emailed reports to ensure they have not been tampered with.
-
-**Task 3:**
-- **Confidentiality:** Low risk — the disk is encrypted, so the data is protected even if the laptop is found by someone.
-- **Integrity:** Low risk — without access, no one can alter the data.
-- **Availability:** **High risk** — the employee cannot access their files until a replacement laptop is provisioned and data restored from backup. This is why regular backups and the ability to work from another device (cloud or VDI) matter.
 $md$, 25, 3);
 
 -- ========== BH-FOUND-2: PRACTICALS ==========
@@ -1715,29 +1547,6 @@ www.example.com.   IN  CNAME   example.com.
 | FTP (control) | ? |
 | DHCP (server) | ? |
 
----
-
-## Model Answer
-
-**Task 1:**
-- **A record (example.com → 93.184.216.34):** Maps the domain name to an IPv4 address — this is where the website lives.
-- **A record (mail.example.com → 93.184.216.40):** Maps the mail subdomain to a different IP — the mail server.
-- **MX record:** Tells other mail servers to deliver email for example.com to mail.example.com, with priority 10.
-- **TXT record (SPF):** Tells receiving mail servers that Google's servers are authorised to send email on behalf of example.com. Helps prevent email spoofing.
-- **CNAME record:** www.example.com is an alias for example.com — both point to the same place.
-
-**Task 2:** DNS resolution failure. The user can reach the IP directly, so the server is up and the network works. The issue is that DNS is not translating www.example.com to the correct IP. Check: Is the DNS server reachable? Is the CNAME record published correctly? Try `nslookup www.example.com`.
-
-**Task 3:**
-
-| Protocol | Port |
-|----------|------|
-| DNS | **53** |
-| HTTP | **80** |
-| HTTPS | **443** |
-| SSH | **22** |
-| FTP (control) | **21** |
-| DHCP (server) | **67** |
 $md$, 25, 3),
 
 -- Module 2: Network Security and Hardening (practical at order 3)
@@ -1766,31 +1575,6 @@ You are auditing the perimeter firewall of a small company. The firewall process
 
 **Task 3 — IDS vs IPS.** The company also asks about intrusion detection. In two sentences each, explain the difference between IDS and IPS and state where each would sit relative to the firewall.
 
----
-
-## Model Answer
-
-**Task 1:**
-1. **Rule 2 allows all traffic** — it is an "allow any any" rule, which effectively disables the firewall for everything after rule 1. Rules 3–5 will never be reached.
-2. **Rule 3 is unreachable** — the deny for the database server is below the "allow all" rule, so database traffic is allowed anyway.
-3. **No source restriction on rule 1** — anyone on the internet can reach the web server on 443, which may be intended, but there is no rate-limiting or geo-filtering.
-4. **Rule 4 is also unreachable** — it is redundant because rule 2 already allows everything.
-
-**Task 2 (corrected):**
-
-| # | Source | Destination | Port | Protocol | Action |
-|---|--------|-------------|------|----------|--------|
-| 1 | Any | Web Server (10.0.1.10) | 443 | TCP | Allow |
-| 2 | Web Server (10.0.1.10) | DB Server (10.0.2.20) | 3306 | TCP | Allow |
-| 3 | Internal (10.0.0.0/8) | Any | 80, 443 | TCP | Allow |
-| 4 | Internal (10.0.0.0/8) | DNS Server | 53 | UDP/TCP | Allow |
-| 5 | Any | Any | Any | Any | **Deny** (default deny) |
-
-Key changes: removed the "allow all" rule; added DB access only from web server; kept default deny last.
-
-**Task 3:**
-- **IDS (Intrusion Detection System)** monitors traffic passively and alerts when it detects suspicious activity. It typically sits on a SPAN/mirror port or tap behind the firewall, watching a copy of the traffic.
-- **IPS (Intrusion Prevention System)** sits inline (traffic flows through it) and can block or drop malicious packets in real time. It is usually placed between the firewall and the internal network, or on the firewall itself.
 $md$, 25, 3),
 
 -- Module 3: Operating System Security (practical at order 3)
@@ -1813,32 +1597,6 @@ Your company is deploying two new servers: one **Windows Server** for file shari
 
 **Task 4 — Spot the mistake.** A colleague's hardening notes say: "Disable the firewall because the application doesn't work with it on." What would you say?
 
----
-
-## Model Answer
-
-**Task 1 (Windows):**
-1. Install all pending Windows updates and enable automatic updates.
-2. Rename or disable the default Administrator account; create named admin accounts.
-3. Enable Windows Firewall; allow only necessary ports (e.g. SMB 445 from internal only).
-4. Disable unnecessary services (e.g. Print Spooler if not printing, Remote Desktop if not needed).
-5. Enable audit logging (logon events, object access, policy changes).
-6. Configure file share permissions using least privilege — only authorised groups get access.
-
-**Task 2 (Linux):**
-1. Update all packages (`sudo apt update && sudo apt upgrade`).
-2. Create a non-root admin user; disable direct root SSH login (`PermitRootLogin no`).
-3. Enable and configure UFW or iptables; allow only ports 80 and 443 (and SSH from management IP only).
-4. Remove unnecessary packages and services (`sudo systemctl disable <service>`).
-5. Set file permissions correctly — web files owned by www-data, not world-writable.
-6. Enable logging (syslog / journald) and install fail2ban to block brute-force SSH attempts.
-
-**Task 3:**
-1. Apply all security patches before going live and schedule regular updates.
-2. Enable a host-based firewall with a default-deny rule.
-3. Enable logging and monitoring (ship logs to a central SIEM if possible).
-
-**Task 4:** "Disabling the firewall is not acceptable — it removes a critical layer of defence. Instead, let's identify which ports the application needs and create specific firewall rules to allow only those. If the application needs ports 80 and 443, we open those and deny everything else."
 $md$, 25, 3);
 
 -- ========== BH-CYBER-2: PRACTICALS ==========
@@ -1867,27 +1625,6 @@ You are a security analyst at a healthcare company. The IT director presents thr
 
 **Task 3 — Control selection.** The hospital's lobby has a public Wi-Fi kiosk. Patients use it to access the internet. Name three controls you would implement to protect the hospital network from this kiosk.
 
----
-
-## Model Answer
-
-**Task 1:**
-1. **Symmetric encryption** — AES-256. Fast, suitable for large data at rest; the hospital controls the key.
-2. **Hashing** (for integrity check) — SHA-256. Compare the downloaded file's hash to the published hash. A **digital signature** by the vendor is even better (proves authenticity + integrity).
-3. **Asymmetric encryption** — RSA-2048 or ECDH for key exchange, then symmetric for the message body (this is how PGP/S-MIME works). Asymmetric solves the key distribution problem.
-4. **Hashing with salt** — bcrypt or Argon2. Never store plaintext passwords; use a slow, salted hash designed for password storage.
-
-**Task 2:**
-1. The browser sends a **ClientHello** with supported TLS versions and cipher suites.
-2. The server responds with a **ServerHello**, selecting a cipher suite, and sends its **digital certificate** (containing its public key).
-3. The browser **verifies the certificate** against trusted certificate authorities (CA chain).
-4. The browser and server perform a **key exchange** (e.g. ECDHE) to agree on a shared session key — without transmitting it.
-5. Both sides switch to **symmetric encryption** using the session key for the rest of the connection.
-
-**Task 3:**
-1. **Network segmentation** — place the kiosk on a separate VLAN with no access to the hospital's internal network.
-2. **Captive portal with acceptable use agreement** — log who connects and set bandwidth/time limits.
-3. **Content filtering / firewall** — block access to malicious or inappropriate sites; monitor for unusual traffic.
 $md$, 30, 4),
 
 -- Module 2: Threats and Vulnerabilities (practical at order 4)
@@ -1918,27 +1655,6 @@ Your vulnerability scanner returned these results for a production e-commerce en
 
 **Task 4 — CVSS interpretation.** Explain in plain English what a CVSS score of 9.8 means and why it matters for prioritisation.
 
----
-
-## Model Answer
-
-**Task 1 (priority order):**
-1. **#1 Apache Struts RCE (9.8)** — Critical CVSS, internet-facing, with a public exploit. An attacker can take full control of the web server remotely.
-2. **#2 TLS 1.0 on payment API (5.3)** — Lower CVSS but on a payment system; PCI DSS requires TLS 1.2+. Compliance and data exposure risk.
-3. **#4 Missing Windows patches (7.5)** — Internal but could be exploited via lateral movement.
-4. **#3 Default printer credentials (6.5)** — Internal, but could be a pivot point; easy to fix.
-5. **#5 jQuery 2.x (4.3)** — Low CVSS, requires chaining with XSS; lowest priority but should still be updated.
-
-**Task 2:**
-
-| Vuln | Action | Owner | Deadline |
-|------|--------|-------|----------|
-| #1 Apache Struts | Patch immediately or apply WAF virtual patch; take server offline if patch not available within 24h | Web ops team | Today |
-| #2 TLS 1.0 | Disable TLS 1.0 and 1.1; enforce TLS 1.2+ on the payment API | Infrastructure team | 48 hours |
-
-**Task 3:** "I disagree. Internal devices with default credentials are common pivot points — if an attacker gains any internal access (e.g. via phishing), they can use the printer to move laterally or exfiltrate data. Changing default credentials takes minutes and removes an easy target."
-
-**Task 4:** A CVSS score of 9.8 out of 10 means the vulnerability is **Critical** — it can likely be exploited remotely, without authentication, and gives the attacker significant control (e.g. remote code execution). It should be treated as a top priority and remediated immediately.
 $md$, 30, 4),
 
 -- Module 3: Security Architecture and Operations (practical at order 4)
@@ -1966,27 +1682,6 @@ A startup, **QuickLend** (online lending), presents this architecture for securi
 
 **Task 3 — Zero trust.** The CTO asks: "What is zero trust and should we adopt it?" Write a 3-sentence answer.
 
----
-
-## Model Answer
-
-**Task 1:**
-1. **Web app and database on the same server** — if the web app is compromised, the attacker has direct access to the database. Separate them.
-2. **Database in a public subnet** — it should be in a private subnet, accessible only from the app server.
-3. **Flat internal network** — an attacker who compromises any device can reach every other device. Segment by function (e.g. corporate, production, management).
-4. **Shared admin account** — no accountability; if something goes wrong, you cannot determine who did it. Use individual named accounts.
-5. **Local-only logs** — an attacker can delete logs on the compromised server. Centralise logs to a SIEM or separate log server.
-6. **USB backup in the server room** — ransomware can encrypt locally attached backups. Use offsite or cloud backup with immutability.
-
-**Task 2:**
-- **Public subnet:** Load balancer / reverse proxy only (accepts HTTPS from internet).
-- **Private subnet 1:** Web/API server (receives traffic from load balancer only).
-- **Private subnet 2:** Database server (receives connections from app server only, port 3306).
-- **Management subnet:** Admin access via VPN or jump box; no direct SSH from internet.
-- **Logging:** All servers ship logs to a centralised SIEM in a separate management subnet.
-- **Backups:** Automated daily to cloud storage with immutability and tested monthly.
-
-**Task 3:** "Zero trust means no device or user is automatically trusted, even inside the network — every request must be verified (identity, device health, context) before access is granted. For QuickLend, adopting zero trust principles would mean enforcing MFA, segmenting the network, and verifying every access request regardless of location. I recommend starting with identity verification (MFA + individual accounts) and network segmentation, then expanding to device posture checks."
 $md$, 30, 4),
 
 -- Module 4: Security Program Management (practical at order 3)
@@ -2012,35 +1707,6 @@ $md$
 
 **Task 4 — Measuring effectiveness.** Name three metrics you would report to the CISO after 12 months to show the programme is working.
 
----
-
-## Model Answer
-
-**Task 1:**
-
-| Quarter | Topic | Method | Audience |
-|---------|-------|--------|----------|
-| Q1 | Phishing awareness + how to report | Interactive workshop + email campaign | All staff |
-| Q2 | Password hygiene and MFA enrolment | Short video + hands-on MFA setup | All staff |
-| Q3 | Data handling and classification | Department-specific session | Finance, HR, IT |
-| Q4 | Social engineering and physical security | Tabletop scenario exercise | All staff + management |
-
-Monthly: short security tip via email or Slack. Ongoing: phishing simulations (one per quarter).
-
-**Task 2:**
-- **Email:** Subject: "Action Required: Verify Your Benefits Enrolment." Sender: "HR Portal <hr-portal@brightpath-secure.com>" (looks legitimate but a different domain). Content: "Your benefits enrolment expires tomorrow. Click here to verify your details." Call to action: link to a fake login page.
-- **Metrics:** Click rate (% who clicked), report rate (% who reported to IT), credential entry rate (% who entered credentials on the fake page).
-- **If clicked:** Redirect to an educational landing page explaining it was a test and what to look for. Log the result. **If reported:** Positive acknowledgement email thanking them; track as a success.
-
-**Task 3:**
-1. Never share your password or credentials with anyone, including IT support.
-2. Report any suspicious email, link, or phone call to the security team immediately using the "Report Phishing" button.
-3. Lock your computer (Win+L or Cmd+Ctrl+Q) every time you leave your desk.
-
-**Task 4:**
-1. **Phishing click rate trend** — should decrease quarter over quarter (e.g. from 30% to under 10%).
-2. **Phishing report rate** — should increase (more employees reporting instead of clicking).
-3. **Training completion rate** — percentage of employees who completed all required training modules.
 $md$, 30, 3);
 
 -- ========== BH-OPS-2: PRACTICALS ==========
@@ -2074,27 +1740,6 @@ You are a Tier 1 SOC analyst starting your Monday shift. The SIEM shows these fi
 
 **Task 4 — Escalation.** Write a 3-sentence escalation note to the Tier 2 analyst for alert #3.
 
----
-
-## Model Answer
-
-**Task 1:**
-1. **#3 Data exfiltration (Critical)** — 8 GB uploaded from a finance PC is a potential data breach in progress or completed.
-2. **#5 New admin account (High)** — Unauthorised admin account creation could indicate compromise or persistence.
-3. **#1 Brute-force SSH (High)** — Active attack on a public-facing server; check if any attempt succeeded.
-4. **#2 Trojan quarantined (Medium)** — Auto-resolved, but verify it was fully removed and check for lateral movement.
-5. **#4 Expired SSL cert (Low)** — Availability/trust issue, not an active threat.
-
-**Task 2 (Investigate #3):**
-1. Check what data was uploaded — file names, types, sensitivity.
-2. Identify the destination — which cloud storage service, what account, what IP?
-3. Check if Finance-PC-11's user was logged in at 01:45 on a Sunday — is this normal?
-4. Review authentication logs — was the account compromised? Any anomalous logins?
-5. Isolate the machine from the network to prevent further exfiltration.
-
-**Task 3:** Yes — if an attacker created svc-backup-new (alert #5) for persistence, they may have used elevated access to exfiltrate data from Finance-PC-11 (alert #3). Check: did svc-backup-new authenticate to Finance-PC-11 or the file server? Was the new account created before or after the exfiltration? Are they linked by IP or session?
-
-**Task 4:** "Alert #3 shows 8 GB of data uploaded from Finance-PC-11 to an external cloud storage service at 01:45 Sunday — outside normal working hours. I have isolated the machine and confirmed the user was not expecting to work this weekend. Please investigate for data breach scope, check for connection to alert #5 (new admin account), and advise on whether to invoke the IR plan."
 $md$, 30, 3),
 
 -- Module 2: Incident Response and Recovery (practical at order 3)
@@ -2130,27 +1775,6 @@ Key facts:
 
 **Task 3 — Communication.** Draft a 3-sentence internal announcement to all employees about the incident.
 
----
-
-## Model Answer
-
-**Task 1:**
-
-| Phase | Actions |
-|-------|---------|
-| 1. Preparation | Should have had: tested backups, IR plan, network segmentation, endpoint detection, IR team with roles assigned |
-| 2. Detection and Analysis | Identify: which 3 servers are encrypted, what ransomware variant (check ransom note), entry point (phishing? RDP?), scope (any lateral movement to the 2 unaffected servers?) |
-| 3. Containment | Isolate encrypted servers from network immediately; block attacker C2 IPs/domains; disable compromised accounts; monitor the 2 unaffected servers closely |
-| 4. Eradication | Remove ransomware from all affected systems; identify and close the entry point (e.g. patch vulnerability, disable compromised RDP); scan all endpoints |
-| 5. Recovery | Restore data from off-site backups (test restore first!); rebuild servers from clean images; bring services back in phases; verify data integrity |
-| 6. Lessons Learned | Conduct post-incident review; document timeline, what worked, what did not; update IR plan; test backups monthly; implement missing controls (e.g. EDR, segmentation) |
-
-**Task 2:**
-- **Arguments for paying:** May be the fastest way to recover if backups are unusable; reduces downtime for hospital supply chains.
-- **Arguments against:** No guarantee the attacker will provide a decryption key; payment funds criminal activity; the organisation may be targeted again; may violate sanctions regulations depending on the attacker.
-- **Recommendation:** Do not pay. First, attempt restore from backups. If backups fail, engage a specialist forensics firm who may be able to assist with decryption (some ransomware variants have known decryptors). Paying should be the absolute last resort, approved by legal and executive leadership.
-
-**Task 3:** "We are currently experiencing a cybersecurity incident affecting some of our file servers. The IT and security teams are working to resolve this and restore services as quickly as possible. Please do not attempt to access the affected shared drives, and report anything unusual to the IT helpdesk immediately."
 $md$, 35, 3);
 
 -- ========== BH-SPEC-SOC: PRACTICALS ==========
@@ -2183,33 +1807,6 @@ As a SOC engineer, you are tasked with creating detection rules for three attack
 
 **Task 3 — MITRE ATT&CK mapping.** Map each of the three attacks to a MITRE ATT&CK tactic and technique.
 
----
-
-## Model Answer
-
-**Task 1:**
-
-| Attack | Data Source | Condition | Threshold |
-|--------|-----------|-----------|-----------|
-| Credential stuffing | VPN authentication logs | Multiple failed logins from different usernames but the same source IP | > 20 unique usernames failing from 1 IP within 10 minutes |
-| PowerShell abuse | Endpoint (Sysmon / EDR) | PowerShell.exe spawns with `-EncodedCommand`, `DownloadString`, `IEX`, or `WebClient` | Any occurrence (low-frequency, high-fidelity) |
-| Data staging | Endpoint or file server | Large compressed archives (.zip, .7z, .rar) created in unusual locations (e.g. temp folders) above a size threshold | Archive > 500 MB created in %TEMP% or unusual directory |
-
-**Task 2:**
-
-| Rule | False positive source | Tuning |
-|------|----------------------|--------|
-| Credential stuffing | Employees mistyping passwords (multiple failures) | Exclude: alert only if > 20 *unique usernames* fail from the same IP (not the same user failing repeatedly) |
-| PowerShell abuse | IT admins running legitimate scripts | Whitelist known admin workstations and signed scripts; alert only on unsigned or obfuscated commands |
-| Data staging | Developers or backup jobs creating large archives | Whitelist: known backup user accounts and scheduled job paths; alert on ad-hoc user accounts creating large archives |
-
-**Task 3:**
-
-| Attack | Tactic | Technique |
-|--------|--------|-----------|
-| Credential stuffing | **Credential Access** | T1110 — Brute Force (sub: Credential Stuffing) |
-| PowerShell abuse | **Execution** | T1059.001 — Command and Scripting Interpreter: PowerShell |
-| Data staging | **Collection** | T1560 — Archive Collected Data |
 $md$, 30, 3),
 
 -- Module 2: Threat Hunting and Incident Handling (practical at order 3)
@@ -2249,31 +1846,6 @@ Action: Created C:\Temp\data_export.zip (2.1 GB)
 
 **Task 4 — Respond.** If confirmed, write the first 4 containment actions.
 
----
-
-## Model Answer
-
-**Task 1:** "The service account svc-report has been compromised and is being used for lateral movement, data collection, and possible exfiltration — the attacker is operating during off-hours from IP 10.0.3.99."
-
-**Task 2:**
-1. svc-report logging into FILE-01 and DB-01 at 02:17/02:22 — unusual time for a reporting service account that normally runs at 08:00.
-2. Source IP 10.0.3.99 — different from the normal 10.0.1.50; identify what device this is.
-3. cmd.exe → powershell.exe with encoded command — classic living-off-the-land technique.
-4. 2.1 GB archive created in C:\Temp — data staging for exfiltration.
-5. admin-jdoe logged in from the same IP (10.0.3.99) at 02:30 — possible privilege escalation or credential theft.
-
-**Task 3:**
-1. What device is 10.0.3.99? Check DHCP/CMDB — is it a workstation, server, or unknown?
-2. What did svc-report do on DB-01? Check database query logs for large data exports.
-3. Did the 2.1 GB archive leave the network? Check firewall/proxy logs for outbound transfers from FILE-01 or 10.0.3.99.
-4. How did admin-jdoe's credentials get used from 10.0.3.99? Check: was jdoe aware? Was Mimikatz or similar used?
-5. Has svc-report's password been changed recently? Check AD password last set date.
-
-**Task 4:**
-1. Disable svc-report and reset its credentials immediately.
-2. Reset admin-jdoe's password and revoke active sessions.
-3. Isolate 10.0.3.99, FILE-01, and DB-01 from the network for forensic investigation.
-4. Preserve all logs and the data_export.zip file as evidence.
 $md$, 35, 3);
 
 -- ========== BH-ADV: PRACTICALS ==========
@@ -2307,32 +1879,6 @@ You are the Head of Information Security at **TrustBank**, a mid-size retail ban
 
 **Task 3 — Objection handling.** A board member asks: "Why can't existing staff handle third-party risk?" Write your response (3–4 sentences).
 
----
-
-## Model Answer
-
-**Task 1:** "TrustBank accepts moderate operational and cyber risk where the potential financial impact per incident is below $500,000 and recovery time is under 24 hours. We have zero tolerance for: (a) loss of customer financial data, (b) regulatory non-compliance resulting in enforcement action, and (c) service disruption to customer-facing banking systems exceeding 4 hours. Risks exceeding these thresholds must be escalated to the Risk Committee for treatment approval."
-
-**Task 2:**
-
-**Slide 1: Current Risk Posture**
-- Overall posture: **Amber** — improving but with gaps in third-party risk management.
-- Phishing incident contained; root cause addressed (MFA deployed, training refreshed).
-- Major audit finding: TPRM process does not meet regulatory expectations. Remediation in progress.
-- Compliance: PCI DSS compliant; data protection programme on track.
-
-**Slide 2: Top 3 Risks**
-- **1. Third-party risk (High):** 23 critical vendors not assessed in 12+ months; regulatory scrutiny increasing. Remediation: TPRM platform + dedicated analyst.
-- **2. Ransomware (High):** Banking sector is a top target. Controls in place (EDR, backups) but tabletop exercise revealed gaps in recovery time. Remediation: improve backup testing cadence.
-- **3. Talent shortage (Medium):** Security team is understaffed relative to scope; incident response relies on 2 people. Remediation: hire 2 FTEs.
-
-**Slide 3: Investment Request**
-- 2 additional security FTEs: 1 TPRM analyst, 1 SOC analyst. Estimated cost: $180,000/yr.
-- TPRM platform license: $40,000/yr. Enables automated vendor assessments and continuous monitoring.
-- Total ask: $220,000/yr. Expected risk reduction: closes the major audit finding, reduces vendor-related incident probability by an estimated 60%.
-- ROI: a single third-party breach costs an average of $4.3M (IBM); this investment mitigates that risk.
-
-**Task 3:** "Our current team of 6 manages vulnerability management, SOC operations, incident response, compliance, and awareness training — they are already stretched beyond capacity, which is why the TPRM audit finding occurred. Third-party risk management requires dedicated effort: vendor assessments, contract review, continuous monitoring, and reporting. Adding it to the existing team without additional headcount means something else will suffer. The regulatory expectation is clear — we need a dedicated function, and one analyst with a platform will scale better than ad-hoc manual reviews."
 $md$, 35, 3),
 
 -- Module 2: Security Architecture and Leadership (practical at order 3)
@@ -2372,29 +1918,6 @@ Budget: $500,000 in Year 1, $400,000 in Year 2, $350,000 in Year 3.
 
 **Task 4 — Success metrics.** Define 3 metrics you would track over the 3 years to measure the programme's success.
 
----
-
-## Model Answer
-
-**Task 1:** Year 1 focus: (1) **Governance and risk** — you need a foundation (risk register, policies, risk committee) before everything else. (2) **Incident response** — if a breach happens tomorrow, you need to be able to respond; this is the biggest immediate liability at maturity 1. (3) **Identity and access** — identity is the new perimeter; compromised credentials are the #1 attack vector. Data protection and TPRM will follow in Year 2 once governance is established.
-
-**Task 2:**
-
-| Year | Focus Areas | Key Initiatives | Budget |
-|------|-------------|-----------------|--------|
-| Year 1 | Governance, IR, IAM | Establish risk committee + register; write core policies; build IR plan + conduct tabletop; deploy MFA and PAM | $500K |
-| Year 2 | Data protection, SecOps, TPRM | Data classification + DLP; deploy SIEM and hire 2 SOC analysts; launch vendor risk assessment programme | $400K |
-| Year 3 | Maturity + optimisation | Automate compliance (GRC platform); threat hunting programme; advanced IAM (zero trust); TPRM continuous monitoring | $350K |
-
-**Task 3:**
-1. Enable MFA for all employees (especially privileged accounts and VPN) — immediate risk reduction.
-2. Create and test an incident response plan with a tabletop exercise — proves readiness.
-3. Conduct a risk assessment and present the top 10 risks to the board — establishes governance credibility.
-
-**Task 4:**
-1. **Maturity score progression** — overall and per-domain, measured annually against the 1–5 scale.
-2. **Mean time to detect and respond (MTTD/MTTR)** — should decrease as SecOps and IR improve.
-3. **Audit finding closure rate** — percentage of findings remediated on time; shows governance effectiveness.
 $md$, 40, 3);
 
 -- ==================================================================================
