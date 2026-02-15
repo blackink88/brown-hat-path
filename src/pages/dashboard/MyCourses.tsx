@@ -308,9 +308,7 @@ export default function MyCourses() {
                   <AlignedToCerts certifications={course.aligned_certifications ?? []} className="mb-2" />
                   {course.duration_hours != null && course.duration_hours > 0 && (
                     <p className="text-xs text-muted-foreground mb-2">
-                      Est. {course.duration_hours} hours · at your own pace
-                      {" · "}
-                      ~{Math.ceil(course.duration_hours / 8)}–{Math.ceil(course.duration_hours / 5)} weeks if 5–8 hrs/week. Labs may add time.
+                      Est. {course.duration_hours} hours
                     </p>
                   )}
                   <div className="mb-3">
@@ -401,14 +399,9 @@ export default function MyCourses() {
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-muted-foreground mb-3">
                       <span>
                         {course.duration_hours != null
-                          ? `Est. ${course.duration_hours} hours · at your own pace`
+                          ? `Est. ${course.duration_hours} hours`
                           : "—"}
                       </span>
-                      {course.duration_hours != null && course.duration_hours > 0 && (
-                        <span className="text-muted-foreground/90">
-                          ~{Math.ceil(course.duration_hours / 8)}–{Math.ceil(course.duration_hours / 5)} weeks if 5–8 hrs/week. Labs may add time.
-                        </span>
-                      )}
                     </div>
                     {isLocked ? (
                       <Button variant="outline" className="w-full" asChild>
