@@ -400,7 +400,7 @@ export default function MyCourses() {
                       <span>
                         {course.duration_hours != null
                           ? `Est. ${course.duration_hours} hours`
-                          : "—"}
+                          : "-"}
                       </span>
                     </div>
                     {isLocked ? (

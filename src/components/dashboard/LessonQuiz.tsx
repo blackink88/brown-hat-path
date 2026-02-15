@@ -165,7 +165,7 @@ export function LessonQuiz({
       {!submitted ? (
         <>
           <p className="text-sm text-muted-foreground">
-            You need {passThreshold}% to pass. Take your time — you can retry if you need to.
+            You need {passThreshold}% to pass. Take your time - you can retry if you need to.
           </p>
           <div className="space-y-6">
             {questions.map((q, idx) => (
@@ -225,8 +225,8 @@ export function LessonQuiz({
             <div>
               <p className="font-semibold">
                 {score !== null && score >= passThreshold
-                  ? `You passed — ${score}% (${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct)`
-                  : `${score}% — ${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct`}
+                  ? `You passed - ${score}% (${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct)`
+                  : `${score}% - ${questions.filter((q) => selected[q.id] && correctOptionIds.has(selected[q.id]!)).length}/${questions.length} correct`}
               </p>
               <p className="text-sm mt-0.5 opacity-90">
                 {score !== null && score >= passThreshold

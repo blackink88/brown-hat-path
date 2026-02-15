@@ -8,12 +8,12 @@
  * Migration courses: BH-GRC-2, BH-SPEC-IAM, BH-SPEC-CLOUD, BH-SPEC-GRC
  */
 export const COURSE_SKILL_MAP: Record<string, string[]> = {
-  // Level 0 — Bridge
+  // Level 0 - Bridge
   "BH-BRIDGE": [
     "Network Security",
     "Security Operations",
   ],
-  // Level 1 — Foundations
+  // Level 1 - Foundations
   "BH-FOUND-1": [
     "Network Security",
     "Security Operations",
@@ -22,14 +22,14 @@ export const COURSE_SKILL_MAP: Record<string, string[]> = {
     "Network Security",
     "Threat Analysis",
   ],
-  // Level 2 — Core Cyber
+  // Level 2 - Core Cyber
   "BH-CYBER-2": [
     "Threat Analysis",
     "Security Operations",
     "Cryptography",
     "Penetration Testing",
   ],
-  // Level 3 — Practitioner
+  // Level 3 - Practitioner
   "BH-OPS-2": [
     "Incident Response",
     "Security Operations",
@@ -39,7 +39,7 @@ export const COURSE_SKILL_MAP: Record<string, string[]> = {
     "GRC & Compliance",
     "Security Operations",
   ],
-  // Level 4 — Specialisations
+  // Level 4 - Specialisations
   "BH-SPEC-SOC": [
     "Incident Response",
     "Security Operations",
@@ -58,7 +58,7 @@ export const COURSE_SKILL_MAP: Record<string, string[]> = {
     "GRC & Compliance",
     "Cloud Security",
   ],
-  // Level 5 — Advanced & Leadership
+  // Level 5 - Advanced & Leadership
   "BH-ADV": [
     "GRC & Compliance",
     "Security Operations",

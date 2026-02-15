@@ -74,7 +74,7 @@ const Enroll = () => {
                 Start Your Cybersecurity Career Today
               </h1>
               <p className="text-lg text-muted-foreground mb-8">
-                Join Brown Hat Academy and gain the skills employers are looking for—no degree required.
+                Join Brown Hat Academy and gain the skills employers are looking for - no degree required.
               </p>
 
               <ul className="space-y-4">

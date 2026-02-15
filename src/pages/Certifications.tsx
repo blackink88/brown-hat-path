@@ -87,7 +87,7 @@ export default function Certifications() {
           )}
 
           <p className="text-muted-foreground mb-8">
-            We don&apos;t issue these certs—you sit the exams with the vendors. Our curriculum prepares you for them.
+            We don&apos;t issue these certs - you sit the exams with the vendors. Our curriculum prepares you for them.
           </p>
           <div className="space-y-4">
             {certs.map((cert) => (

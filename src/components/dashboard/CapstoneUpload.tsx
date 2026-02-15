@@ -38,7 +38,7 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Fetch existing submission — gracefully handle missing table
+  // Fetch existing submission - gracefully handle missing table
   const {
     data: submission,
     isLoading,
@@ -84,7 +84,7 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
       return;
     }
 
-    // Validate file name pattern (informational — don't block)
+    // Validate file name pattern (informational - don't block)
     const expectedPattern = new RegExp(
       `^BH-[A-Z0-9-]+-capstone-[A-Za-z]+-[A-Za-z]+\\.pdf$`
     );

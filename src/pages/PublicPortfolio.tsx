@@ -73,7 +73,7 @@ export default function PublicPortfolio() {
             {portfolio.display_name || "Skills portfolio"}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Brown Hat Academy — verified skills portfolio
+            Brown Hat Academy - verified skills portfolio
           </p>
 
           {courses.length > 0 && (

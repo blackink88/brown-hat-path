@@ -56,7 +56,7 @@ export function LearningPathPreview() {
             Your learning journey
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            From complete beginner to cybersecurity professional—one clear path.
+            From complete beginner to cybersecurity professional - one clear path.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export function LearningPathPreview() {
                   No university education?
                 </h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Start at the Bridge level. No shame, no labels—just a clear entry point.
+                  Start at the Bridge level. No shame, no labels - just a clear entry point.
                 </p>
                 <div className="flex items-center gap-2 text-sm text-accent font-medium">
                   <CheckCircle className="h-4 w-4" />

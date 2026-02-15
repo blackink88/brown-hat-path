@@ -19,7 +19,7 @@ const values = [
   {
     icon: Heart,
     title: "Locally Rooted",
-    description: "Designed for African realities—accessible, affordable, and relevant.",
+    description: "Designed for African realities - accessible, affordable, and relevant.",
   },
   {
     icon: Award,
@@ -39,7 +39,7 @@ Specialises in Identity and Access Management (IAM), with experience designing a
 
 Driven by a strong belief that cybersecurity education must be practical, accessible, and outcomes-focused, particularly within the South African and broader African context. Has led the design and development of cybersecurity awareness and training platforms tailored for SMEs, with a focus on skills that translate directly into employability and operational competence.
 
-As CEO, leads with a clear mandate: build scalable cybersecurity capability, close the skills gap, and produce professionals who can operate confidently in real-world security roles—not just pass exams.`,
+As CEO, leads with a clear mandate: build scalable cybersecurity capability, close the skills gap, and produce professionals who can operate confidently in real-world security roles - not just pass exams.`,
   },
   {
     role: "Chief of Operations",

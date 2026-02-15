@@ -9,7 +9,7 @@ const valueProps = [
   {
     icon: Globe,
     title: "Globally aligned certifications",
-    description: "Our curriculum maps directly to CompTIA, ISC², and Microsoft certifications—internationally recognized credentials.",
+    description: "Our curriculum maps directly to CompTIA, ISC², and Microsoft certifications - internationally recognized credentials.",
   },
   {
     icon: MapPin,

@@ -228,7 +228,7 @@ export default function AdminCourses() {
                 <CollapsibleTrigger className="flex w-full items-center gap-2 p-4 text-left hover:bg-muted/50">
                   <ChevronRight className={cn("h-4 w-4 transition-transform", isCourseOpen && "rotate-90")} />
                   <span className="font-medium">{course.code}</span>
-                  <span className="text-muted-foreground">— {course.title}</span>
+                  <span className="text-muted-foreground">- {course.title}</span>
                   <span className="text-xs text-muted-foreground ml-auto">{modules.length} modules</span>
                 </CollapsibleTrigger>
                 <CollapsibleContent>

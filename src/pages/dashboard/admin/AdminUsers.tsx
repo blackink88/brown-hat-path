@@ -182,7 +182,7 @@ export default function AdminUsers() {
   const roleByUser = (userId: string) => roles?.find((r) => r.user_id === userId)?.role ?? "student";
   const activeSubForUser = (userId: string) =>
     subscriptions?.find((s) => s.user_id === userId && s.status === "active");
-  const tierName = (tierId: string) => tiers?.find((t) => t.id === tierId)?.name ?? "—";
+  const tierName = (tierId: string) => tiers?.find((t) => t.id === tierId)?.name ?? "-";
 
   if (isLoading) return <div className="text-muted-foreground">Loading users…</div>;
 
@@ -211,7 +211,7 @@ export default function AdminUsers() {
               return (
                 <tr key={profile.id} className="border-t border-border">
                   <td className="p-3">
-                    <div className="font-medium">{profile.full_name || "—"}</div>
+                    <div className="font-medium">{profile.full_name || "-"}</div>
                     <div className="text-xs text-muted-foreground">{profile.user_id}</div>
                   </td>
                   <td className="p-3">
@@ -220,7 +220,7 @@ export default function AdminUsers() {
                       {role}
                     </span>
                   </td>
-                  <td className="p-3">{sub ? tierName(sub.tier_id) : "—"}</td>
+                  <td className="p-3">{sub ? tierName(sub.tier_id) : "-"}</td>
                   <td className="p-3 text-right space-x-2">
                     <Select value={role} onValueChange={(v) => updateRole.mutate({ userId: profile.user_id, role: v as "admin" | "student" })}>
                       <SelectTrigger className="w-[110px] h-8 inline-flex">
@@ -327,7 +327,7 @@ export default function AdminUsers() {
                 </SelectTrigger>
                 <SelectContent>
                   {courses?.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>{c.code} — {c.title}</SelectItem>
+                    <SelectItem key={c.id} value={c.id}>{c.code} - {c.title}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

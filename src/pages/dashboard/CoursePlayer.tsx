@@ -309,12 +309,12 @@ export default function CoursePlayer() {
                     />
                   )}
 
-                  {/* Practical submission — text answers for "Practical:" lessons */}
+                  {/* Practical submission - text answers for "Practical:" lessons */}
                   {currentLesson?.title?.startsWith("Practical:") && (
                     <PracticalSubmission lessonId={currentLesson.id} />
                   )}
 
-                  {/* Capstone upload — PDF upload for "Capstone:" lessons */}
+                  {/* Capstone upload - PDF upload for "Capstone:" lessons */}
                   {currentLesson?.title?.startsWith("Capstone:") && courseCode && (
                     <CapstoneUpload
                       lessonId={currentLesson.id}
