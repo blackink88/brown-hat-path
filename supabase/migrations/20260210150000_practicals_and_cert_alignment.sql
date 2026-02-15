@@ -1,8 +1,36 @@
 -- Practical challenge lessons for BH-GRC-2, BH-SPEC-IAM, BH-SPEC-CLOUD, BH-SPEC-GRC.
--- One practical per module (16 total). Each contains a scenario, tasks, and a model answer.
+-- One practical per module (16 total). Each contains a scenario and tasks.
 -- Practicals use the same lessons table; title prefix "Practical:" distinguishes them in the UI.
 
 BEGIN;
+
+-- ========== Ensure the four courses exist (idempotent) ==========
+INSERT INTO public.courses (id, code, title, description, level, required_tier_level, duration_hours, order_index, aligned_certifications) VALUES
+  ('a0000000-0000-4000-8000-000000000008', 'BH-GRC-2',      'Practitioner Core: GRC',          'Governance, risk, and compliance.',          3, 2, 100, 5, ARRAY['ISC² SSCP']),
+  ('a0000000-0000-4000-8000-000000000009', 'BH-SPEC-IAM',    'Specialisation: IAM',             'Identity and Access Management.',            4, 3, 120, 7, ARRAY['CISSP']),
+  ('a0000000-0000-4000-8000-00000000000a', 'BH-SPEC-CLOUD',  'Specialisation: Cloud Security',  'Cloud security (AWS, Azure, GCP).',          4, 3, 120, 8, ARRAY['AWS Security','Microsoft SC-200']),
+  ('a0000000-0000-4000-8000-00000000000b', 'BH-SPEC-GRC',    'Specialisation: Advanced GRC',    'Advanced governance, risk, and compliance.', 4, 3, 120, 9, ARRAY['CRISC'])
+ON CONFLICT (code) DO NOTHING;
+
+-- ========== Ensure all 16 modules exist (idempotent) ==========
+INSERT INTO public.modules (id, course_id, title, description, order_index) VALUES
+  ('d0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000008', 'GRC Foundations',                          'Governance, risk, and compliance in the context of cybersecurity.', 1),
+  ('d0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000008', 'Risk Management',                          'Identification, assessment, treatment, and monitoring of risk.',    2),
+  ('d0000000-0000-4000-8000-000000000003', 'a0000000-0000-4000-8000-000000000008', 'Policy and Control Frameworks',            'Policies, standards, and common frameworks.',                      3),
+  ('d0000000-0000-4000-8000-000000000004', 'a0000000-0000-4000-8000-000000000008', 'Compliance and Audit',                     'Compliance programmes, audits, and reporting.',                    4),
+  ('d0000000-0000-4000-8000-000000000011', 'a0000000-0000-4000-8000-000000000009', 'IAM Fundamentals',                         'Identity, authentication, authorization, and directory services.', 1),
+  ('d0000000-0000-4000-8000-000000000012', 'a0000000-0000-4000-8000-000000000009', 'Access Control Models and Mechanisms',     'DAC, MAC, RBAC, ABAC, MFA, and privileged access.',               2),
+  ('d0000000-0000-4000-8000-000000000013', 'a0000000-0000-4000-8000-000000000009', 'Identity Lifecycle and Federation',        'Provisioning, deprovisioning, SSO, and federation.',              3),
+  ('d0000000-0000-4000-8000-000000000014', 'a0000000-0000-4000-8000-000000000009', 'IAM in Practice',                          'Zero trust, cloud IAM, monitoring, and incident response.',       4),
+  ('d0000000-0000-4000-8000-000000000021', 'a0000000-0000-4000-8000-00000000000a', 'Cloud Security Fundamentals',              'Shared responsibility, cloud models, and threats.',               1),
+  ('d0000000-0000-4000-8000-000000000022', 'a0000000-0000-4000-8000-00000000000a', 'Cloud Identity and Access',                'IAM in cloud, roles, policies, conditional access.',              2),
+  ('d0000000-0000-4000-8000-000000000023', 'a0000000-0000-4000-8000-00000000000a', 'Cloud Infrastructure and Network Security','VPC, encryption, logging, and hardening.',                        3),
+  ('d0000000-0000-4000-8000-000000000024', 'a0000000-0000-4000-8000-00000000000a', 'Cloud Security Operations',                'CSPM, incident response, and compliance in cloud.',               4),
+  ('d0000000-0000-4000-8000-000000000031', 'a0000000-0000-4000-8000-00000000000b', 'Enterprise Risk Management',               'ERM framework, risk appetite, and board-level risk.',             1),
+  ('d0000000-0000-4000-8000-000000000032', 'a0000000-0000-4000-8000-00000000000b', 'IT Risk Identification and Analysis',      'IT-specific risk scenarios and quantitative methods.',            2),
+  ('d0000000-0000-4000-8000-000000000033', 'a0000000-0000-4000-8000-00000000000b', 'Risk Response and Monitoring',             'Response strategies, KRIs, and risk reporting.',                  3),
+  ('d0000000-0000-4000-8000-000000000034', 'a0000000-0000-4000-8000-00000000000b', 'Governance and Reporting',                 'Risk governance, committees, and assurance.',                     4)
+ON CONFLICT (id) DO NOTHING;
 
 -- ========== BH-GRC-2: PRACTICALS ==========
 INSERT INTO public.lessons (id, module_id, title, description, content_markdown, duration_minutes, order_index) VALUES
