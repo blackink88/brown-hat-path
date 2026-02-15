@@ -1232,4 +1232,12 @@ Example summary table:
 - An evidence summary table bridges technical findings and compliance requirements.
 $md$, 30, 6);
 
+-- =====================================================================
+-- ========== POPULATE courses.skills FOR "Skills You Will Gain" ==========
+-- =====================================================================
+UPDATE public.courses SET skills = '["Governance and accountability","Risk identification and assessment","Policy and control frameworks","Compliance programmes and audit","Security auditing with Lynis"]'::jsonb WHERE code = 'BH-GRC-2';
+UPDATE public.courses SET skills = '["Identity lifecycle management","Access control models (RBAC, ABAC)","MFA and privileged access","Federation and SSO","Linux access control and permissions"]'::jsonb WHERE code = 'BH-SPEC-IAM';
+UPDATE public.courses SET skills = '["Cloud shared responsibility model","Cloud IAM and network security","Microsoft Defender and Sentinel","AWS security services","TLS assessment and web security"]'::jsonb WHERE code = 'BH-SPEC-CLOUD';
+UPDATE public.courses SET skills = '["Enterprise risk management","Quantitative risk analysis (ALE)","KRI dashboards and monitoring","COBIT and IT governance","BCP/DRP and compliance evidence"]'::jsonb WHERE code = 'BH-SPEC-GRC';
+
 COMMIT;

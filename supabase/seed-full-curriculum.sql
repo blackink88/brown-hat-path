@@ -7059,4 +7059,15 @@ Compile everything into a board-ready document with these sections:
 3. Upload using the **Upload Capstone** button below.
 $md$, 180, 1);
 
+-- =====================================================================
+-- ========== POPULATE courses.skills FOR "Skills You Will Gain" ==========
+-- =====================================================================
+UPDATE public.courses SET skills = '["Digital literacy","Operating system basics","Command-line navigation","Basic networking concepts","Cybersecurity awareness"]'::jsonb WHERE code = 'BH-BRIDGE';
+UPDATE public.courses SET skills = '["Hardware troubleshooting","Windows OS management","Network fundamentals","Security concepts","Reconnaissance with nmap and dig"]'::jsonb WHERE code = 'BH-FOUND-1';
+UPDATE public.courses SET skills = '["Routing and switching","IPv6 and NAT","Network troubleshooting","SNMP and syslog monitoring","Packet analysis with Wireshark"]'::jsonb WHERE code = 'BH-FOUND-2';
+UPDATE public.courses SET skills = '["Threat landscape analysis","Security controls and frameworks","Cryptography fundamentals","OWASP Top 10 and application security","Vulnerability scanning with nmap and nikto"]'::jsonb WHERE code = 'BH-CYBER-2';
+UPDATE public.courses SET skills = '["SOC operations and monitoring","Log analysis and SIEM correlation","Incident response procedures","Endpoint detection and response","Vulnerability and patch management"]'::jsonb WHERE code = 'BH-OPS-2';
+UPDATE public.courses SET skills = '["Advanced threat detection","Windows Event Log and Sysmon analysis","Detection engineering with Sigma rules","Malware triage and sandboxing","Cloud SOC monitoring"]'::jsonb WHERE code = 'BH-SPEC-SOC';
+UPDATE public.courses SET skills = '["Security architecture and models","Cryptographic systems and PKI","CISSP domain knowledge","Security programme management","Governance frameworks (COBIT, ISO 27001)"]'::jsonb WHERE code = 'BH-ADV';
+
 COMMIT;

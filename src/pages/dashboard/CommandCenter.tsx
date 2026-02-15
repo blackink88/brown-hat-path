@@ -66,8 +66,7 @@ export default function CommandCenter() {
 
   const radarData =
     skills?.map((skill) => ({
-      subject: skill.name.split(" ")[0],
-      fullName: skill.name,
+      subject: skill.name,
       value: userSkillLevels[skill.name] ?? 0,
       fullMark: 100,
     })) || [];
@@ -140,7 +139,7 @@ export default function CommandCenter() {
               <PolarGrid stroke="hsl(var(--border))" />
               <PolarAngleAxis
                 dataKey="subject"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
               />
               <PolarRadiusAxis
                 angle={30}
