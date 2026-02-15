@@ -28,6 +28,7 @@ export type Database = {
           feedback: string | null
           graded_by: string | null
           graded_at: string | null
+          response_text: string | null
         }
         Insert: {
           id?: string
@@ -42,6 +43,7 @@ export type Database = {
           feedback?: string | null
           graded_by?: string | null
           graded_at?: string | null
+          response_text?: string | null
         }
         Update: {
           id?: string
@@ -56,6 +58,7 @@ export type Database = {
           feedback?: string | null
           graded_by?: string | null
           graded_at?: string | null
+          response_text?: string | null
         }
         Relationships: [
           {
