@@ -7,18 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Award } from "lucide-react";
 
 const certs = [
-  { name: "CompTIA A+", level: "Foundations", desc: "Core IT and hardware fundamentals." },
-  { name: "CompTIA Network+", level: "Foundations", desc: "Networking concepts and protocols." },
-  { name: "CompTIA Security+", level: "Core Cyber", desc: "Entry-level security concepts and controls." },
-  { name: "ISC² Certified in Cybersecurity (CC)", level: "Core Cyber", desc: "Foundational security knowledge." },
-  { name: "CompTIA CySA+", level: "Practitioner", desc: "Security analytics and threat detection." },
-  { name: "ISC² SSCP", level: "Practitioner", desc: "Security administration and operations." },
-  { name: "CompTIA CASP+", level: "Specialisation", desc: "Advanced security practitioner." },
-  { name: "Microsoft SC-200", level: "Specialisation", desc: "Security operations with Microsoft Defender and Sentinel." },
-  { name: "AWS Security – Specialty", level: "Specialisation", desc: "Cloud security on Amazon Web Services." },
-  { name: "CISSP", level: "Advanced", desc: "Security leadership and architecture." },
-  { name: "CISM", level: "Advanced", desc: "Security management and governance." },
-  { name: "TOGAF", level: "Advanced", desc: "Enterprise architecture and security governance." },
+  { name: "CompTIA A+", level: "Foundations (BH-FOUND-1)", desc: "Core IT and hardware fundamentals." },
+  { name: "CompTIA Network+", level: "Foundations (BH-FOUND-2)", desc: "Networking concepts and protocols." },
+  { name: "CompTIA Security+", level: "Core Cyber (BH-CYBER-2)", desc: "Entry-level security concepts and controls." },
+  { name: "ISC² Certified in Cybersecurity (CC)", level: "Core Cyber (BH-CYBER-2)", desc: "Foundational security knowledge." },
+  { name: "CompTIA CySA+", level: "Practitioner / Specialisation (BH-OPS-2, BH-SPEC-SOC)", desc: "Security analytics and threat detection." },
+  { name: "ISC² SSCP", level: "Practitioner (BH-OPS-2, BH-GRC-2)", desc: "Security administration and operations." },
+  { name: "Microsoft SC-200", level: "Specialisation (BH-SPEC-CLOUD)", desc: "Security operations with Microsoft Defender and Sentinel." },
+  { name: "AWS Security - Specialty", level: "Specialisation (BH-SPEC-CLOUD)", desc: "Cloud security on Amazon Web Services." },
+  { name: "CRISC", level: "Specialisation (BH-SPEC-GRC)", desc: "IT risk management and governance." },
+  { name: "CISSP", level: "Specialisation / Advanced (BH-SPEC-IAM, BH-ADV)", desc: "Security leadership and architecture." },
+  { name: "CISM", level: "Advanced (BH-ADV)", desc: "Security management and governance." },
 ];
 
 export default function Certifications() {
