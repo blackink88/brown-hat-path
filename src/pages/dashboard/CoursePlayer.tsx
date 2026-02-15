@@ -34,6 +34,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
 import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
+import { CapstoneUpload } from "@/components/dashboard/CapstoneUpload";
 
 export default function CoursePlayer() {
   const { courseCode } = useParams<{ courseCode: string }>();
@@ -279,6 +280,14 @@ export default function CoursePlayer() {
                         })
                       }
                       alreadyCompleted={!!userProgress?.[currentLesson.id]}
+                    />
+                  )}
+
+                  {/* Capstone upload — shown for lessons with "Capstone:" title prefix */}
+                  {currentLesson?.title?.startsWith("Capstone:") && courseCode && (
+                    <CapstoneUpload
+                      lessonId={currentLesson.id}
+                      courseCode={courseCode.toUpperCase()}
                     />
                   )}
 

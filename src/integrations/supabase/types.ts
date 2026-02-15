@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      capstone_submissions: {
+        Row: {
+          id: string
+          user_id: string
+          lesson_id: string
+          file_path: string
+          file_name: string
+          file_size_bytes: number | null
+          submitted_at: string
+          status: string
+          grade: number | null
+          feedback: string | null
+          graded_by: string | null
+          graded_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          lesson_id: string
+          file_path: string
+          file_name: string
+          file_size_bytes?: number | null
+          submitted_at?: string
+          status?: string
+          grade?: number | null
+          feedback?: string | null
+          graded_by?: string | null
+          graded_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          lesson_id?: string
+          file_path?: string
+          file_name?: string
+          file_size_bytes?: number | null
+          submitted_at?: string
+          status?: string
+          grade?: number | null
+          feedback?: string | null
+          graded_by?: string | null
+          graded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capstone_submissions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificates: {
         Row: {
           certificate_number: string
