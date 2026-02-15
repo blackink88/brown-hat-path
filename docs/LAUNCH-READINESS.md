@@ -92,7 +92,7 @@
 
 - **Supabase:** Set project URL and anon key in `.env` (e.g. `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`). Ensure all migrations are applied.
 - **Auth:** Email signup with confirmation is on; configure redirect URLs and email templates in Supabase Auth if needed.
-- **Deploy:** Build (`npm run build`) and host the static app (e.g. Vercel, Netlify, Lovable). No server required for the current app.
+- **Deploy:** Build (`npm run build`) and host the static app (e.g. Vercel, Netlify). No server required for the current app.
 
 ---
 
