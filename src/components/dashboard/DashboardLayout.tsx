@@ -3,7 +3,7 @@ import { Outlet, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
-import { DashboardBreadcrumb } from "./DashboardBreadcrumb";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Bell, User, Settings, LogOut, ChevronDown } from "lucide-react";
@@ -57,7 +57,6 @@ export function DashboardLayout() {
           {/* Top Header */}
           <header className="sticky top-0 z-40 flex h-14 items-center gap-2 sm:gap-4 border-b border-border bg-background/95 backdrop-blur px-3 sm:px-6">
             <SidebarTrigger />
-            <DashboardBreadcrumb />
             <div className="flex-1 flex justify-center sm:justify-start">
               <GlobalSearch />
             </div>
