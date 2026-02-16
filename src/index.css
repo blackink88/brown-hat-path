@@ -311,6 +311,61 @@
     -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 20%, transparent 100%);
   }
 
+  /* Hero card animations */
+  @keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  @keyframes floatCardTiltLeft {
+    0%, 100% { transform: rotate(-6deg) translateY(0); }
+    50% { transform: rotate(-6deg) translateY(-8px); }
+  }
+
+  @keyframes floatCardTiltRight {
+    0%, 100% { transform: rotate(6deg) translateY(0); }
+    50% { transform: rotate(6deg) translateY(-8px); }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px -4px hsl(var(--primary) / 0.3), 0 8px 32px -8px hsl(var(--primary) / 0.15); }
+    50% { box-shadow: 0 0 32px -2px hsl(var(--primary) / 0.5), 0 8px 40px -8px hsl(var(--primary) / 0.25); }
+  }
+
+  @keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes bounceScroll {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(6px); opacity: 1; }
+  }
+
+  .animate-float-card {
+    animation: floatCard 4s ease-in-out infinite;
+  }
+
+  .animate-float-tilt-left {
+    animation: floatCardTiltLeft 5s ease-in-out infinite;
+  }
+
+  .animate-float-tilt-right {
+    animation: floatCardTiltRight 4.5s ease-in-out infinite;
+  }
+
+  .animate-glow-pulse {
+    animation: glowPulse 2.5s ease-in-out infinite;
+  }
+
+  .animate-blink-cursor {
+    animation: blinkCursor 1s step-end infinite;
+  }
+
+  .animate-bounce-scroll {
+    animation: bounceScroll 2s ease-in-out infinite;
+  }
+
   .dark .security-doodle {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23c4915a' stroke-width='1' opacity='0.1'%3E%3Cpath d='M30 20 L30 10 L20 6 L10 10 L10 20 C10 28 20 34 20 34 C20 34 30 28 30 20Z'/%3E%3Crect x='65' y='18' width='14' height='12' rx='2'/%3E%3Cpath d='M68 18 V14 A4 4 0 0 1 76 14 V18'/%3E%3Ccircle cx='130' cy='15' r='5'/%3E%3Cline x1='135' y1='15' x2='148' y2='15'/%3E%3Cline x1='144' y1='15' x2='144' y2='20'/%3E%3Cline x1='148' y1='15' x2='148' y2='19'/%3E%3Cellipse cx='175' cy='15' rx='10' ry='6'/%3E%3Ccircle cx='175' cy='15' r='3'/%3E%3Cpath d='M15 65 A8 8 0 0 1 15 81' /%3E%3Cpath d='M18 67 A5 5 0 0 1 18 79' /%3E%3Cpath d='M21 70 A2 2 0 0 1 21 76' /%3E%3Ccircle cx='72' cy='73' r='6'/%3E%3Cline x1='66' y1='70' x2='62' y2='66'/%3E%3Cline x1='78' y1='70' x2='82' y2='66'/%3E%3Cline x1='66' y1='76' x2='62' y2='80'/%3E%3Cline x1='78' y1='76' x2='82' y2='80'/%3E%3Cline x1='66' y1='73' x2='62' y2='73'/%3E%3Cline x1='78' y1='73' x2='82' y2='73'/%3E%3Cpath d='M120 80 A12 12 0 0 1 140 80' fill='none'/%3E%3Cpath d='M124 77 A8 8 0 0 1 136 77' fill='none'/%3E%3Cpath d='M128 74 A4 4 0 0 1 132 74' fill='none'/%3E%3Ccircle cx='130' cy='81' r='1.5'/%3E%3Crect x='160' y='65' width='22' height='16' rx='2'/%3E%3Cpolyline points='164,72 168,75 164,78'/%3E%3Cline x1='170' y1='78' x2='176' y2='78'/%3E%3Cpath d='M25 130 A8 8 0 0 1 35 122 A6 6 0 0 1 45 126 A5 5 0 0 1 48 135 L22 135 A5 5 0 0 1 25 130Z'/%3E%3Cellipse cx='78' cy='125' rx='10' ry='4'/%3E%3Cline x1='68' y1='125' x2='68' y2='137'/%3E%3Cline x1='88' y1='125' x2='88' y2='137'/%3E%3Cellipse cx='78' cy='137' rx='10' ry='4'/%3E%3Cpath d='M130 138 L122 125 L138 125 Z'/%3E%3Cline x1='130' y1='128' x2='130' y2='133'/%3E%3Ccircle cx='130' cy='135.5' r='1'/%3E%3Cpath d='M165 122 L158 130 L165 138'/%3E%3Cpath d='M178 122 L185 130 L178 138'/%3E%3Cline x1='174' y1='121' x2='169' y2='139'/%3E%3Ccircle cx='30' cy='180' r='8'/%3E%3Cpolyline points='25,180 28,184 35,176'/%3E%3Ccircle cx='80' cy='180' r='8'/%3E%3Cellipse cx='80' cy='180' rx='4' ry='8'/%3E%3Cline x1='72' y1='180' x2='88' y2='180'/%3E%3Crect x='123' y='180' width='14' height='12' rx='2'/%3E%3Cpath d='M126 180 V176 A4 4 0 0 1 134 176'/%3E%3Cpath d='M170 190 A16 16 0 0 1 190 190' /%3E%3Cpath d='M174 187 A10 10 0 0 1 186 187' /%3E%3Cpath d='M178 184 A5 5 0 0 1 182 184' /%3E%3Ccircle cx='180' cy='192' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
   }
