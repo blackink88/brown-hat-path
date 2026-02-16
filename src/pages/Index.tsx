@@ -3,7 +3,6 @@ import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
 import { ValuePropsSection } from "@/components/home/ValuePropsSection";
 import { AudienceSection } from "@/components/home/AudienceSection";
-import { LearningPathPreview } from "@/components/home/LearningPathPreview";
 import { CTASection } from "@/components/home/CTASection";
 
 const Index = () => {
@@ -14,7 +13,6 @@ const Index = () => {
         <HeroSection />
         <ValuePropsSection />
         <AudienceSection />
-        <LearningPathPreview />
         <CTASection />
       </main>
       <Footer />

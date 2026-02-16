@@ -1,15 +1,10 @@
-import { Target, Globe, MapPin, Wrench } from "lucide-react";
+import { Target, MapPin, Clock, Briefcase } from "lucide-react";
 
 const valueProps = [
   {
     icon: Target,
     title: "Skills-first, not theory-first",
-    description: "Learn by doing. Every module includes hands-on labs and real-world scenarios that prepare you for actual job tasks.",
-  },
-  {
-    icon: Globe,
-    title: "Globally aligned certifications",
-    description: "Our curriculum maps directly to CompTIA, ISC², and Microsoft certifications - internationally recognized credentials.",
+    description: "Learn by doing. Every module includes real-world scenarios that prepare you for actual job tasks from day one.",
   },
   {
     icon: MapPin,
@@ -17,9 +12,14 @@ const valueProps = [
     description: "Affordable pricing, local context, and career pathways that make sense for the African cybersecurity market.",
   },
   {
-    icon: Wrench,
-    title: "Hands-on labs & assessments",
-    description: "No multiple-choice exams. Prove your skills through practical challenges using real security tools.",
+    icon: Clock,
+    title: "Self-paced and flexible",
+    description: "Study around your schedule. Access content anytime, revisit modules, and progress at the pace that works for you.",
+  },
+  {
+    icon: Briefcase,
+    title: "Career-ready outcomes",
+    description: "Graduate with a portfolio of practical work, not just a certificate. Employers see what you can actually do.",
   },
 ];
 

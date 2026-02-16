@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -12,7 +12,51 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import brownhatLogo from "@/assets/brownhat.png";
+
+/* ── Auto-scroll hook for learning path ─────────────── */
+
+function useAutoScroll() {
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let scrollPos = 0;
+    const speed = 0.5; // px per frame
+    let raf: number;
+    let paused = false;
+
+    const step = () => {
+      if (!paused && el.scrollWidth > el.clientWidth) {
+        scrollPos += speed;
+        if (scrollPos >= el.scrollWidth - el.clientWidth) {
+          scrollPos = 0;
+        }
+        el.scrollLeft = scrollPos;
+      }
+      raf = requestAnimationFrame(step);
+    };
+
+    const pause = () => { paused = true; };
+    const resume = () => {
+      scrollPos = el.scrollLeft;
+      paused = false;
+    };
+
+    el.addEventListener("pointerenter", pause);
+    el.addEventListener("pointerleave", resume);
+    raf = requestAnimationFrame(step);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("pointerenter", pause);
+      el.removeEventListener("pointerleave", resume);
+    };
+  }, []);
+
+  return ref;
+}
 
 /* ── Rotating headline word ─────────────────────────── */
 
@@ -92,6 +136,7 @@ const STATS = [
 export function HeroSection() {
   const { word, phase } = useRotatingWord();
   const { displayed, done } = useTypingEffect();
+  const scrollRef = useAutoScroll();
 
   return (
     <section className="relative min-h-[100svh] flex flex-col justify-center bg-white overflow-hidden">
@@ -101,17 +146,6 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-stone-100/60 pointer-events-none" />
 
       <div className="container relative z-10 py-20 md:py-28">
-        {/* Academy badge */}
-        <div
-          className="flex justify-center mb-8 animate-fade-up"
-          style={{ animationFillMode: "backwards" }}
-        >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-primary/[0.06] border border-primary/15 text-sm font-medium text-primary">
-            <img src={brownhatLogo} alt="" className="h-5 w-auto" />
-            Brown Hat Academy
-          </span>
-        </div>
-
         {/* Headline */}
         <h1
           className="text-center text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.08] mb-5 animate-fade-up"
@@ -222,25 +256,29 @@ export function HeroSection() {
                 Structured Learning Path
               </h3>
             </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-none">
-              {LEVELS.map((level, i) => (
-                <div key={level} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                  <div
-                    className={cn(
-                      "h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold text-white transition-colors",
-                      i <= 2 ? "bg-primary" : "bg-primary/30",
+            <div ref={scrollRef} className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {/* Duplicate items for seamless loop */}
+              {[...LEVELS, ...LEVELS].map((level, i) => {
+                const idx = i % LEVELS.length;
+                return (
+                  <div key={`${level}-${i}`} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <div
+                      className={cn(
+                        "h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold text-white transition-colors",
+                        idx <= 2 ? "bg-primary" : "bg-primary/30",
+                      )}
+                    >
+                      {idx + 1}
+                    </div>
+                    <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">
+                      {level}
+                    </span>
+                    {(i < LEVELS.length * 2 - 1) && (
+                      <div className="w-3 sm:w-5 h-px bg-border" />
                     )}
-                  >
-                    {i + 1}
                   </div>
-                  <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">
-                    {level}
-                  </span>
-                  {i < 5 && (
-                    <div className="w-3 sm:w-5 h-px bg-border" />
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
