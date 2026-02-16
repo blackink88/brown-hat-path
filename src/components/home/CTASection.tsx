@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle, Clock, Award, CreditCard } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, Award, CreditCard, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 
 const trustItems = [
   { icon: Clock, label: "Self-paced" },
   { icon: Award, label: "Certification-aligned" },
+  { icon: MapPin, label: "Built for Africa" },
   { icon: CreditCard, label: "No credit card to start" },
 ];
 
