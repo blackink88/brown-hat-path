@@ -139,11 +139,17 @@ export function HeroSection() {
   const scrollRef = useAutoScroll();
 
   return (
-    <section className="relative min-h-[100svh] flex flex-col justify-center bg-white overflow-hidden">
-      {/* Subtle dot-grid background */}
-      <div className="absolute inset-0 hero-dot-grid pointer-events-none" />
-      {/* Warm fade at bottom */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-stone-100/60 pointer-events-none" />
+    <section className="relative min-h-[100svh] flex flex-col justify-center bg-background overflow-hidden">
+      {/* Background layers — matches other page heroes */}
+      <div
+        className="absolute inset-0 opacity-[0.4] pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)",
+        }}
+      />
+      <div className="absolute inset-0 cyber-grid pointer-events-none" />
+      <div className="absolute inset-0 security-doodle pointer-events-none" />
 
       <div className="container relative z-10 py-20 md:py-28">
         {/* Headline */}
