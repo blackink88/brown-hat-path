@@ -207,11 +207,11 @@ export default function DashboardHome() {
   return (
     <div className="space-y-6">
       {userTierLevel === 0 && (
-        <div className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-4 flex items-center justify-between gap-4">
+        <div className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <p className="text-sm text-foreground">
             Subscribe to a plan to access courses and track your progress.
           </p>
-          <Button asChild variant="default">
+          <Button asChild variant="default" className="shrink-0">
             <Link to="/pricing">View plans</Link>
           </Button>
         </div>
@@ -227,30 +227,30 @@ export default function DashboardHome() {
           </Button>
         </div>
         <div className="relative">
-          <div className="absolute top-8 left-0 right-0 h-1 bg-border rounded-full" />
+          <div className="absolute top-8 left-0 right-0 h-1 bg-border rounded-full hidden sm:block" />
           <div
-            className="absolute top-8 left-0 h-1 bg-primary rounded-full transition-all"
+            className="absolute top-8 left-0 h-1 bg-primary rounded-full transition-all hidden sm:block"
             style={{
               width: `${currentStage ? currentStage.progress : overallPathProgress}%`,
             }}
           />
-          <div className="relative grid grid-cols-4 gap-2 sm:gap-4">
+          <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-4">
             {learningPathStages.map((stage) => (
               <div key={stage.id} className="flex flex-col items-center text-center">
                 <div
                   className={cn(
-                    "relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-4 transition-all",
+                    "relative z-10 flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full border-4 transition-all",
                     stage.status === "completed" && "bg-primary border-primary text-primary-foreground",
                     stage.status === "current" && "bg-background border-primary text-primary animate-pulse",
                     stage.status === "locked" && "bg-muted border-border text-muted-foreground"
                   )}
                 >
                   {stage.status === "completed" ? (
-                    <CheckCircle2 className="h-6 w-6" />
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" />
                   ) : stage.status === "locked" ? (
-                    <Lock className="h-5 w-5" />
+                    <Lock className="h-4 w-4 sm:h-5 sm:w-5" />
                   ) : (
-                    <Circle className="h-6 w-6" />
+                    <Circle className="h-5 w-5 sm:h-6 sm:w-6" />
                   )}
                 </div>
                 <div className="mt-3 w-full min-w-0">
@@ -280,16 +280,16 @@ export default function DashboardHome() {
           </div>
         ) : continueLearningCourse ? (
           <>
-            <div className="flex flex-row items-center gap-4 p-4 rounded-lg bg-muted/50">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg bg-muted/50">
               <div className="h-16 w-24 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
                 <span className="text-xs font-mono text-primary">{continueLearningCourse.code}</span>
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 w-full">
                 <h3 className="font-medium text-foreground truncate">{continueLearningCourse.title}</h3>
                 <p className="text-sm text-muted-foreground">{continueLearningCourse.progress}% complete</p>
                 <Progress value={continueLearningCourse.progress} className="h-1.5 mt-2" />
               </div>
-              <Button asChild className="shrink-0">
+              <Button asChild className="shrink-0 w-full sm:w-auto">
                 <Link to={`/dashboard/course/${(continueLearningCourse.code ?? "").toLowerCase()}`}>Continue</Link>
               </Button>
             </div>
