@@ -4,6 +4,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Shield, Target, Users, Globe, Award, Heart, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
+import teamCeo from "@/assets/team-ceo.png";
+import teamCoo from "@/assets/team-coo.png";
 
 const values = [
   {
@@ -31,6 +33,7 @@ const values = [
 const team = [
   {
     role: "Chief Executive Officer",
+    image: teamCeo,
     credentials: ["Master's in Information Systems", "Honours in Information Systems", "CCNA"],
     shortBio: "A cybersecurity practitioner and systems thinker with a strong foundation in information systems, identity governance, and enterprise security architecture.",
     fullBio: `A cybersecurity practitioner and systems thinker with a strong foundation in information systems, identity governance, and enterprise security architecture. Holds a Master's degree and Honours in Information Systems, supported by hands-on technical expertise and industry certifications.
@@ -43,6 +46,7 @@ As CEO, leads with a clear mandate: build scalable cybersecurity capability, clo
   },
   {
     role: "Chief of Operations",
+    image: teamCoo,
     credentials: ["Master's in Information Systems", "Honours in Digital Forensics", "CISSP", "PhD in Progress"],
     shortBio: "A seasoned cybersecurity professional with over 15 years of experience across information systems, security operations, and digital forensics.",
     fullBio: `A seasoned cybersecurity professional with over 15 years of experience across information technology, security operations, digital forensics, research and teaching. Holds Master's degree in Information Systems and an Honours degree specialising in Digital Forensics and Information Security from a leading global university, and is currently completing a PhD in Information Systems with research focused on Information Security.
@@ -60,9 +64,11 @@ function TeamCard({ member }: { member: typeof team[number] }) {
       {/* Avatar with cyber ring */}
       <div className="relative h-32 w-32 mx-auto mb-6">
         <div className="absolute inset-0 rounded-full border-2 border-cyber-teal" />
-        <div className="absolute inset-2 rounded-full bg-muted flex items-center justify-center">
-          <Users className="h-12 w-12 text-muted-foreground" />
-        </div>
+        <img
+          src={member.image}
+          alt={member.role}
+          className="absolute inset-2 rounded-full object-cover w-[calc(100%-16px)] h-[calc(100%-16px)]"
+        />
       </div>
 
       {/* Role */}
