@@ -7,17 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Award } from "lucide-react";
 
 const certs = [
-  { name: "CompTIA A+", level: "Foundations (BH-FOUND-1)", desc: "Core IT and hardware fundamentals." },
-  { name: "CompTIA Network+", level: "Foundations (BH-FOUND-2)", desc: "Networking concepts and protocols." },
-  { name: "CompTIA Security+", level: "Core Cyber (BH-CYBER-2)", desc: "Entry-level security concepts and controls." },
-  { name: "ISC² Certified in Cybersecurity (CC)", level: "Core Cyber (BH-CYBER-2)", desc: "Foundational security knowledge." },
-  { name: "CompTIA CySA+", level: "Practitioner / Specialisation (BH-OPS-2, BH-SPEC-SOC)", desc: "Security analytics and threat detection." },
-  { name: "ISC² SSCP", level: "Practitioner (BH-OPS-2, BH-GRC-2)", desc: "Security administration and operations." },
-  { name: "Microsoft SC-200", level: "Specialisation (BH-SPEC-CLOUD)", desc: "Security operations with Microsoft Defender and Sentinel." },
-  { name: "AWS Security - Specialty", level: "Specialisation (BH-SPEC-CLOUD)", desc: "Cloud security on Amazon Web Services." },
-  { name: "CRISC", level: "Specialisation (BH-SPEC-GRC)", desc: "IT risk management and governance." },
-  { name: "CISSP", level: "Specialisation / Advanced (BH-SPEC-IAM, BH-ADV)", desc: "Security leadership and architecture." },
-  { name: "CISM", level: "Advanced (BH-ADV)", desc: "Security management and governance." },
+  { name: "CompTIA A+", level: "Level 1: Foundations (BH-FOUND 1)", desc: "Core IT and hardware fundamentals.", discount: true },
+  { name: "CompTIA Network+", level: "Level 1: Foundations (BH-FOUND 1)", desc: "Networking concepts and protocols.", discount: true },
+  { name: "CompTIA Security+", level: "Level 2: Core Cyber (BH-CYBER 2)", desc: "Entry-level security concepts and controls.", discount: true },
+  { name: "ISC² Certified in Cybersecurity (CC)", level: "Level 2: Core Cyber (BH-CYBER 2)", desc: "Foundational security knowledge.", discount: true },
+  { name: "CompTIA CySA+", level: "Level 3: Practitioner (BH-OPS 2)", desc: "Security analytics and threat detection.", discount: true },
+  { name: "ISC² SSCP", level: "Level 3: Practitioner (BH-OPS 2 / BH-GRC 2)", desc: "Security administration and operations.", discount: true },
+  { name: "CompTIA PenTest+", level: "Level 4: Specialisation (BH-SOC)", desc: "Penetration testing and vulnerability assessment.", discount: true },
+  { name: "CompTIA CASP+", level: "Level 4: Specialisation (BH-SOC / BH-IAM)", desc: "Advanced enterprise security architecture.", discount: true },
+  { name: "Microsoft SC-200", level: "Level 4: Specialisation (BH-CLOUD)", desc: "Security operations with Microsoft Defender and Sentinel.", discount: true },
+  { name: "AWS Security Specialty", level: "Level 4: Specialisation (BH-CLOUD)", desc: "Cloud security on Amazon Web Services.", discount: true },
+  { name: "CRISC", level: "Level 4: Specialisation (BH-GRC)", desc: "IT risk management and governance.", discount: false },
+  { name: "CISSP", level: "Level 5: Advanced (BH-ARCH / BH-LEAD)", desc: "Security leadership and architecture. Requires 5 years professional experience.", discount: false },
+  { name: "CISM", level: "Level 5: Advanced (BH-ARCH / BH-LEAD)", desc: "Security management and governance. Requires 5 years professional experience.", discount: false },
 ];
 
 export default function Certifications() {
@@ -85,8 +87,11 @@ export default function Certifications() {
             </div>
           )}
 
-          <p className="text-muted-foreground mb-8">
+          <p className="text-muted-foreground mb-4">
             We don&apos;t issue these certs - you sit the exams with the vendors. Our curriculum prepares you for them.
+          </p>
+          <p className="text-sm text-muted-foreground mb-8">
+            Certifications marked with <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase bg-emerald-500/10 text-emerald-600 rounded-full">Exam discount</span> are eligible for discounted exam vouchers through our vendor partnerships.
           </p>
           <div className="space-y-4">
             {certs.map((cert) => (
@@ -98,7 +103,14 @@ export default function Certifications() {
                   <Award className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">{cert.name}</h3>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-semibold text-foreground">{cert.name}</h3>
+                    {cert.discount && (
+                      <span className="px-2 py-0.5 text-[10px] font-semibold uppercase bg-emerald-500/10 text-emerald-600 rounded-full">
+                        Exam discount
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground mb-1">{cert.desc}</p>
                   <span className="text-xs text-primary font-medium">{cert.level}</span>
                 </div>
