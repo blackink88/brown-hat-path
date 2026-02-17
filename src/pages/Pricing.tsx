@@ -92,7 +92,7 @@ const Pricing = () => {
     },
   });
 
-  const tiers = (dbTiers ?? []).map((t) => {
+  const tiers = (dbTiers ?? []).filter((t) => t.name !== "Explorer").map((t) => {
     const meta = tierMeta[t.name] ?? { icon: Zap, description: "", cta: `Start ${t.name}`, popular: false };
     const features: string[] = Array.isArray(t.features)
       ? t.features
