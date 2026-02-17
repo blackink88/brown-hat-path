@@ -116,12 +116,12 @@ function useTypingEffect() {
 const CERTS = ["CompTIA Security+", "ISC2 CC", "Microsoft SC-900"];
 
 const LEVELS = [
-  "Bridge",
-  "Foundation",
-  "Core",
-  "Practitioner",
-  "Specialisation",
-  "Advanced",
+  { label: "Bridge", level: 0 },
+  { label: "Foundations", level: 1 },
+  { label: "Core Cyber", level: 2 },
+  { label: "Practitioner", level: 3 },
+  { label: "Specialisation", level: 4 },
+  { label: "Advanced", level: 5 },
 ];
 
 const STATS = [
@@ -264,20 +264,20 @@ export function HeroSection() {
             </div>
             <div ref={scrollRef} className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-none">
               {/* Duplicate items for seamless loop */}
-              {[...LEVELS, ...LEVELS].map((level, i) => {
+              {[...LEVELS, ...LEVELS].map((item, i) => {
                 const idx = i % LEVELS.length;
                 return (
-                  <div key={`${level}-${i}`} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                  <div key={`${item.label}-${i}`} className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <div
                       className={cn(
                         "h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold text-white transition-colors",
                         idx <= 2 ? "bg-primary" : "bg-primary/30",
                       )}
                     >
-                      {idx + 1}
+                      {item.level}
                     </div>
                     <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">
-                      {level}
+                      {item.label}
                     </span>
                     {(i < LEVELS.length * 2 - 1) && (
                       <div className="w-3 sm:w-5 h-px bg-border" />
