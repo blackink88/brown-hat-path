@@ -374,6 +374,35 @@
     -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 90%);
   }
 
+  /* Intersection observer reveal animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+
+  .reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Accordion content transition */
+  .accordion-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+  }
+
+  .accordion-content.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .accordion-content > div {
+    overflow: hidden;
+  }
+
   /* Hide scrollbar utility */
   .scrollbar-none {
     -ms-overflow-style: none;

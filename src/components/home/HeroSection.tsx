@@ -139,7 +139,7 @@ export function HeroSection() {
   const scrollRef = useAutoScroll();
 
   return (
-    <section className="relative min-h-[100svh] flex flex-col justify-center bg-background overflow-hidden">
+    <section className="relative min-h-[100svh] flex flex-col justify-center bg-background overflow-hidden snap-start">
       {/* Background layers — matches other page heroes */}
       <div
         className="absolute inset-0 opacity-[0.4] pointer-events-none"

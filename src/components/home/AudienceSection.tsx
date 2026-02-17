@@ -1,12 +1,14 @@
-import { GraduationCap, RefreshCw, Laptop, Building2, Users, CheckCircle2 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { GraduationCap, RefreshCw, Laptop, Building2, Users, CheckCircle2, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const audienceRows = [
   {
     heading: "Starting Fresh",
+    tagline: "No degree? No problem.",
     image:
-      "https://images.unsplash.com/photo-1620829813573-7c9e1877706f?w=800&q=80",
-    imageAlt: "Young man studying at a laptop - Photo by Kojo Kwarteng on Unsplash",
+      "https://images.pexels.com/photos/6281731/pexels-photo-6281731.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageAlt: "Student studying at a laptop - Photo by Monstera Production on Pexels",
     groups: [
       {
         icon: GraduationCap,
@@ -29,9 +31,10 @@ const audienceRows = [
   },
   {
     heading: "Levelling Up",
+    tagline: "Already in IT? Go further.",
     image:
-      "https://images.unsplash.com/photo-1580894894513-541e068a3e2b?w=800&q=80",
-    imageAlt: "Engineer coding at a desk with multiple monitors - Photo by ThisisEngineering on Unsplash",
+      "https://images.pexels.com/photos/5380655/pexels-photo-5380655.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageAlt: "Professionals working on cybersecurity - Photo by Tima Miroshnichenko on Pexels",
     groups: [
       {
         icon: RefreshCw,
@@ -54,9 +57,10 @@ const audienceRows = [
   },
   {
     heading: "Building Teams",
+    tagline: "Hire-ready cyber talent.",
     image:
-      "https://images.unsplash.com/photo-1573165759995-5865a394a1aa?w=800&q=80",
-    imageAlt: "Diverse team collaborating around a table with laptops - Photo by Christina on Unsplash",
+      "https://images.pexels.com/photos/3184293/pexels-photo-3184293.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageAlt: "Team collaborating in a professional setting - Photo by fauxels on Pexels",
     groups: [
       {
         icon: Building2,
@@ -73,88 +77,161 @@ const audienceRows = [
   },
 ];
 
+/* Intersection observer hook for reveal-on-scroll */
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("revealed");
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.15 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return ref;
+}
+
 export function AudienceSection() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const sectionRef = useReveal<HTMLElement>();
+
+  const toggle = (idx: number) => {
+    setActiveIndex((prev) => (prev === idx ? null : idx));
+  };
+
   return (
-    <section className="py-16 md:py-24 bg-muted/30">
+    <section
+      ref={sectionRef}
+      className="py-16 md:py-24 bg-muted/30 reveal snap-start"
+    >
       <div className="container">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
             Who this is for
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Whether you are starting fresh or advancing your career, there is a
-            path for you.
+          <p className="text-muted-foreground max-w-lg mx-auto">
+            Whether you are starting fresh or advancing your career, there is a path for you.
           </p>
         </div>
 
-        <div className="space-y-16 md:space-y-24">
-          {audienceRows.map((row, rowIdx) => (
-            <div
-              key={row.heading}
-              className={cn(
-                "grid md:grid-cols-2 gap-8 md:gap-12 items-center animate-fade-up",
-              )}
-              style={{
-                animationDelay: `${rowIdx * 150}ms`,
-                animationFillMode: "backwards",
-              }}
-            >
-              {/* Image */}
-              <div
+        {/* Tab pills */}
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          {audienceRows.map((row, idx) => {
+            const Icon = row.groups[0].icon;
+            const isActive = activeIndex === idx;
+            return (
+              <button
+                key={row.heading}
+                onClick={() => toggle(idx)}
                 className={cn(
-                  "relative rounded-2xl overflow-hidden shadow-elevated aspect-[4/3]",
-                  rowIdx % 2 === 1 && "md:order-2",
+                  "flex items-center gap-2.5 px-5 py-3 rounded-xl border text-sm font-medium transition-all duration-300",
+                  isActive
+                    ? "bg-primary text-primary-foreground border-primary shadow-md scale-[1.03]"
+                    : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground hover:shadow-card",
                 )}
               >
-                <img
-                  src={row.image}
-                  alt={row.imageAlt}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  loading="lazy"
+                <Icon className="h-4 w-4" />
+                {row.heading}
+                <ChevronRight
+                  className={cn(
+                    "h-3.5 w-3.5 transition-transform duration-300",
+                    isActive && "rotate-90",
+                  )}
                 />
-                {/* Subtle overlay for contrast */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-              </div>
+              </button>
+            );
+          })}
+        </div>
 
-              {/* Text content */}
-              <div className={cn(rowIdx % 2 === 1 && "md:order-1")}>
-                <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-2 block">
-                  {row.heading}
-                </span>
-
-                <div className="space-y-5 mb-6">
-                  {row.groups.map((group) => (
-                    <div key={group.title} className="flex gap-4">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <group.icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground mb-1">
-                          {group.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {group.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Bullet points */}
-                <ul className="space-y-2">
-                  {row.bullets.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
+        {/* Expandable content panels */}
+        <div className="max-w-5xl mx-auto space-y-4">
+          {audienceRows.map((row, rowIdx) => {
+            const isActive = activeIndex === rowIdx;
+            return (
+              <div
+                key={row.heading}
+                className={cn(
+                  "accordion-content",
+                  isActive && "open",
+                )}
+              >
+                <div>
+                  <div
+                    className={cn(
+                      "grid md:grid-cols-2 gap-6 md:gap-10 items-center rounded-2xl bg-card border border-border p-6 md:p-8 shadow-card",
+                    )}
+                  >
+                    {/* Image */}
+                    <div
+                      className={cn(
+                        "relative rounded-xl overflow-hidden shadow-elevated aspect-[4/3]",
+                        rowIdx % 2 === 1 && "md:order-2",
+                      )}
                     >
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
+                      <img
+                        src={row.image}
+                        alt={row.imageAlt}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    </div>
+
+                    {/* Text content */}
+                    <div className={cn(rowIdx % 2 === 1 && "md:order-1")}>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-1 block">
+                        {row.heading}
+                      </span>
+                      <p className="text-lg font-semibold text-foreground mb-5">
+                        {row.tagline}
+                      </p>
+
+                      <div className="space-y-4 mb-5">
+                        {row.groups.map((group) => (
+                          <div key={group.title} className="flex gap-3">
+                            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                              <group.icon className="h-4 w-4 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-foreground text-sm mb-0.5">
+                                {group.title}
+                              </h3>
+                              <p className="text-sm text-muted-foreground leading-relaxed">
+                                {group.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <ul className="space-y-1.5">
+                        {row.bullets.map((bullet) => (
+                          <li
+                            key={bullet}
+                            className="flex items-center gap-2 text-sm text-muted-foreground"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                            {bullet}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

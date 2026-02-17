@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle, Clock, Award, CreditCard, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,8 +12,31 @@ const trustItems = [
 ];
 
 export function CTASection() {
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("revealed");
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="py-16 md:py-24 bg-muted/40 border-t border-border">
+    <section
+      ref={ref}
+      className="py-16 md:py-24 bg-muted/40 border-t border-border reveal snap-start"
+    >
       <div className="container">
         <div className="max-w-2xl mx-auto">
           <Card className="overflow-hidden border-border shadow-card bg-card hover:shadow-elevated transition-shadow duration-300">
@@ -23,7 +47,7 @@ export function CTASection() {
                 Ready to build in-demand skills?
               </h2>
               <p className="text-muted-foreground mt-2 text-base">
-                Join learners on a structured path to real-world security roles. Start when you’re ready.
+                Join learners on a structured path to real-world security roles. Start when you're ready.
               </p>
             </CardHeader>
             <CardContent className="px-8 md:px-10 pt-0">
