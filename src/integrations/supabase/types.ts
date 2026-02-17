@@ -16,49 +16,49 @@ export type Database = {
     Tables: {
       capstone_submissions: {
         Row: {
-          id: string
-          user_id: string
-          lesson_id: string
-          file_path: string
-          file_name: string
-          file_size_bytes: number | null
-          submitted_at: string
-          status: string
-          grade: number | null
           feedback: string | null
-          graded_by: string | null
+          file_name: string
+          file_path: string
+          file_size_bytes: number | null
+          grade: number | null
           graded_at: string | null
+          graded_by: string | null
+          id: string
+          lesson_id: string
           response_text: string | null
+          status: string
+          submitted_at: string
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          lesson_id: string
-          file_path: string
-          file_name: string
-          file_size_bytes?: number | null
-          submitted_at?: string
-          status?: string
-          grade?: number | null
           feedback?: string | null
-          graded_by?: string | null
+          file_name: string
+          file_path: string
+          file_size_bytes?: number | null
+          grade?: number | null
           graded_at?: string | null
+          graded_by?: string | null
+          id?: string
+          lesson_id: string
           response_text?: string | null
+          status?: string
+          submitted_at?: string
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          lesson_id?: string
-          file_path?: string
-          file_name?: string
-          file_size_bytes?: number | null
-          submitted_at?: string
-          status?: string
-          grade?: number | null
           feedback?: string | null
-          graded_by?: string | null
+          file_name?: string
+          file_path?: string
+          file_size_bytes?: number | null
+          grade?: number | null
           graded_at?: string | null
+          graded_by?: string | null
+          id?: string
+          lesson_id?: string
           response_text?: string | null
+          status?: string
+          submitted_at?: string
+          user_id?: string
         }
         Relationships: [
           {
