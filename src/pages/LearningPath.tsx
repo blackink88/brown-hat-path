@@ -148,7 +148,7 @@ function LevelCard({
                         </span>
                       ))}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">We provide support and exam discounts for these certifications.</p>
+                    <p className="text-xs text-muted-foreground mt-1">Our curriculum prepares you for these exams. Discounted vouchers available for select certifications.</p>
                   </div>
                 )}
 
@@ -355,7 +355,7 @@ export default function LearningPath() {
                   "Offensive Security & Penetration Testing",
                   "Vulnerability Management",
                 ]}
-                certAlignment={["CompTIA CASP+", "Microsoft SC-200", "AWS Security"]}
+                certAlignment={["CompTIA PenTest+", "CompTIA CASP+", "Microsoft SC-200", "AWS Security Specialty"]}
                 jobRoles={["SOC Analyst L2", "IAM Engineer", "Cloud Security Engineer", "Penetration Tester"]}
                 tier="Professional"
               >
@@ -383,7 +383,7 @@ export default function LearningPath() {
                   "CISO / Security management skills",
                   "Capstone project",
                 ]}
-                certAlignment={["CISSP", "CISM", "TOGAF"]}
+                certAlignment={["CISSP", "CISM"]}
                 jobRoles={["Security Architect", "Security Manager", "CISO"]}
                 tier="Professional"
               />
