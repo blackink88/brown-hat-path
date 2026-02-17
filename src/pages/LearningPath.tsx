@@ -28,21 +28,23 @@ interface LevelProps {
   certAlignment?: string[];
   jobRoles?: string[];
   isOptional?: boolean;
+  tier?: string;
   children?: React.ReactNode;
 }
 
-function LevelCard({ 
-  level, 
-  name, 
+function LevelCard({
+  level,
+  name,
   code,
-  color, 
-  description, 
-  duration, 
-  outcome, 
+  color,
+  description,
+  duration,
+  outcome,
   modules,
   certAlignment,
   jobRoles,
   isOptional,
+  tier,
   children
 }: LevelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -74,6 +76,16 @@ function LevelCard({
               {isOptional && (
                 <span className="px-2 py-0.5 text-[10px] font-medium uppercase bg-muted rounded-full text-muted-foreground">
                   Optional
+                </span>
+              )}
+              {tier && (
+                <span className={cn(
+                  "px-2 py-0.5 text-[10px] font-medium uppercase rounded-full",
+                  tier === "Free"
+                    ? "bg-emerald-500/10 text-emerald-600"
+                    : "bg-primary/10 text-primary"
+                )}>
+                  {tier}
                 </span>
               )}
             </div>
@@ -234,7 +246,7 @@ export default function LearningPath() {
                 code="BH-BRIDGE 0"
                 color="bg-level-bridge"
                 description="For learners with no prior IT experience. Build the digital foundations you need before diving into cybersecurity."
-                duration="4-6 weeks"
+                duration="1 week"
                 outcome="Eligible to enter cybersecurity foundations with confidence."
                 modules={[
                   "Computer fundamentals & digital literacy",
@@ -243,6 +255,7 @@ export default function LearningPath() {
                   "Professional communication skills",
                 ]}
                 isOptional
+                tier="Free"
               />
 
               {/* Level 1 - Foundations */}
@@ -252,7 +265,7 @@ export default function LearningPath() {
                 code="BH-FOUND 1"
                 color="bg-level-foundation"
                 description="Build core IT skills and understand the cybersecurity landscape. This is where everyone's cyber journey begins."
-                duration="8-12 weeks"
+                duration="8 weeks (6 teaching + 2 assessment)"
                 outcome="Junior IT / Cyber Intern readiness"
                 modules={[
                   "Networking fundamentals (TCP/IP, DNS, etc.)",
@@ -262,6 +275,7 @@ export default function LearningPath() {
                 ]}
                 certAlignment={["CompTIA A+", "CompTIA Network+"]}
                 jobRoles={["IT Support", "Junior Technician"]}
+                tier="Foundation"
               />
 
               {/* Level 2 - Core Cyber */}
@@ -271,7 +285,7 @@ export default function LearningPath() {
                 code="BH-CYBER 2"
                 color="bg-level-core"
                 description="Develop essential cybersecurity practitioner skills. Understand threats, controls, and how to protect systems."
-                duration="10-14 weeks"
+                duration="10 weeks (8 teaching + 2 assessment)"
                 outcome="Cybersecurity practitioner baseline"
                 modules={[
                   "Threat landscape & attack vectors",
@@ -281,6 +295,7 @@ export default function LearningPath() {
                 ]}
                 certAlignment={["CompTIA Security+", "ISC² CC"]}
                 jobRoles={["Security Analyst (Entry)", "IT Security Support"]}
+                tier="Practitioner"
               />
 
               {/* Level 3 - Practitioner */}
@@ -290,7 +305,7 @@ export default function LearningPath() {
                 code="BH-OPS 2 / BH-GRC 2"
                 color="bg-level-practitioner"
                 description="Specialize in either Cyber Operations (Blue Team) or Governance, Risk & Compliance. Pick your track."
-                duration="12-16 weeks"
+                duration="11 weeks (8 teaching + 3 assessment)"
                 outcome="Practitioner-level competence in your chosen track"
                 modules={[
                   "SOC operations & incident response (Blue Team track)",
@@ -300,6 +315,7 @@ export default function LearningPath() {
                 ]}
                 certAlignment={["CompTIA CySA+", "ISC² SSCP"]}
                 jobRoles={["SOC Analyst L1", "GRC Analyst", "Security Operations"]}
+                tier="Practitioner"
               >
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg border border-level-practitioner/30 bg-level-practitioner/5 flex gap-3">
@@ -330,7 +346,7 @@ export default function LearningPath() {
                 code="BH-SOC / BH-IAM / BH-CLOUD / BH-GRC"
                 color="bg-level-specialisation"
                 description="Deep-dive into your area of expertise. Become a specialist in one of our focused tracks."
-                duration="16-20 weeks"
+                duration="13 weeks (10 teaching + 3 assessment)"
                 outcome="Specialist-level expertise and job readiness"
                 modules={[
                   "Advanced SOC & Incident Response",
@@ -341,6 +357,7 @@ export default function LearningPath() {
                 ]}
                 certAlignment={["CompTIA CASP+", "Microsoft SC-200", "AWS Security"]}
                 jobRoles={["SOC Analyst L2", "IAM Engineer", "Cloud Security Engineer", "Penetration Tester"]}
+                tier="Professional"
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {["SOC & IR", "IAM", "Cloud Security", "Offensive Security", "Vuln Management", "Advanced GRC"].map((track) => (
@@ -358,7 +375,7 @@ export default function LearningPath() {
                 code="BH-ARCH / BH-LEAD"
                 color="bg-level-advanced"
                 description="For experienced practitioners ready to lead. Architecture, strategy, and executive-level skills."
-                duration="20+ weeks"
+                duration="12 weeks (8 teaching + 4 assessment)"
                 outcome="Senior practitioner or leadership readiness"
                 modules={[
                   "Security architecture design",
@@ -368,6 +385,7 @@ export default function LearningPath() {
                 ]}
                 certAlignment={["CISSP", "CISM", "TOGAF"]}
                 jobRoles={["Security Architect", "Security Manager", "CISO"]}
+                tier="Professional"
               />
             </div>
 

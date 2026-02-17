@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Check, Zap, Shield, Crown, Globe, Loader2, ArrowRight } from "lucide-react";
+import { Check, Zap, Shield, Crown, Globe, Loader2, ArrowRight, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,6 +16,12 @@ import { PaystackButton } from "@/components/pricing/PaystackButton";
 type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown; paystack_plan_code: string | null };
 
 const tierMeta: Record<string, { icon: typeof Zap; description: string; cta: string; popular: boolean }> = {
+  Free: {
+    icon: BookOpen,
+    description: "Try the Bridge course and see if cybersecurity is for you.",
+    cta: "Start Free",
+    popular: false,
+  },
   Foundation: {
     icon: Zap,
     description: "Perfect for beginners starting their cybersecurity journey.",
@@ -46,8 +52,8 @@ const faqs = [
     a: "Yes! You can upgrade or downgrade your subscription at any time. Changes take effect on your next billing cycle.",
   },
   {
-    q: "Is there a free trial?",
-    a: "We offer a 7-day money-back guarantee on all tiers. If you're not satisfied, we'll refund your first month.",
+    q: "Is there a free option?",
+    a: "Yes! Our Free tier gives you full access to the Bridge course (Level 0) at no cost. It's the perfect way to explore cybersecurity before committing to a paid plan.",
   },
   {
     q: "Do you offer corporate pricing?",
@@ -180,14 +186,53 @@ const Pricing = () => {
         {/* Pricing Cards */}
         <section className="py-16 md:py-24">
           <div className="container">
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              {/* Free tier - always rendered from static data */}
+              {(() => {
+                const meta = tierMeta.Free;
+                const freeFeatures = [
+                  "Level 0: Bridge course",
+                  "Digital literacy fundamentals",
+                  "Basic networking intro",
+                  "No credit card required",
+                ];
+                return (
+                  <div className="relative p-8 rounded-2xl border border-border bg-card hover:shadow-lg transition-all">
+                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                      <meta.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Free</h3>
+                    <div className="mb-4">
+                      <span className="text-4xl font-bold text-foreground">R0</span>
+                      <span className="text-muted-foreground">/forever</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-6">{meta.description}</p>
+                    <ul className="space-y-3 mb-8">
+                      {freeFeatures.map((feature) => (
+                        <li key={feature} className="flex items-start gap-2 text-sm">
+                          <Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />
+                          <span className="text-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button variant="outline" size="lg" className="w-full gap-2 font-medium" asChild>
+                      <Link to="/enroll" className="group">
+                        {meta.cta}
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                    </Button>
+                  </div>
+                );
+              })()}
+
+              {/* Paid tiers from DB */}
               {tiers.map((tier) => (
                 <div
                   key={tier.name}
                   className={cn(
                     "relative p-8 rounded-2xl border bg-card transition-all",
                     tier.popular
-                      ? "border-accent shadow-xl scale-105 z-10"
+                      ? "border-accent shadow-xl sm:scale-105 z-10"
                       : "border-border hover:shadow-lg"
                   )}
                 >
