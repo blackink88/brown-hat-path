@@ -81,7 +81,7 @@ function LevelCard({
               {tier && (
                 <span className={cn(
                   "px-2 py-0.5 text-[10px] font-medium uppercase rounded-full",
-                  tier === "Free"
+                  tier === "Explorer"
                     ? "bg-emerald-500/10 text-emerald-600"
                     : "bg-primary/10 text-primary"
                 )}>
@@ -255,7 +255,7 @@ export default function LearningPath() {
                   "Professional communication skills",
                 ]}
                 isOptional
-                tier="Free"
+                tier="Explorer"
               />
 
               {/* Level 1 - Foundations */}

@@ -16,10 +16,10 @@ import { PaystackButton } from "@/components/pricing/PaystackButton";
 type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown; paystack_plan_code: string | null };
 
 const tierMeta: Record<string, { icon: typeof Zap; description: string; cta: string; popular: boolean }> = {
-  Free: {
+  Explorer: {
     icon: BookOpen,
     description: "Try the Bridge course and see if cybersecurity is for you.",
-    cta: "Start Free",
+    cta: "Start Exploring",
     popular: false,
   },
   Foundation: {
@@ -53,7 +53,7 @@ const faqs = [
   },
   {
     q: "Is there a free option?",
-    a: "Yes! Our Free tier gives you full access to the Bridge course (Level 0) at no cost. It's the perfect way to explore cybersecurity before committing to a paid plan.",
+    a: "Yes! Our Explorer tier gives you full access to the Bridge course (Level 0: Digital Readiness) at no cost. It's the perfect way to explore cybersecurity before committing to a paid plan.",
   },
   {
     q: "Do you offer corporate pricing?",
@@ -187,13 +187,13 @@ const Pricing = () => {
         <section className="py-16 md:py-24">
           <div className="container">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {/* Free tier - always rendered from static data */}
+              {/* Explorer tier - always rendered from static data */}
               {(() => {
-                const meta = tierMeta.Free;
-                const freeFeatures = [
-                  "Level 0: Bridge course",
-                  "Digital literacy fundamentals",
-                  "Basic networking intro",
+                const meta = tierMeta.Explorer;
+                const explorerFeatures = [
+                  "Level 0: Bridge - Digital Readiness",
+                  "Computer fundamentals & digital literacy",
+                  "Basic networking concepts",
                   "No credit card required",
                 ];
                 return (
@@ -201,14 +201,14 @@ const Pricing = () => {
                     <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                       <meta.icon className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Free</h3>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Explorer</h3>
                     <div className="mb-4">
-                      <span className="text-4xl font-bold text-foreground">R0</span>
+                      <span className="text-4xl font-bold text-foreground">Free</span>
                       <span className="text-muted-foreground">/forever</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-6">{meta.description}</p>
                     <ul className="space-y-3 mb-8">
-                      {freeFeatures.map((feature) => (
+                      {explorerFeatures.map((feature) => (
                         <li key={feature} className="flex items-start gap-2 text-sm">
                           <Check className="h-4 w-4 text-accent mt-0.5 shrink-0" />
                           <span className="text-foreground">{feature}</span>
