@@ -24,7 +24,6 @@ const EMAIL_SUBJECTS: Record<string, string> = {
   reauthentication: "Your verification code",
 };
 
-// Template mapping
 const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
   signup: SignupEmail,
   invite: InviteEmail,
@@ -34,17 +33,11 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
   reauthentication: ReauthenticationEmail,
 };
 
-// Configuration
 const SITE_NAME = "Brown Hat Academy";
 const SENDER_DOMAIN = "notify.brownhat.academy";
 const ROOT_DOMAIN = "brownhat.academy";
-const FROM_DOMAIN = "brownhat.academy"; // Domain shown in From address (may be root or sender subdomain)
+const FROM_DOMAIN = "brownhat.academy";
 
-// Sample data for preview mode ONLY (not used in actual email sending).
-// URLs are baked in at scaffold time from the project's real data.
-// The sample email uses a fixed placeholder (RFC 6761 .test TLD) so the Go backend
-// can always find-and-replace it with the actual recipient when sending test emails,
-// even if the project's domain has changed since the template was scaffolded.
 const SAMPLE_PROJECT_URL = "https://brownhat.academy";
 const SAMPLE_EMAIL = "user@example.test";
 const SAMPLE_DATA: Record<string, object> = {
@@ -78,7 +71,6 @@ const SAMPLE_DATA: Record<string, object> = {
   },
 };
 
-// Preview endpoint handler - returns rendered HTML without sending email
 async function handlePreview(req: Request): Promise<Response> {
   const previewCorsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -128,7 +120,6 @@ async function handlePreview(req: Request): Promise<Response> {
   });
 }
 
-// Webhook handler - verifies signature and sends email
 async function handleWebhook(req: Request): Promise<Response> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
 
@@ -140,7 +131,6 @@ async function handleWebhook(req: Request): Promise<Response> {
     });
   }
 
-  // Verify signature + timestamp, then parse payload.
   let payload: any;
   let run_id = "";
   try {
@@ -196,8 +186,6 @@ async function handleWebhook(req: Request): Promise<Response> {
     });
   }
 
-  // The email action type is in payload.data.action_type (e.g., "signup", "recovery")
-  // payload.type is the hook event type ("auth")
   const emailType = payload.data.action_type;
   console.log("Received auth event", { emailType, email: payload.data.email, run_id });
 
@@ -210,7 +198,6 @@ async function handleWebhook(req: Request): Promise<Response> {
     });
   }
 
-  // Build template props from payload.data (HookData structure)
   const templateProps = {
     siteName: SITE_NAME,
     siteUrl: `https://${ROOT_DOMAIN}`,
@@ -221,15 +208,11 @@ async function handleWebhook(req: Request): Promise<Response> {
     newEmail: payload.data.new_email,
   };
 
-  // Render React Email to HTML and plain text
   const html = await renderAsync(React.createElement(EmailTemplate, templateProps));
   const text = await renderAsync(React.createElement(EmailTemplate, templateProps), {
     plainText: true,
   });
 
-  // Send email via Lovable Email API
-  // The callback URL is provided in the payload by Lovable, ensuring correct routing
-  // for both production and local development
   const callbackUrl = payload.data.callback_url;
   if (!callbackUrl) {
     console.error("No callback_url in payload", { run_id });
@@ -274,17 +257,14 @@ async function handleWebhook(req: Request): Promise<Response> {
 Deno.serve(async (req) => {
   const url = new URL(req.url);
 
-  // Handle CORS preflight for main endpoint
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Route to preview handler for /preview path
   if (url.pathname.endsWith("/preview")) {
     return handlePreview(req);
   }
 
-  // Main webhook handler
   try {
     return await handleWebhook(req);
   } catch (error) {
