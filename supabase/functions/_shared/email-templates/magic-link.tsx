@@ -15,15 +15,15 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
+const LOGO_URL = 'https://fwxfhupzkjjbodymckrl.supabase.co/storage/v1/object/public/email-assets/logo.png?v=1'
+
 interface MagicLinkEmailProps {
   siteName: string
-  siteUrl?: string
   confirmationUrl: string
 }
 
 export const MagicLinkEmail = ({
   siteName,
-  siteUrl = 'https://brownhat.academy',
   confirmationUrl,
 }: MagicLinkEmailProps) => (
   <Html lang="en" dir="ltr">
@@ -32,12 +32,7 @@ export const MagicLinkEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
-          <Img
-            src={`${siteUrl}/bhlogo.png`}
-            alt="Brown Hat Academy"
-            width={160}
-            style={logo}
-          />
+          <Img src={LOGO_URL} alt="Brown Hat Academy" width={160} style={logo} />
         </Section>
         <Section style={body}>
           <Heading style={h1}>Your login link</Heading>

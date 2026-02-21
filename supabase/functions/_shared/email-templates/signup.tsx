@@ -16,6 +16,8 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
+const LOGO_URL = 'https://fwxfhupzkjjbodymckrl.supabase.co/storage/v1/object/public/email-assets/logo.png?v=1'
+
 interface SignupEmailProps {
   siteName: string
   siteUrl: string
@@ -35,15 +37,10 @@ export const SignupEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
-          <Img
-            src={`${siteUrl}/bhlogo.png`}
-            alt="Brown Hat Academy"
-            width={160}
-            style={logo}
-          />
+          <Img src={LOGO_URL} alt="Brown Hat Academy" width={160} style={logo} />
         </Section>
         <Section style={body}>
-          <Heading style={h1}>Confirm your email</Heading>
+          <Heading style={h1}>Welcome to Brown Hat Academy!</Heading>
           <Text style={text}>
             Thanks for signing up for{' '}
             <Link href={siteUrl} style={link}>
@@ -59,7 +56,7 @@ export const SignupEmail = ({
             ) by clicking the button below:
           </Text>
           <Button style={button} href={confirmationUrl}>
-            Verify Email
+            Get Started
           </Button>
           <Text style={footer}>
             If you didn't create an account, you can safely ignore this email.

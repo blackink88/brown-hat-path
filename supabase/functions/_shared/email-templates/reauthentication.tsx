@@ -14,27 +14,20 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
+const LOGO_URL = 'https://fwxfhupzkjjbodymckrl.supabase.co/storage/v1/object/public/email-assets/logo.png?v=1'
+
 interface ReauthenticationEmailProps {
   token: string
-  siteUrl?: string
 }
 
-export const ReauthenticationEmail = ({
-  token,
-  siteUrl = 'https://brownhat.academy',
-}: ReauthenticationEmailProps) => (
+export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Your verification code</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
-          <Img
-            src={`${siteUrl}/bhlogo.png`}
-            alt="Brown Hat Academy"
-            width={160}
-            style={logo}
-          />
+          <Img src={LOGO_URL} alt="Brown Hat Academy" width={160} style={logo} />
         </Section>
         <Section style={body}>
           <Heading style={h1}>Confirm reauthentication</Heading>

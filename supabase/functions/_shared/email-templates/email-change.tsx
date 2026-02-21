@@ -16,9 +16,10 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
+const LOGO_URL = 'https://fwxfhupzkjjbodymckrl.supabase.co/storage/v1/object/public/email-assets/logo.png?v=1'
+
 interface EmailChangeEmailProps {
   siteName: string
-  siteUrl?: string
   email: string
   newEmail: string
   confirmationUrl: string
@@ -26,7 +27,6 @@ interface EmailChangeEmailProps {
 
 export const EmailChangeEmail = ({
   siteName,
-  siteUrl = 'https://brownhat.academy',
   email,
   newEmail,
   confirmationUrl,
@@ -37,12 +37,7 @@ export const EmailChangeEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
-          <Img
-            src={`${siteUrl}/bhlogo.png`}
-            alt="Brown Hat Academy"
-            width={160}
-            style={logo}
-          />
+          <Img src={LOGO_URL} alt="Brown Hat Academy" width={160} style={logo} />
         </Section>
         <Section style={body}>
           <Heading style={h1}>Confirm your email change</Heading>
