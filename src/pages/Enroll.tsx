@@ -10,8 +10,6 @@ import bhlogo from "@/assets/bhlogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
-const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
-
 const benefits = [
   "Skills-first curriculum aligned to global certifications",
   "Verified Skills Portfolio for employers",
@@ -54,9 +52,10 @@ const Enroll = () => {
     } else {
       toast({
         title: "Welcome to Brown Hat Academy!",
-        description: "Account created successfully. Click 'Open LMS' to access your courses.",
+        description: "Account created! Choose a plan to start learning.",
       });
-      navigate("/dashboard");
+      // New accounts have no subscription yet — send them to pricing
+      navigate("/pricing");
     }
   };
 

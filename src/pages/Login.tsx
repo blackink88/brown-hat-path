@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -17,20 +17,13 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
-
-  // If the user was trying to reach a React dashboard page (settings/profile/etc),
-  // send them there. Otherwise, send them to Frappe LMS where all courses live.
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
-  const dashboardOnlyPaths = ["/dashboard/settings", "/dashboard/profile", "/dashboard/billing"];
-  const redirectToDashboard = from && dashboardOnlyPaths.some((p) => from.startsWith(p));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
+    const { error, tierLevel } = await signIn(email, password);
 
     if (error) {
       toast({
@@ -39,16 +32,16 @@ const Login = () => {
         variant: "destructive",
       });
       setIsLoading(false);
+    } else if (tierLevel && tierLevel > 0) {
+      // Has an active subscription — go straight to Frappe LMS
+      window.location.href = FRAPPE_LMS_URL;
     } else {
+      // No subscription — choose a plan first
       toast({
         title: "Welcome back!",
-        description: "Taking you to your courses...",
+        description: "Choose a plan to access your courses.",
       });
-      if (redirectToDashboard) {
-        navigate(from!, { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
+      navigate("/pricing", { replace: true });
     }
   };
 

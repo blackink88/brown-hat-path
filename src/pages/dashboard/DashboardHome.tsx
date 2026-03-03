@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowRight, CheckCircle2, Circle, Lock, Loader2, ExternalLink, BookOpen } from "lucide-react";
+import { ArrowRight, CheckCircle2, Circle, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -10,8 +10,6 @@ import { CareerAlignmentPanel } from "@/components/dashboard/CareerAlignmentPane
 import { CertificatesPanel } from "@/components/dashboard/CertificatesPanel";
 import { listEnrollments, getCourses, frappeKeys } from "@/lib/frappe";
 import { getCourseByFrappeName } from "@/lib/courseCatalog";
-
-const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
 
 type StageStatus = "completed" | "current" | "locked";
 
@@ -87,31 +85,6 @@ export default function DashboardHome() {
 
   return (
     <div className="space-y-6">
-      {/* Primary CTA — go to the LMS where all course content lives */}
-      <div className="rounded-xl border border-primary/40 bg-primary/10 p-6 space-y-4">
-        <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-            <BookOpen className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h2 className="text-base font-semibold text-foreground">Your courses are on the Brown Hat LMS</h2>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Click the button below to open the LMS, then sign in with the <strong>same email and password</strong> you used to create this account.
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <Button asChild size="lg" className="shrink-0 w-full sm:w-auto">
-            <a href={FRAPPE_LMS_URL} target="_blank" rel="noopener noreferrer">
-              Open LMS <ExternalLink className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Having trouble? Use <strong>Forgot Password</strong> on the LMS login page to reset your credentials.
-          </p>
-        </div>
-      </div>
-
       {tierLevel === 0 && (
         <div className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <p className="text-sm text-foreground">

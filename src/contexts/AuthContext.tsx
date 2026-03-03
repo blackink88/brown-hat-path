@@ -60,7 +60,7 @@ interface AuthContextType {
   tierLevel:      number;
   isAdmin:        boolean;
   signUp:         (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
-  signIn:         (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn:         (email: string, password: string) => Promise<{ error: Error | null; tierLevel?: number }>;
   signOut:        () => Promise<void>;
   applyNewToken:  (token: string) => void;
 }
@@ -157,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json() as Record<string, unknown>;
       if (data.error) return { error: new Error(data.error as string) };
       applyToken(data.token as string);
-      return { error: null };
+      return { error: null, tierLevel: (data.tier_level as number) ?? 0 };
     } catch (e) {
       return { error: e instanceof Error ? e : new Error("Login failed") };
     }
