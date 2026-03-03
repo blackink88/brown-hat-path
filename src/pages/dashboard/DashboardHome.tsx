@@ -88,23 +88,28 @@ export default function DashboardHome() {
   return (
     <div className="space-y-6">
       {/* Primary CTA — go to the LMS where all course content lives */}
-      <div className="rounded-xl border border-primary/40 bg-primary/10 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="rounded-xl border border-primary/40 bg-primary/10 p-6 space-y-4">
         <div className="flex items-start gap-4">
           <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
             <BookOpen className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-foreground">Your courses are on the LMS</h2>
+            <h2 className="text-base font-semibold text-foreground">Your courses are on the Brown Hat LMS</h2>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Log in with the same email &amp; password you used here to access all your courses.
+              Click the button below to open the LMS, then sign in with the <strong>same email and password</strong> you used to create this account.
             </p>
           </div>
         </div>
-        <Button asChild size="lg" className="shrink-0 w-full sm:w-auto">
-          <a href={FRAPPE_LMS_URL} target="_blank" rel="noopener noreferrer">
-            Open LMS <ExternalLink className="ml-2 h-4 w-4" />
-          </a>
-        </Button>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <Button asChild size="lg" className="shrink-0 w-full sm:w-auto">
+            <a href={FRAPPE_LMS_URL} target="_blank" rel="noopener noreferrer">
+              Open LMS <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            Having trouble? Use <strong>Forgot Password</strong> on the LMS login page to reset your credentials.
+          </p>
+        </div>
       </div>
 
       {tierLevel === 0 && (

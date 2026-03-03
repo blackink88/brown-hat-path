@@ -54,10 +54,9 @@ const Enroll = () => {
     } else {
       toast({
         title: "Welcome to Brown Hat Academy!",
-        description: "Account created — taking you to your courses now.",
+        description: "Account created successfully. Click 'Open LMS' to access your courses.",
       });
-      // Redirect to Frappe LMS where all course content lives
-      window.location.href = FRAPPE_LMS_URL;
+      navigate("/dashboard");
     }
   };
 

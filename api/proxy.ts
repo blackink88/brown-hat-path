@@ -253,8 +253,10 @@ export default async function handler(req: Request): Promise<Response> {
       last_name:    full_name.split(" ").slice(1).join(" ") || "",
       full_name,
       new_password: password,
+      enabled:      1,
       user_type:    "Website User",
       send_welcome_email: 0,
+      send_password_update_notification: 0,
       roles: [{ role: "LMS Student" }],
     });
 
@@ -262,6 +264,14 @@ export default async function handler(req: Request): Promise<Response> {
       const errMsg = createResult.data?.message ?? createResult.data?.exception ?? "Registration failed";
       return json({ error: errMsg }, 400);
     }
+
+    // Frappe's new_password in a POST doesn't always persist reliably — do an
+    // explicit PUT immediately after to guarantee the password is set.
+    await frappeDocPut("User", email, {
+      new_password:                    password,
+      logout_all_sessions:             0,
+      send_password_update_notification: 0,
+    });
 
     const token = await issueJWT(email, full_name, 0);
     return json({ token, email, full_name, tier_level: 0 });

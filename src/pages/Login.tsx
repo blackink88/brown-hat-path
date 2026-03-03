@@ -47,8 +47,7 @@ const Login = () => {
       if (redirectToDashboard) {
         navigate(from!, { replace: true });
       } else {
-        // Redirect to Frappe LMS — all course content lives there
-        window.location.href = FRAPPE_LMS_URL;
+        navigate("/dashboard", { replace: true });
       }
     }
   };
