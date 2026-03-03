@@ -29,10 +29,10 @@ export function usePaystackSubscription({
   const config = {
     reference,
     email:     user?.email || "",
+    amount:    0,          // required by Paystack inline JS even for subscription plans; plan amount takes precedence
     plan:      planCode,
     publicKey,
-    // currency is set on the Paystack plan itself — passing it here causes
-    // "Invalid transaction parameters" when a plan code is used
+    // currency omitted — set on the Paystack plan itself
   };
 
   const initializePayment = usePaystackPayment(config);
