@@ -51,10 +51,10 @@ const Enroll = () => {
       setIsLoading(false);
     } else {
       toast({
-        title: "Check your email!",
-        description: "We've sent you a confirmation link to verify your account.",
+        title: "Welcome to Brown Hat Academy!",
+        description: "Your account has been created. Let's get started.",
       });
-      navigate("/login");
+      navigate("/dashboard");
     }
   };
 
