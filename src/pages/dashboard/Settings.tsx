@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Lock, LogOut, Loader2, AlertTriangle, CreditCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,66 +20,61 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 
+const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
+
 export default function Settings() {
-  const { user, signOut } = useAuth();
+  const { user, session, signOut, applyNewToken } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCancelling, setIsCancelling] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const { data: subscription, isLoading: subscriptionLoading } = useQuery({
-    queryKey: ["activeSubscription", user?.id],
+  const token = session?.access_token ?? "";
+
+  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
+    queryKey: ["mySubscription", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("subscriptions")
-        .select("id, status, starts_at, current_period_end, subscription_tiers(name)")
-        .eq("user_id", user!.id)
-        .eq("status", "active")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
+      const res = await fetch(`${PROXY_URL}?action=my-subscription`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.json() as Promise<{
+        subscription: { status: string; start_date: string; end_date: string } | null;
+        tier: { tier_name: string; tier_level: number } | null;
+      }>;
     },
-    enabled: !!user?.id,
+    enabled: !!token,
   });
 
-  const nextBillingDate = subscription?.current_period_end
-    ? new Date(subscription.current_period_end)
-    : subscription?.starts_at
-      ? (() => {
-          const d = new Date(subscription.starts_at);
-          d.setMonth(d.getMonth() + 1);
-          return d;
-        })()
-      : null;
+  const subscription  = subscriptionData?.subscription ?? null;
+  const tier          = subscriptionData?.tier ?? null;
+  const nextBilling   = subscription?.end_date
+    ? new Date(subscription.end_date)
+    : null;
 
   const handleCancelSubscription = async () => {
     setIsCancelling(true);
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      const { data, error } = await supabase.functions.invoke("cancel-subscription", {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      const res = await fetch(`${PROXY_URL}?action=cancel-subscription`, {
+        method:  "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body:    JSON.stringify({}),
       });
-      if (error) throw error;
-      const result = data as { error?: string; success?: boolean };
-      if (result?.error) throw new Error(result.error);
-      queryClient.invalidateQueries({ queryKey: ["activeSubscription", user?.id] });
-      queryClient.invalidateQueries({ queryKey: ["userTierLevel", user?.id] });
+      const data = await res.json() as { success?: boolean; error?: string; token?: string };
+      if (!res.ok) throw new Error(data.error ?? "Cancellation failed");
+      if (data.token) applyNewToken(data.token);
+      queryClient.invalidateQueries({ queryKey: ["mySubscription", user?.id] });
       toast({
-        title: "Subscription cancelled",
-        description: "You no longer have access to subscription content. You can resubscribe anytime from Pricing.",
+        title:       "Subscription cancelled",
+        description: "You've been moved to the Explorer (free) tier. You can resubscribe anytime.",
       });
     } catch (e) {
       toast({
-        title: "Could not cancel",
+        title:       "Could not cancel",
         description: e instanceof Error ? e.message : "Please try again or contact support.",
-        variant: "destructive",
+        variant:     "destructive",
       });
     } finally {
       setIsCancelling(false);
@@ -89,44 +83,27 @@ export default function Settings() {
 
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your new passwords match.",
-        variant: "destructive",
-      });
+      toast({ title: "Passwords don't match", description: "Please make sure your new passwords match.", variant: "destructive" });
       return;
     }
-
     if (newPassword.length < 6) {
-      toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive",
-      });
+      toast({ title: "Password too short", description: "Password must be at least 6 characters long.", variant: "destructive" });
       return;
     }
-
     setIsChangingPassword(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
+      const res = await fetch(`${PROXY_URL}?action=change-password`, {
+        method:  "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body:    JSON.stringify({ new_password: newPassword }),
       });
-
-      if (error) throw error;
-
-      toast({
-        title: "Password updated",
-        description: "Your password has been changed successfully.",
-      });
-      setCurrentPassword("");
+      const data = await res.json() as { success?: boolean; error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Password change failed");
+      toast({ title: "Password updated", description: "Your password has been changed successfully." });
       setNewPassword("");
       setConfirmPassword("");
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update password. Please try again.",
-        variant: "destructive",
-      });
+    } catch (error) {
+      toast({ title: "Error", description: error instanceof Error ? error.message : "Failed to update password.", variant: "destructive" });
     } finally {
       setIsChangingPassword(false);
     }
@@ -159,19 +136,26 @@ export default function Settings() {
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading…
             </p>
-          ) : subscription ? (
+          ) : subscription && tier ? (
             <>
               <p className="text-sm text-foreground">
-                Current plan: <span className="font-medium">{subscription.subscription_tiers?.name ?? "Active"}</span>
+                Current plan: <span className="font-medium">{tier.tier_name}</span>
               </p>
-              {nextBillingDate && (
+              {nextBilling && (
                 <p className="text-sm text-muted-foreground">
-                  Next billing date: <span className="font-medium text-foreground">{nextBillingDate.toLocaleDateString(undefined, { dateStyle: "long" })}</span>
+                  Next billing date:{" "}
+                  <span className="font-medium text-foreground">
+                    {nextBilling.toLocaleDateString(undefined, { dateStyle: "long" })}
+                  </span>
                 </p>
               )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="text-destructive border-destructive/50 hover:bg-destructive/10" disabled={isCancelling}>
+                  <Button
+                    variant="outline"
+                    className="text-destructive border-destructive/50 hover:bg-destructive/10"
+                    disabled={isCancelling}
+                  >
                     {isCancelling ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     Cancel subscription
                   </Button>
@@ -180,7 +164,7 @@ export default function Settings() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      You will lose access to subscription content immediately. You can resubscribe anytime from the Pricing page.
+                      You will be moved to the free Explorer tier immediately. You can resubscribe anytime from the Pricing page.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -236,8 +220,8 @@ export default function Settings() {
               placeholder="Confirm new password"
             />
           </div>
-          <Button 
-            onClick={handlePasswordChange} 
+          <Button
+            onClick={handlePasswordChange}
             disabled={isChangingPassword || !newPassword || !confirmPassword}
           >
             {isChangingPassword ? (
@@ -252,7 +236,7 @@ export default function Settings() {
         </CardContent>
       </Card>
 
-      {/* Session & Security Card */}
+      {/* Session Card */}
       <Card>
         <CardHeader>
           <CardTitle>Session</CardTitle>
@@ -287,33 +271,12 @@ export default function Settings() {
               <p className="font-medium text-foreground">Delete Account</p>
               <p className="text-sm text-muted-foreground">Permanently delete your account and all associated data</p>
             </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Account</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your account and remove all your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    onClick={() => {
-                      toast({
-                        title: "Contact Support",
-                        description: "Please contact support to delete your account.",
-                      });
-                    }}
-                  >
-                    Delete Account
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button
+              variant="destructive"
+              onClick={() => toast({ title: "Contact Support", description: "Please contact support to delete your account." })}
+            >
+              Delete Account
+            </Button>
           </div>
         </CardContent>
       </Card>

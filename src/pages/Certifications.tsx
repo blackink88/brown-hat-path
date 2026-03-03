@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -15,6 +14,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { listEnrollments, frappeKeys } from "@/lib/frappe";
+import { getCourseByFrappeName } from "@/lib/courseCatalog";
 
 /* ── Vendor-coloured badge ────────────────────────── */
 
@@ -117,31 +118,24 @@ const valueProps = [
 /* ── Component ────────────────────────────────────── */
 
 export default function Certifications() {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
+  const accessToken = session?.access_token ?? "";
 
-  const { data: certificationsInPath } = useQuery({
-    queryKey: ["certificationsInPath", user?.id],
-    queryFn: async () => {
-      const { data: enrollments, error: eErr } = await supabase
-        .from("course_enrollments")
-        .select("course_id")
-        .eq("user_id", user!.id);
-      if (eErr) throw eErr;
-      const courseIds = (enrollments ?? []).map((r) => r.course_id);
-      if (courseIds.length === 0) return [];
-      const { data: courses, error: cErr } = await supabase
-        .from("courses")
-        .select("code, title, aligned_certifications")
-        .in("id", courseIds);
-      if (cErr) throw cErr;
-      return (courses ?? []).map((c) => ({
-        code: c.code,
-        title: c.title,
-        certs: Array.isArray(c.aligned_certifications) ? c.aligned_certifications : [],
-      }));
-    },
-    enabled: !!user?.id,
+  // Derive certifications in path from Frappe enrollments + static catalog
+  const { data: enrollments = [] } = useQuery({
+    queryKey: frappeKeys.enrollments(),
+    queryFn: () => listEnrollments(accessToken),
+    enabled: !!accessToken,
+    staleTime: 5 * 60 * 1000,
   });
+
+  const certificationsInPath = enrollments
+    .map((e) => {
+      const catalog = getCourseByFrappeName(e.course);
+      if (!catalog || !catalog.aligned_certifications?.length) return null;
+      return { code: catalog.code, certs: catalog.aligned_certifications };
+    })
+    .filter(Boolean) as { code: string; certs: string[] }[];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -176,7 +170,7 @@ export default function Certifications() {
         </section>
 
         {/* User's enrolled certs */}
-        {user && certificationsInPath && certificationsInPath.length > 0 && (
+        {user && certificationsInPath.length > 0 && (
           <section className="py-8 bg-muted/30 border-b border-border">
             <div className="container max-w-4xl">
               <div className="p-6 rounded-xl bg-card border border-border shadow-card">

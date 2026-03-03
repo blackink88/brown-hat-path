@@ -1,27 +1,14 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
+/**
+ * Returns the Paystack public key from the VITE_PAYSTACK_PUBLIC_KEY env var.
+ * The public key is safe to embed in the frontend bundle.
+ * Set VITE_PAYSTACK_PUBLIC_KEY=pk_live_... in your .env file.
+ */
 export function usePaystackConfig() {
-  const [publicKey, setPublicKey] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string | undefined;
 
-  useEffect(() => {
-    const fetchPublicKey = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke("get-paystack-config");
-        if (error) throw error;
-        setPublicKey(data?.publicKey || null);
-      } catch (err) {
-        console.error("Failed to fetch Paystack config:", err);
-        setError(err instanceof Error ? err.message : "Failed to load payment config");
-        setPublicKey(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchPublicKey();
-  }, []);
-
-  return { publicKey, isLoading, error };
+  return {
+    publicKey: publicKey || null,
+    isLoading: false,
+    error: publicKey ? null : "VITE_PAYSTACK_PUBLIC_KEY not set in .env",
+  };
 }

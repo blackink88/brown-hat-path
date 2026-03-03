@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Award, Download, Loader2, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { issueCertificate, frappeKeys } from "@/lib/frappe";
 
 interface CertificateCardProps {
   stageKey: string;
   stageName: string;
+  frappeCourse: string;     // Frappe LMS Course slug (frappe_name)
   isEligible: boolean;
   isEarned: boolean;
   certificateNumber?: string;
@@ -20,6 +21,7 @@ interface CertificateCardProps {
 export function CertificateCard({
   stageKey,
   stageName,
+  frappeCourse,
   isEligible,
   isEarned,
   certificateNumber,
@@ -27,32 +29,19 @@ export function CertificateCard({
   progress,
   avgScore,
 }: CertificateCardProps) {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDownloading, setIsDownloading] = useState(false);
+  const accessToken = session?.access_token ?? "";
 
   const claimCertificate = useMutation({
     mutationFn: async () => {
-      const learnerName =
-        (user?.user_metadata?.full_name as string) ||
-        user?.email?.split("@")[0] ||
-        "Learner";
-      const certNumber = `BH-${stageKey.toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
-
-      const { error } = await supabase.from("certificates").insert({
-        user_id: user?.id,
-        certificate_type: stageKey,
-        stage_name: stageName,
-        learner_name: learnerName,
-        certificate_number: certNumber,
-      });
-
-      if (error) throw error;
-      return certNumber;
+      if (!accessToken) throw new Error("Sign in to claim a certificate.");
+      return issueCertificate(frappeCourse, accessToken);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userCertificates"] });
+      queryClient.invalidateQueries({ queryKey: frappeKeys.certificates() });
       toast({
         title: "Certificate Claimed!",
         description: `Your ${stageName} certificate has been issued.`,
@@ -61,7 +50,7 @@ export function CertificateCard({
     onError: (e) => {
       toast({
         title: "Failed to claim certificate",
-        description: String(e.message),
+        description: String((e as Error).message),
         variant: "destructive",
       });
     },
@@ -69,16 +58,13 @@ export function CertificateCard({
 
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
-
     try {
       const learnerName =
         (user?.user_metadata?.full_name as string) ||
         user?.email?.split("@")[0] ||
         "Learner";
 
-      // Generate a simple PDF-like content (in a real app, use a PDF library)
-      const certificateHTML = `
-<!DOCTYPE html>
+      const certificateHTML = `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -95,7 +81,7 @@ export function CertificateCard({
 </head>
 <body>
   <div class="certificate">
-    <div class="logo">🛡️ Brown Hat Academy</div>
+    <div class="logo">Brown Hat Academy</div>
     <div class="title">Certificate of Completion</div>
     <div class="subtitle">This is to certify that</div>
     <div class="name">${learnerName}</div>
@@ -107,14 +93,11 @@ export function CertificateCard({
 </body>
 </html>`;
 
-      // Open in new window for printing
       const printWindow = window.open("", "_blank");
       if (printWindow) {
         printWindow.document.write(certificateHTML);
         printWindow.document.close();
-        printWindow.onload = () => {
-          printWindow.print();
-        };
+        printWindow.onload = () => { printWindow.print(); };
       }
     } finally {
       setIsDownloading(false);
@@ -148,14 +131,11 @@ export function CertificateCard({
             </p>
           ) : (
             <p className="text-sm text-muted-foreground mt-1">
-              {progress}% complete • {avgScore > 0 ? `${avgScore}% avg score` : "No assessments yet"}
+              {progress}% complete{avgScore > 0 ? ` • ${avgScore}% avg score` : ""}
             </p>
           )}
-
           {certificateNumber && (
-            <p className="text-xs text-muted-foreground mt-1">
-              #{certificateNumber}
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">#{certificateNumber}</p>
           )}
         </div>
 

@@ -11,19 +11,18 @@ interface PaystackButtonProps {
   popular?: boolean;
 }
 
-// Fallback button that links to /enroll when Paystack isn't ready
+// Fallback button: for logged-in users links to /pricing (they're already here),
+// for unauthenticated flow Pricing.tsx already shows /enroll instead of PaystackButton.
 function EnrollFallbackButton({ tierName, popular }: Omit<PaystackButtonProps, "planCode">) {
   return (
     <Button
       variant={popular ? "accent" : "outline"}
       className="w-full gap-2 font-medium"
       size="lg"
-      asChild
+      disabled
     >
-      <Link to="/enroll" className="group">
-        Subscribe to {tierName}
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </Link>
+      Subscribe to {tierName}
+      <ArrowRight className="h-4 w-4" />
     </Button>
   );
 }
@@ -37,8 +36,10 @@ function PaystackPaymentButton({
 }: PaystackButtonProps & { publicKey: string }) {
   const navigate = useNavigate();
 
+  // Fix: pass tierName so activate-subscription receives it
   const { pay, isVerifying } = usePaystackSubscription({
     planCode,
+    tierName,
     publicKey,
     onSuccess: () => {
       navigate("/dashboard");

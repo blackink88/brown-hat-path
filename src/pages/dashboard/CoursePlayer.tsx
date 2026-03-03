@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { getCourseByCode } from "@/lib/courseCatalog";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,13 +15,13 @@ import {
 } from "@/components/ui/resizable";
 import {
   ChevronLeft,
-  Clock,
   ChevronDown,
   ChevronRight,
   Loader2,
   FileText,
   CheckCircle2,
   Award,
+  Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -31,123 +31,119 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { LessonQuiz } from "@/components/dashboard/LessonQuiz";
 import { SkillsYouWillGain } from "@/components/dashboard/SkillsYouWillGain";
 import { CapstoneUpload } from "@/components/dashboard/CapstoneUpload";
 import { PracticalSubmission } from "@/components/dashboard/PracticalSubmission";
+import {
+  getLesson,
+  getCourseOutline,
+  markLessonProgress,
+  frappeKeys,
+  type FrappeLesson,
+  type FrappeChapter,
+} from "@/lib/frappe";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+// course-code → Frappe slug fallback (catalog is authoritative, this is a safety net)
+const FRAPPE_SLUG_FALLBACK: Record<string, string> = {
+  "BH-BRIDGE":    "technical-readiness-bridge",
+  "BH-FOUND-1":   "cybersecurity-foundations-i",
+  "BH-FOUND-2":   "cybersecurity-foundations-ii",
+  "BH-CYBER-2":   "core-cyber-foundations",
+  "BH-OPS-2":     "practitioner-core-cyber-operations",
+  "BH-SPEC-SOC":  "specialisation-soc-incident-response",
+  "BH-ADV":       "advanced-leadership",
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CoursePlayer() {
   const { courseCode } = useParams<{ courseCode: string }>();
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
+  const { user, session } = useAuth();
   const { toast } = useToast();
-  const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
-  const [expandedModules, setExpandedModules] = useState<string[]>([]);
-  const [mobileCurriculumOpen, setMobileCurriculumOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  // Fetch user role to control rubric visibility
-  const { data: userRole } = useQuery({
-    queryKey: ["userRole", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user!.id)
-        .single();
-      if (error) return null;
-      return data?.role as string | null;
-    },
-    enabled: !!user?.id,
+  // ch and ls are 1-based Frappe chapter/lesson indices — always in sync with Frappe
+  const [selectedPos, setSelectedPos] = useState<{ ch: number; ls: number } | null>(null);
+  const [expandedChapters, setExpandedChapters] = useState<number[]>([]);
+  const [mobileCurriculumOpen, setMobileCurriculumOpen] = useState(false);
+
+  // Completion tracking keyed by Frappe lesson doc name (e.g. "0040 Capstone: ...")
+  const [completedSet, setCompletedSet] = useState<Set<string>>(new Set());
+
+  // ── Course metadata from static catalog ───────────────────────
+  const catalogCourse = courseCode ? getCourseByCode(courseCode.toUpperCase()) : null;
+  const courseLoading = false;
+
+  // ── Frappe course slug ────────────────────────────────────────
+  const frappeCourseSlug =
+    catalogCourse?.frappe_name ??
+    (courseCode ? FRAPPE_SLUG_FALLBACK[courseCode.toUpperCase()] ?? null : null);
+
+  // ── Course outline from Frappe (replaces Supabase modules) ────
+  const { data: frappeOutline, isLoading: outlineLoading } = useQuery<FrappeChapter[]>({
+    queryKey: frappeKeys.courseOutline(frappeCourseSlug ?? ""),
+    queryFn: () => getCourseOutline(frappeCourseSlug!),
+    enabled: !!frappeCourseSlug,
+    staleTime: 10 * 60 * 1000,
   });
 
-  const isInstructor = userRole === "admin" || userRole === "tutor";
-
-  // Fetch course with modules and lessons
-  const { data: courseData, isLoading } = useQuery({
-    queryKey: ["course", courseCode],
+  // ── Lesson content from Frappe ────────────────────────────────
+  const { data: frappeLesson, isLoading: lessonLoading } = useQuery<FrappeLesson | null>({
+    queryKey: frappeKeys.lesson(
+      frappeCourseSlug ?? "",
+      selectedPos?.ch ?? 0,
+      selectedPos?.ls ?? 0
+    ),
     queryFn: async () => {
-      const { data: course, error: courseError } = await supabase
-        .from("courses")
-        .select("*")
-        .ilike("code", courseCode || "")
-        .single();
-
-      if (courseError) throw courseError;
-
-      const { data: modules, error: modulesError } = await supabase
-        .from("modules")
-        .select("*, lessons(*)")
-        .eq("course_id", course.id)
-        .order("order_index");
-
-      if (modulesError) throw modulesError;
-
-      // Sort lessons within each module
-      const sortedModules = modules.map((m) => ({
-        ...m,
-        lessons: m.lessons.sort(
-          (a: { order_index: number }, b: { order_index: number }) =>
-            a.order_index - b.order_index
-        ),
-      }));
-
-      return { course, modules: sortedModules };
+      if (!frappeCourseSlug || !selectedPos) return null;
+      return getLesson(frappeCourseSlug, selectedPos.ch, selectedPos.ls);
     },
-    enabled: !!courseCode,
+    enabled: !!frappeCourseSlug && !!selectedPos,
+    staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch user progress
-  const { data: userProgress } = useQuery({
-    queryKey: ["userProgress", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_progress")
-        .select("lesson_id, completed")
-        .eq("user_id", user?.id || "");
+  // ── Reset selection when course changes ───────────────────────
+  useEffect(() => {
+    setSelectedPos(null);
+    setExpandedChapters([]);
+    setCompletedSet(new Set());
+  }, [frappeCourseSlug]);
 
-      if (error) throw error;
-      const list = data ?? [];
-      return list.reduce(
-        (acc, p) => ({ ...acc, [p.lesson_id]: !!p.completed }),
-        {} as Record<string, boolean>
-      );
-    },
-    enabled: !!user?.id,
-  });
+  // ── Auto-select first lesson when outline loads ───────────────
+  useEffect(() => {
+    if (frappeOutline?.[0] && !selectedPos) {
+      const first = frappeOutline[0];
+      setSelectedPos({ ch: first.idx, ls: 1 });
+      setExpandedChapters([first.idx]);
+    }
+  }, [frappeOutline]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Toggle lesson completion using direct upsert
+  // ── Progress tracking ─────────────────────────────────────────
   const toggleCompletion = useMutation({
-    mutationFn: async ({
-      lessonId,
-      completed,
-    }: {
-      lessonId: string;
-      completed: boolean;
+    mutationFn: async (vars: {
+      lessonName: string;
+      chapterNumber: number;
+      lessonNumber: number;
     }) => {
-      if (!user?.id) throw new Error("You must be signed in to save progress.");
-      const payload = {
-        user_id: user.id,
-        lesson_id: lessonId,
-        completed,
-        completed_at: completed ? new Date().toISOString() : null,
-      };
-      const { error } = await supabase.from("user_progress").upsert(payload, {
-        onConflict: "user_id,lesson_id",
-      });
-      if (error) throw error;
+      if (!user?.email) throw new Error("Sign in to save progress.");
+      if (frappeCourseSlug && session?.access_token) {
+        markLessonProgress(
+          frappeCourseSlug,
+          vars.chapterNumber,
+          vars.lessonNumber,
+          session.access_token
+        ).catch(() => {});
+      }
     },
-    onSuccess: (_, variables) => {
-      queryClient.setQueryData<Record<string, boolean>>(
-        ["userProgress", user?.id],
-        (prev) => ({
-          ...(prev ?? {}),
-          [variables.lessonId]: variables.completed,
-        })
-      );
-      queryClient.invalidateQueries({ queryKey: ["userProgress"] });
+    onSuccess: (_, vars) => {
+      setCompletedSet((prev) => {
+        const next = new Set(prev);
+        next.add(vars.lessonName);
+        return next;
+      });
     },
     onError: (err) => {
       toast({
@@ -158,39 +154,25 @@ export default function CoursePlayer() {
     },
   });
 
-  // Set first lesson as selected when course data loads or course changes
-  useEffect(() => {
-    if (courseData?.modules?.[0]?.lessons?.[0]) {
-      setSelectedLesson(courseData.modules[0].lessons[0].id);
-      setExpandedModules([courseData.modules[0].id]);
-    }
-  }, [courseCode, courseData?.course?.id]);
-
-  const currentLesson = courseData?.modules
-    .flatMap((m) => m.lessons)
-    .find((l) => l.id === selectedLesson);
-
-  // Calculate progress
+  // ── Derived values ────────────────────────────────────────────
   const totalLessons =
-    courseData?.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 0;
-  const completedLessons =
-    courseData?.modules
-      .flatMap((m) => m.lessons)
-      .filter((l) => userProgress?.[l.id]).length || 0;
+    frappeOutline?.reduce((acc, ch) => acc + ch.lessons.length, 0) ?? 0;
+  const completedLessons = completedSet.size;
   const progressPercent =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+  const isLessonComplete = frappeLesson ? completedSet.has(frappeLesson.name) : false;
+  const courseTitle =
+    catalogCourse?.title ?? frappeCourseSlug?.replace(/-/g, " ") ?? "Course";
 
-  const isLessonComplete = selectedLesson ? !!userProgress?.[selectedLesson] : false;
-
-  if (isLoading) {
+  // ── Loading / not-found states ───────────────────────────────
+  if (courseLoading && !catalogCourse && !frappeCourseSlug) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
-
-  if (!courseData) {
+  if (!catalogCourse && !frappeCourseSlug) {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">Course not found</p>
@@ -201,88 +183,85 @@ export default function CoursePlayer() {
     );
   }
 
-  const curriculumContent = (
+  // ── Curriculum sidebar (driven entirely by Frappe outline) ────
+  const curriculumContent = outlineLoading ? (
+    <div className="flex items-center gap-2 text-muted-foreground text-sm p-4">
+      <Loader2 className="h-4 w-4 animate-spin" />
+      Loading curriculum…
+    </div>
+  ) : (
     <div className="p-2">
-      {courseData.modules.map((module) => (
+      {(frappeOutline ?? []).map((chapter) => (
         <Collapsible
-          key={module.id}
-          open={expandedModules.includes(module.id)}
-          onOpenChange={(open) => {
-            setExpandedModules(
+          key={chapter.idx}
+          open={expandedChapters.includes(chapter.idx)}
+          onOpenChange={(open) =>
+            setExpandedChapters(
               open
-                ? [...expandedModules, module.id]
-                : expandedModules.filter((id) => id !== module.id)
-            );
-          }}
+                ? [...expandedChapters, chapter.idx]
+                : expandedChapters.filter((i) => i !== chapter.idx)
+            )
+          }
         >
           <CollapsibleTrigger className="flex items-center gap-2 w-full p-3 rounded-lg hover:bg-muted/50 text-left">
-            {expandedModules.includes(module.id) ? (
+            {expandedChapters.includes(chapter.idx) ? (
               <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
             ) : (
               <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
             )}
             <span className="font-medium text-foreground text-sm flex-1">
-              {module.title}
+              {chapter.title}
             </span>
             <span className="text-xs text-muted-foreground">
-              {module.lessons.filter((l: { id: string }) => userProgress?.[l.id])
-                .length}
-              /{module.lessons.length}
+              {chapter.lessons.filter((l) => completedSet.has(l.name)).length}/
+              {chapter.lessons.length}
             </span>
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="ml-6 space-y-1">
-              {module.lessons.map(
-                (lesson: {
-                  id: string;
-                  title: string;
-                  duration_minutes: number | null;
-                }) => {
-                  const isComplete = userProgress?.[lesson.id];
-                  const isSelected = selectedLesson === lesson.id;
-                  return (
-                    <div
-                      key={lesson.id}
-                      className={cn(
-                        "flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors",
-                        isSelected
-                          ? "bg-primary/10 text-primary"
-                          : "hover:bg-muted/50"
-                      )}
-                      onClick={() => {
-                        setSelectedLesson(lesson.id);
-                        if (isMobile) setMobileCurriculumOpen(false);
-                      }}
-                    >
-                      <Checkbox
-                        checked={isComplete}
-                        onCheckedChange={(checked) => {
+              {chapter.lessons.map((lesson) => {
+                const isComplete = completedSet.has(lesson.name);
+                const isSelected =
+                  selectedPos?.ch === chapter.idx && selectedPos?.ls === lesson.idx;
+                return (
+                  <div
+                    key={lesson.name}
+                    className={cn(
+                      "flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors",
+                      isSelected
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-muted/50"
+                    )}
+                    onClick={() => {
+                      setSelectedPos({ ch: chapter.idx, ls: lesson.idx });
+                      if (isMobile) setMobileCurriculumOpen(false);
+                    }}
+                  >
+                    <Checkbox
+                      checked={isComplete}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
                           toggleCompletion.mutate({
-                            lessonId: lesson.id,
-                            completed: checked === true,
+                            lessonName: lesson.name,
+                            chapterNumber: chapter.idx,
+                            lessonNumber: lesson.idx,
                           });
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                        className="shrink-0"
-                      />
-                      <span
-                        className={cn(
-                          "text-sm flex-1 truncate",
-                          isComplete && "line-through text-muted-foreground"
-                        )}
-                      >
-                        {lesson.title}
-                      </span>
-                      {lesson.duration_minutes && (
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {lesson.duration_minutes}m
-                        </span>
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="shrink-0"
+                    />
+                    <span
+                      className={cn(
+                        "text-sm flex-1 truncate",
+                        isComplete && "line-through text-muted-foreground"
                       )}
-                    </div>
-                  );
-                }
-              )}
+                    >
+                      {lesson.title}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -290,100 +269,141 @@ export default function CoursePlayer() {
     </div>
   );
 
+  // ── Lesson content panel ──────────────────────────────────────
+  const lessonTitle = frappeLesson?.title ?? "Select a lesson";
+  const examAlignment = frappeLesson?.custom_exam_alignment ?? null;
+  const isCapstone = !!frappeLesson?.title?.toLowerCase().includes("capstone");
+
   const lessonContent = (
     <div className="space-y-4">
+      {/* Title + exam alignment */}
       <div>
-        <h2 className="text-xl font-semibold text-foreground">
-          {currentLesson?.title || "Select a lesson"}
-        </h2>
-        {currentLesson?.description && (
-          <p className="text-sm text-muted-foreground mt-1">
-            {currentLesson.description}
-          </p>
-        )}
-        {currentLesson?.exam_alignment && (
+        <h2 className="text-xl font-semibold text-foreground">{lessonTitle}</h2>
+        {examAlignment && (
           <div className="mt-3 flex flex-wrap items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2">
             <div className="flex items-center gap-1.5 text-xs font-medium text-primary">
               <Award className="h-3.5 w-3.5 shrink-0" aria-hidden />
               <span>Exam relevance</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {(currentLesson.exam_alignment
+              {examAlignment
                 .split(/;\s*/)
                 .map((s) => s.trim())
-                .filter(Boolean) as string[]).map((objective) => (
-                <span
-                  key={objective}
-                  className="inline-flex rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
-                >
-                  {objective}
-                </span>
-              ))}
+                .filter(Boolean)
+                .map((obj) => (
+                  <span
+                    key={obj}
+                    className="inline-flex rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                  >
+                    {obj}
+                  </span>
+                ))}
             </div>
           </div>
         )}
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <FileText className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-medium text-foreground">Lesson content</h3>
+      {/* Video embed */}
+      {frappeLesson?.youtube && (
+        <div className="rounded-xl overflow-hidden border border-border bg-black aspect-video">
+          <iframe
+            src={
+              frappeLesson.youtube.includes("youtube.com") ||
+              frappeLesson.youtube.includes("youtu.be")
+                ? `https://www.youtube.com/embed/${frappeLesson.youtube
+                    .replace(/.*[?&v=]([^&]+).*/, "$1")
+                    .replace(/.*youtu\.be\//, "")}`
+                : frappeLesson.youtube
+            }
+            className="w-full h-full"
+            allowFullScreen
+            title={lessonTitle}
+          />
         </div>
-        <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:font-semibold prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">
-          {currentLesson?.content_markdown ? (
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {(() => {
-                const md = currentLesson.content_markdown;
-                // Hide "## Marking Rubric" section from students
-                if (!isInstructor) {
-                  const rubricIdx = md.indexOf("## Marking Rubric");
-                  if (rubricIdx !== -1) return md.slice(0, rubricIdx).trimEnd();
-                }
-                return md;
-              })()}
-            </ReactMarkdown>
-          ) : (
-            <p className="text-muted-foreground italic">
-              No content for this lesson yet.
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Skills You Will Gain - Course Level */}
-      {Array.isArray(courseData.course.skills) && courseData.course.skills.length > 0 && (
-        <SkillsYouWillGain skills={courseData.course.skills as string[]} />
       )}
 
-      {/* Lesson quiz (when we have quiz data) */}
-      {currentLesson && (
-        <LessonQuiz
-          lessonId={currentLesson.id}
-          onPass={() =>
-            toggleCompletion.mutate({
-              lessonId: currentLesson.id,
-              completed: true,
-            })
-          }
-          alreadyCompleted={!!userProgress?.[currentLesson.id]}
+      {/* Capstone upload — shown at the top so students see it before the brief */}
+      {isCapstone && frappeCourseSlug && courseCode && (
+        <CapstoneUpload
+          course={frappeCourseSlug}
+          courseCode={courseCode.toUpperCase()}
+          lesson={frappeLesson?.name}
         />
       )}
 
-      {/* Practical submission - text answers for "Practical:" lessons */}
-      {currentLesson?.title?.startsWith("Practical:") && (
-        <PracticalSubmission lessonId={currentLesson.id} />
+      {/* Lesson body */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <FileText className="h-4 w-4 text-muted-foreground" />
+          <h3 className="font-medium text-foreground">
+            {isCapstone ? "Assignment brief" : "Lesson content"}
+          </h3>
+        </div>
+
+        {lessonLoading ? (
+          <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Loading content from Frappe LMS…
+          </div>
+        ) : frappeLesson?.body ? (
+          <div
+            className="prose prose-sm dark:prose-invert max-w-none
+              prose-headings:font-semibold
+              prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-2
+              prose-h3:text-base prose-h3:mt-4 prose-h3:mb-1
+              prose-p:text-foreground prose-li:text-foreground
+              prose-strong:text-foreground prose-code:text-primary
+              prose-pre:bg-muted prose-pre:text-foreground
+              prose-ol:list-decimal prose-ul:list-disc"
+            dangerouslySetInnerHTML={{ __html: frappeLesson.body }}
+          />
+        ) : !frappeCourseSlug ? (
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            This course is not yet linked to Frappe LMS.
+          </p>
+        ) : selectedPos ? (
+          <p className="text-muted-foreground italic text-sm">
+            No content for this lesson yet.
+          </p>
+        ) : (
+          <p className="text-muted-foreground italic text-sm">
+            Select a lesson from the curriculum.
+          </p>
+        )}
+      </div>
+
+      {/* Skills */}
+      {catalogCourse?.skills && catalogCourse.skills.length > 0 && (
+        <SkillsYouWillGain skills={catalogCourse.skills} />
       )}
 
-      {/* Capstone upload - PDF upload for "Capstone:" lessons */}
-      {currentLesson?.title?.startsWith("Capstone:") && courseCode && (
-        <CapstoneUpload
-          lessonId={currentLesson.id}
-          courseCode={courseCode.toUpperCase()}
+      {/* Quiz */}
+      {frappeLesson?.quiz_id && (
+        <LessonQuiz
+          frappeQuizId={frappeLesson.quiz_id}
+          onPass={() =>
+            selectedPos &&
+            frappeLesson &&
+            toggleCompletion.mutate({
+              lessonName: frappeLesson.name,
+              chapterNumber: selectedPos.ch,
+              lessonNumber: selectedPos.ls,
+            })
+          }
+          alreadyCompleted={isLessonComplete}
+        />
+      )}
+
+      {/* Practical submission */}
+      {frappeLesson?.title?.startsWith("Practical:") && frappeCourseSlug && (
+        <PracticalSubmission
+          course={frappeCourseSlug}
+          lesson={frappeLesson.name}
         />
       )}
 
       {/* Mark as complete */}
-      {currentLesson && (
+      {frappeLesson && (
         <div className="rounded-xl border border-border bg-card p-4">
           {isLessonComplete ? (
             <p className="text-sm text-muted-foreground flex items-center gap-2">
@@ -393,9 +413,12 @@ export default function CoursePlayer() {
           ) : (
             <Button
               onClick={() =>
+                selectedPos &&
+                frappeLesson &&
                 toggleCompletion.mutate({
-                  lessonId: currentLesson.id,
-                  completed: true,
+                  lessonName: frappeLesson.name,
+                  chapterNumber: selectedPos.ch,
+                  lessonNumber: selectedPos.ls,
                 })
               }
               disabled={toggleCompletion.isPending}
@@ -426,7 +449,7 @@ export default function CoursePlayer() {
         </Button>
         <div className="flex-1 min-w-0">
           <h1 className="font-semibold text-foreground truncate text-sm sm:text-base">
-            {courseData.course.title}
+            {courseTitle}
           </h1>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="text-xs sm:text-sm">
@@ -435,8 +458,22 @@ export default function CoursePlayer() {
             <Progress value={progressPercent} className="w-16 sm:w-24 h-2" />
             <span className="text-xs sm:text-sm">{progressPercent}%</span>
           </div>
-          <AlignedToCerts certifications={courseData.course.aligned_certifications ?? []} className="mt-1" />
+          <AlignedToCerts
+            certifications={catalogCourse?.aligned_certifications ?? []}
+            className="mt-1"
+          />
         </div>
+        {frappeCourseSlug && (
+          <a
+            href={`${import.meta.env.VITE_FRAPPE_URL}/courses/${frappeCourseSlug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Video className="h-3 w-3" />
+            Frappe LMS
+          </a>
+        )}
         {isMobile && (
           <Button
             variant="outline"
@@ -448,9 +485,8 @@ export default function CoursePlayer() {
         )}
       </div>
 
-      {/* Main Content */}
+      {/* Main content */}
       {isMobile ? (
-        /* Mobile: stacked layout with toggle */
         <div className="flex-1 pt-4">
           {mobileCurriculumOpen ? (
             <div className="rounded-xl border border-border bg-card">
@@ -464,28 +500,21 @@ export default function CoursePlayer() {
           )}
         </div>
       ) : (
-        /* Desktop: resizable split pane */
         <div className="flex-1 pt-4 overflow-hidden">
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <ResizablePanel defaultSize={65} minSize={40}>
               <div className="h-full flex flex-col gap-4 pr-4 overflow-hidden">
-                <ScrollArea className="flex-1 min-h-0 pr-4">
-                  {lessonContent}
-                </ScrollArea>
+                <ScrollArea className="flex-1 min-h-0 pr-4">{lessonContent}</ScrollArea>
               </div>
             </ResizablePanel>
-
             <ResizableHandle withHandle />
-
             <ResizablePanel defaultSize={35} minSize={25}>
               <div className="h-full flex flex-col gap-4 pl-2">
                 <div className="flex-1 min-h-0 rounded-xl border border-border bg-card flex flex-col">
                   <div className="p-4 border-b border-border shrink-0">
                     <h3 className="font-semibold text-foreground">Curriculum</h3>
                   </div>
-                  <ScrollArea className="flex-1">
-                    {curriculumContent}
-                  </ScrollArea>
+                  <ScrollArea className="flex-1">{curriculumContent}</ScrollArea>
                 </div>
               </div>
             </ResizablePanel>

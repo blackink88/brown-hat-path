@@ -1,45 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Award, Download, ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
-interface Certificate {
-  id: string;
-  certificate_type: string;
-  stage_name: string;
-  certificate_number: string;
-  issued_at: string;
-  learner_name: string;
-}
+import { getCertificates, frappeKeys, type FrappeCertificate } from "@/lib/frappe";
 
 export default function Certificates() {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const accessToken = session?.access_token ?? "";
 
-  const { data: certificates, isLoading } = useQuery({
-    queryKey: ["userCertificates", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("certificates")
-        .select("*")
-        .eq("user_id", user?.id ?? "")
-        .order("issued_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as Certificate[];
-    },
-    enabled: !!user?.id,
+  const { data: certificates = [], isLoading } = useQuery({
+    queryKey: frappeKeys.certificates(),
+    queryFn: () => getCertificates(accessToken),
+    enabled: !!accessToken,
   });
 
-  const handleDownload = async (cert: Certificate) => {
-    setDownloadingId(cert.id);
+  const handleDownload = async (cert: FrappeCertificate) => {
+    setDownloadingId(cert.name);
     try {
+      const learnerName = user?.user_metadata?.full_name ?? user?.email ?? "Student";
       const certificateHTML = `
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Brown Hat Academy - ${cert.stage_name} Certificate</title>
+  <title>Brown Hat Academy - ${cert.course_title} Certificate</title>
   <style>
     @page { size: landscape; margin: 0; }
     body { font-family: Georgia, serif; text-align: center; padding: 60px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; min-height: 100vh; margin: 0; display: flex; align-items: center; justify-content: center; }
@@ -56,15 +41,15 @@ export default function Certificates() {
 </head>
 <body>
   <div class="certificate">
-    <div class="logo">🛡️ Brown Hat Academy</div>
+    <div class="logo">Brown Hat Academy</div>
     <div class="title">Certificate of Completion</div>
     <div class="subtitle">This is to certify that</div>
-    <div class="name">${cert.learner_name}</div>
-    <div class="stage">has successfully completed the <strong>${cert.stage_name}</strong> stage</div>
-    <div class="subtitle">demonstrating proficiency in cybersecurity fundamentals</div>
-    <div class="date">Issued: ${new Date(cert.issued_at).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}</div>
-    <div class="cert-number">Certificate #: ${cert.certificate_number}</div>
-    <div class="verify">Verify at: brownhat.academy/verify/${cert.certificate_number}</div>
+    <div class="name">${learnerName}</div>
+    <div class="stage">has successfully completed <strong>${cert.course_title}</strong></div>
+    <div class="subtitle">demonstrating proficiency in cybersecurity</div>
+    <div class="date">Issued: ${new Date(cert.issue_date).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}</div>
+    <div class="cert-number">Certificate ID: ${cert.name}</div>
+    <div class="verify">Verify at: brownhat.academy/verify/${cert.name}</div>
   </div>
 </body>
 </html>`;
@@ -99,19 +84,19 @@ export default function Certificates() {
         </p>
       </div>
 
-      {!certificates?.length ? (
+      {!certificates.length ? (
         <div className="rounded-xl border border-border bg-card p-8 text-center">
           <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="font-semibold text-foreground mb-2">No certificates yet</h3>
           <p className="text-sm text-muted-foreground">
-            Complete a learning stage to earn your first certificate.
+            Complete a course to earn your certificate.
           </p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {certificates.map((cert) => (
             <div
-              key={cert.id}
+              key={cert.name}
               className="rounded-xl border border-border bg-card p-6"
             >
               <div className="flex items-start gap-4">
@@ -120,20 +105,17 @@ export default function Certificates() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground">
-                    {cert.stage_name} Certificate
+                    {cert.course_title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Issued to {cert.learner_name}
-                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(cert.issued_at).toLocaleDateString("en-ZA", {
+                    {new Date(cert.issue_date).toLocaleDateString("en-ZA", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
                     })}
                   </p>
                   <p className="text-xs font-mono text-muted-foreground mt-1">
-                    #{cert.certificate_number}
+                    {cert.name}
                   </p>
                 </div>
               </div>
@@ -142,9 +124,9 @@ export default function Certificates() {
                   variant="outline"
                   size="sm"
                   onClick={() => handleDownload(cert)}
-                  disabled={downloadingId === cert.id}
+                  disabled={downloadingId === cert.name}
                 >
-                  {downloadingId === cert.id ? (
+                  {downloadingId === cert.name ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   ) : (
                     <Download className="h-4 w-4 mr-2" />
@@ -154,9 +136,7 @@ export default function Certificates() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() =>
-                    window.open(`/verify/${cert.certificate_number}`, "_blank")
-                  }
+                  onClick={() => window.open(`/verify/${cert.name}`, "_blank")}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Verify

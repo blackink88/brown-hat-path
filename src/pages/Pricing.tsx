@@ -1,7 +1,6 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -13,32 +12,41 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { PaystackButton } from "@/components/pricing/PaystackButton";
 
-type TierRow = { id: string; name: string; price_zar: number; level: number; features: unknown; paystack_plan_code: string | null };
+const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
+
+type TierRow = {
+  name: string;
+  tier_name: string;
+  tier_level: number;
+  price_zar: number;
+  features: string | string[];
+  paystack_plan_code: string | null;
+};
 
 const tierMeta: Record<string, { icon: typeof Zap; description: string; cta: string; popular: boolean }> = {
   Explorer: {
-    icon: BookOpen,
+    icon:        BookOpen,
     description: "Try the Bridge course and see if cybersecurity is for you.",
-    cta: "Start Exploring",
-    popular: false,
+    cta:         "Start Exploring",
+    popular:     false,
   },
   Foundation: {
-    icon: Zap,
+    icon:        Zap,
     description: "Perfect for beginners starting their cybersecurity journey.",
-    cta: "Start Foundation",
-    popular: false,
+    cta:         "Start Foundation",
+    popular:     false,
   },
   Practitioner: {
-    icon: Shield,
+    icon:        Shield,
     description: "For those ready to dive into core cybersecurity skills.",
-    cta: "Start Practitioner",
-    popular: true,
+    cta:         "Start Practitioner",
+    popular:     true,
   },
   Professional: {
-    icon: Crown,
+    icon:        Crown,
     description: "Complete access for serious career advancement.",
-    cta: "Start Professional",
-    popular: false,
+    cta:         "Start Professional",
+    popular:     false,
   },
 };
 
@@ -61,11 +69,15 @@ const faqs = [
   },
 ];
 
+function parseFeatures(raw: string | string[]): string[] {
+  if (Array.isArray(raw)) return raw;
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
 const Pricing = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [checkoutTierId, setCheckoutTierId] = useState<string | null>(null);
   const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
   const handledCancelledRef = useRef(false);
 
@@ -80,70 +92,35 @@ const Pricing = () => {
     }, { replace: true });
   }, [searchParams, setSearchParams, toast]);
 
-  const { data: dbTiers, isLoading: tiersLoading } = useQuery({
-    queryKey: ["subscription_tiers"],
+  const { data: rawTiers, isLoading: tiersLoading } = useQuery({
+    queryKey: ["frappeTiers"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("subscription_tiers")
-        .select("id, name, price_zar, level, features, paystack_plan_code")
-        .order("level");
-      if (error) throw error;
-      return (data ?? []) as TierRow[];
+      const res = await fetch(`${PROXY_URL}?action=tiers`);
+      const data = await res.json() as { tiers?: TierRow[] };
+      return (data.tiers ?? []) as TierRow[];
     },
+    staleTime: 10 * 60 * 1000,
   });
 
-  const tiers = (dbTiers ?? []).filter((t) => t.name !== "Explorer").map((t) => {
-    const meta = tierMeta[t.name] ?? { icon: Zap, description: "", cta: `Start ${t.name}`, popular: false };
-    const features: string[] = Array.isArray(t.features)
-      ? t.features
-      : typeof t.features === "string"
-        ? (() => {
-            try {
-              const parsed = JSON.parse(t.features);
-              return Array.isArray(parsed) ? parsed : [];
-            } catch {
-              return [];
-            }
-          })()
-        : [];
-    return {
-      id: t.id,
-      name: t.name,
-      price: formatPrice(t.price_zar),
-      planCode: t.paystack_plan_code || "",
-      period: "/month",
-      description: meta.description,
-      icon: meta.icon,
-      features,
-      cta: meta.cta,
-      popular: meta.popular,
-    };
-  });
-
-  const handleSubscribe = async (tierId: string) => {
-    if (!user) {
-      window.location.href = "/enroll";
-      return;
-    }
-    setCheckoutTierId(tierId);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
-        body: { tier_id: tierId },
-      });
-      if (error) throw error;
-      const url = (data as { url?: string })?.url;
-      if (url) window.location.href = url;
-      else throw new Error("No checkout URL returned");
-    } catch (e) {
-      toast({
-        title: "Checkout failed",
-        description: e instanceof Error ? e.message : "Please try again or contact support.",
-        variant: "destructive",
-      });
-    } finally {
-      setCheckoutTierId(null);
-    }
-  };
+  const paidTiers = (rawTiers ?? [])
+    .filter((t) => t.tier_name !== "Explorer")
+    .sort((a, b) => a.tier_level - b.tier_level)
+    .map((t) => {
+      const meta = tierMeta[t.tier_name] ?? { icon: Zap, description: "", cta: `Start ${t.tier_name}`, popular: false };
+      return {
+        id:          t.name,
+        name:        t.tier_name,
+        tier_level:  t.tier_level,
+        price:       formatPrice(t.price_zar),
+        planCode:    t.paystack_plan_code || "",
+        period:      "/month",
+        description: meta.description,
+        icon:        meta.icon,
+        features:    parseFeatures(t.features),
+        cta:         meta.cta,
+        popular:     meta.popular,
+      };
+    });
 
   const isLoading = currencyLoading || tiersLoading;
 
@@ -151,17 +128,12 @@ const Pricing = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        {/* Hero - consistent with homepage */}
+        {/* Hero */}
         <section className="relative bg-background border-b border-border overflow-hidden">
-          {/* Gradient wash */}
           <div
             className="absolute inset-0 opacity-[0.4] pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)",
-            }}
+            style={{ background: "linear-gradient(160deg, hsl(var(--muted)) 0%, transparent 50%, hsl(var(--background)) 100%)" }}
           />
-          {/* Animated cyber grid */}
           <div className="absolute inset-0 cyber-grid pointer-events-none" />
           <div className="absolute inset-0 security-doodle pointer-events-none" />
           <div className="container relative py-20 md:py-28">
@@ -187,7 +159,8 @@ const Pricing = () => {
         <section className="py-16 md:py-24">
           <div className="container">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {/* Explorer tier - always rendered from static data */}
+
+              {/* Explorer — always free, static */}
               {(() => {
                 const meta = tierMeta.Explorer;
                 const explorerFeatures = [
@@ -225,8 +198,8 @@ const Pricing = () => {
                 );
               })()}
 
-              {/* Paid tiers from DB */}
-              {tiers.map((tier) => (
+              {/* Paid tiers from Frappe */}
+              {paidTiers.map((tier) => (
                 <div
                   key={tier.name}
                   className={cn(
@@ -288,9 +261,7 @@ const Pricing = () => {
         <section className="py-16 md:py-24 bg-muted/30">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Training for Teams
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Training for Teams</h2>
               <p className="text-muted-foreground mb-8">
                 Need to upskill your security team or build an internal cybersecurity capability? We offer custom corporate packages with dedicated support.
               </p>

@@ -1,55 +1,52 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { BookOpen, Users, GraduationCap, CreditCard } from "lucide-react";
+import { ExternalLink, BookOpen, Users, GraduationCap, CreditCard } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const FRAPPE_DESK =
+  (import.meta.env.VITE_FRAPPE_URL as string | undefined) ??
+  "https://lms-dzr-tbs.c.frappe.cloud";
+
+const links = [
+  { label: "Courses", icon: BookOpen, path: "/lms/courses" },
+  { label: "Users", icon: Users, path: "/app/user" },
+  { label: "Enrollments", icon: GraduationCap, path: "/app/lms-enrollment" },
+  { label: "Subscriptions", icon: CreditCard, path: "/app/bh-subscription" },
+];
 
 export default function AdminOverview() {
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["adminStats"],
-    queryFn: async () => {
-      const [coursesRes, profilesRes, enrollmentsRes, subscriptionsRes] = await Promise.all([
-        supabase.from("courses").select("id", { count: "exact", head: true }),
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("course_enrollments").select("id", { count: "exact", head: true }),
-        supabase.from("subscriptions").select("id", { count: "exact", head: true }).eq("status", "active"),
-      ]);
-      return {
-        courses: coursesRes.count ?? 0,
-        users: profilesRes.count ?? 0,
-        enrollments: enrollmentsRes.count ?? 0,
-        activeSubscriptions: subscriptionsRes.count ?? 0,
-      };
-    },
-  });
-
-  if (isLoading) {
-    return <div className="text-muted-foreground">Loading stats…</div>;
-  }
-
-  const cards = [
-    { label: "Courses", value: stats?.courses ?? 0, icon: BookOpen },
-    { label: "Users", value: stats?.users ?? 0, icon: Users },
-    { label: "Enrollments", value: stats?.enrollments ?? 0, icon: GraduationCap },
-    { label: "Active subscriptions", value: stats?.activeSubscriptions ?? 0, icon: CreditCard },
-  ];
-
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Admin Overview</h1>
+      <p className="text-muted-foreground">
+        Course and user management is handled in Frappe Desk. Click a link below to open the relevant section.
+      </p>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-xl border border-border bg-card p-6 flex items-center gap-4"
+        {links.map((item) => (
+          <a
+            key={item.label}
+            href={`${FRAPPE_DESK}${item.path}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl border border-border bg-card p-6 flex items-center gap-4 hover:shadow-lg transition-shadow"
           >
-            <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-              <card.icon className="h-6 w-6 text-primary" />
+            <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <item.icon className="h-6 w-6 text-primary" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">{card.value}</p>
-              <p className="text-sm text-muted-foreground">{card.label}</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground">{item.label}</p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                Open in Frappe <ExternalLink className="h-3 w-3" />
+              </p>
             </div>
-          </div>
+          </a>
         ))}
+      </div>
+      <div className="pt-4">
+        <Button asChild>
+          <a href={`${FRAPPE_DESK}/app`} target="_blank" rel="noopener noreferrer">
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Open Frappe Desk
+          </a>
+        </Button>
       </div>
     </div>
   );

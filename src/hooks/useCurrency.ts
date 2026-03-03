@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface CurrencyInfo {
   currency: "ZAR" | "USD";
@@ -7,13 +6,6 @@ interface CurrencyInfo {
   rate: number;
   isLoading: boolean;
 }
-
-// ZAR base prices in cents
-const BASE_PRICES_ZAR = {
-  foundation: 499,
-  practitioner: 1500,
-  professional: 3000,
-};
 
 export function useCurrency() {
   const [currencyInfo, setCurrencyInfo] = useState<CurrencyInfo>({
@@ -24,71 +16,35 @@ export function useCurrency() {
   });
 
   useEffect(() => {
-    const detectCurrencyAndFetchRate = async () => {
-      // Detect if user is in South Africa based on browser locale/timezone
+    const detect = async () => {
       const locale = navigator.language || "en-ZA";
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      
-      const isSouthAfrican = 
-        locale.includes("ZA") || 
-        locale === "af" || 
-        timezone === "Africa/Johannesburg";
+      const isSouthAfrican =
+        locale.includes("ZA") || locale === "af" || timezone === "Africa/Johannesburg";
 
       if (isSouthAfrican) {
-        setCurrencyInfo({
-          currency: "ZAR",
-          symbol: "R",
-          rate: 1,
-          isLoading: false,
-        });
+        setCurrencyInfo({ currency: "ZAR", symbol: "R", rate: 1, isLoading: false });
         return;
       }
 
-      // Fetch USD exchange rate for non-SA users
+      // Free public exchange rate API — no auth required
       try {
-        const { data, error } = await supabase.functions.invoke("get-exchange-rate");
-        
-        if (error) throw error;
-        
-        setCurrencyInfo({
-          currency: "USD",
-          symbol: "$",
-          rate: data.rate || 0.055,
-          isLoading: false,
-        });
-      } catch (error) {
-        console.error("Failed to fetch exchange rate:", error);
-        // Fallback rate
-        setCurrencyInfo({
-          currency: "USD",
-          symbol: "$",
-          rate: 0.055,
-          isLoading: false,
-        });
+        const res = await fetch("https://api.frankfurter.app/latest?from=ZAR&to=USD");
+        const data = await res.json() as { rates?: { USD?: number } };
+        const rate = data.rates?.USD ?? 0.055;
+        setCurrencyInfo({ currency: "USD", symbol: "$", rate, isLoading: false });
+      } catch {
+        setCurrencyInfo({ currency: "USD", symbol: "$", rate: 0.055, isLoading: false });
       }
     };
-
-    detectCurrencyAndFetchRate();
+    detect();
   }, []);
 
   const formatPrice = (zarAmount: number): string => {
-    if (currencyInfo.currency === "ZAR") {
-      return `R${zarAmount.toLocaleString()}`;
-    }
-    
+    if (currencyInfo.currency === "ZAR") return `R${zarAmount.toLocaleString()}`;
     const usdAmount = Math.round(zarAmount * currencyInfo.rate);
     return `$${usdAmount.toLocaleString()}`;
   };
 
-  const getPrices = () => ({
-    foundation: formatPrice(BASE_PRICES_ZAR.foundation),
-    practitioner: formatPrice(BASE_PRICES_ZAR.practitioner),
-    professional: formatPrice(BASE_PRICES_ZAR.professional),
-  });
-
-  return {
-    ...currencyInfo,
-    formatPrice,
-    getPrices,
-  };
+  return { ...currencyInfo, formatPrice };
 }

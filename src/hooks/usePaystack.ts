@@ -1,18 +1,26 @@
 import { usePaystackPayment } from "react-paystack";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
+const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
+
 interface UsePaystackOptions {
-  planCode: string;
+  planCode:  string;
+  tierName:  string;
   publicKey: string;
   onSuccess?: () => void;
-  onError?: (error: string) => void;
+  onError?:   (error: string) => void;
 }
 
-export function usePaystackSubscription({ planCode, publicKey, onSuccess, onError }: UsePaystackOptions) {
-  const { user } = useAuth();
+export function usePaystackSubscription({
+  planCode,
+  tierName,
+  publicKey,
+  onSuccess,
+  onError,
+}: UsePaystackOptions) {
+  const { user, session, applyNewToken } = useAuth();
   const { toast } = useToast();
   const [isVerifying, setIsVerifying] = useState(false);
 
@@ -20,10 +28,10 @@ export function usePaystackSubscription({ planCode, publicKey, onSuccess, onErro
 
   const config = {
     reference,
-    email: user?.email || "",
-    plan: planCode,
+    email:     user?.email || "",
+    plan:      planCode,
     publicKey,
-    currency: "ZAR",
+    currency:  "ZAR",
   };
 
   const initializePayment = usePaystackPayment(config);
@@ -31,30 +39,38 @@ export function usePaystackSubscription({ planCode, publicKey, onSuccess, onErro
   const handleSuccess = async (response: { reference: string }) => {
     setIsVerifying(true);
     try {
-      const { data, error } = await supabase.functions.invoke("verify-payment", {
-        body: {
-          reference: response.reference,
-          user_id: user?.id,
+      const token = session?.access_token;
+      if (!token) throw new Error("Not signed in");
+
+      const res = await fetch(`${PROXY_URL}?action=activate-subscription`, {
+        method:  "POST",
+        headers: {
+          Authorization:  `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          tier_name:          tierName,
+          paystack_reference: response.reference,
+        }),
       });
 
-      if (error) throw error;
+      const data = await res.json() as Record<string, unknown>;
+      if (!res.ok) throw new Error((data.error as string) || "Activation failed");
 
-      if (data?.success) {
-        toast({
-          title: "Subscription Activated!",
-          description: "Welcome to Brown Hat Academy. Your monthly subscription is now active.",
-        });
-        onSuccess?.();
-      } else {
-        throw new Error(data?.error || "Verification failed");
-      }
+      // Apply the new JWT which carries the updated tier_level
+      if (data.token) applyNewToken(data.token as string);
+
+      toast({
+        title:       "Subscription Activated!",
+        description: `Welcome to the ${tierName} plan. Your access has been updated.`,
+      });
+      onSuccess?.();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Payment verification failed";
       toast({
-        title: "Verification Failed",
+        title:       "Verification Failed",
         description: message,
-        variant: "destructive",
+        variant:     "destructive",
       });
       onError?.(message);
     } finally {
@@ -64,7 +80,7 @@ export function usePaystackSubscription({ planCode, publicKey, onSuccess, onErro
 
   const handleClose = () => {
     toast({
-      title: "Payment Cancelled",
+      title:       "Payment Cancelled",
       description: "You can complete your subscription anytime.",
     });
   };
@@ -72,13 +88,12 @@ export function usePaystackSubscription({ planCode, publicKey, onSuccess, onErro
   const pay = () => {
     if (!user?.email) {
       toast({
-        title: "Login Required",
+        title:       "Login Required",
         description: "Please log in to subscribe.",
-        variant: "destructive",
+        variant:     "destructive",
       });
       return;
     }
-
     initializePayment({ onSuccess: handleSuccess, onClose: handleClose });
   };
 

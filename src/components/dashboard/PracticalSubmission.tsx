@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,74 +14,59 @@ import {
   RotateCcw,
   PenLine,
 } from "lucide-react";
+import {
+  submitPractical,
+  getSubmissions,
+  frappeKeys,
+  type BHSubmission,
+} from "@/lib/frappe";
 
 interface PracticalSubmissionProps {
-  lessonId: string;
+  /** Frappe course slug, e.g. "practitioner-core-grc-2" */
+  course: string;
+  /** Frappe lesson doc name (optional) */
+  lesson?: string;
 }
 
 const STATUS_CONFIG: Record<
-  string,
+  BHSubmission["status"],
   { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: typeof Clock }
 > = {
-  submitted: { label: "Submitted", variant: "default", icon: Clock },
-  under_review: { label: "Under Review", variant: "secondary", icon: Clock },
-  graded: { label: "Graded", variant: "default", icon: CheckCircle2 },
-  resubmit: { label: "Resubmission Required", variant: "destructive", icon: RotateCcw },
+  Submitted: { label: "Submitted", variant: "default", icon: Clock },
+  "Under Review": { label: "Under Review", variant: "secondary", icon: Clock },
+  Graded: { label: "Graded", variant: "default", icon: CheckCircle2 },
+  "Resubmit Required": { label: "Resubmission Required", variant: "destructive", icon: RotateCcw },
 };
 
-export function PracticalSubmission({ lessonId }: PracticalSubmissionProps) {
-  const { user } = useAuth();
+export function PracticalSubmission({ course, lesson }: PracticalSubmissionProps) {
+  const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [answer, setAnswer] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const accessToken = session?.access_token ?? "";
 
-  // Fetch existing submission
-  const { data: submission, isLoading } = useQuery({
-    queryKey: ["practicalSubmission", user?.id, lessonId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("capstone_submissions")
-        .select("*")
-        .eq("user_id", user!.id)
-        .eq("lesson_id", lessonId)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (data) setAnswer((data as any).response_text || "");
-      return data;
-    },
-    enabled: !!user?.id && !!lessonId,
+  const { data: submissions = [], isLoading } = useQuery({
+    queryKey: frappeKeys.submissions(course),
+    queryFn: () => getSubmissions(accessToken, course),
+    enabled: !!accessToken && !!course,
   });
 
-  const submitAnswer = useMutation({
+  // Find the practical submission for this specific lesson
+  const submission = submissions.find(
+    (s) =>
+      s.submission_type === "Practical" &&
+      (lesson ? s.lesson === lesson : true)
+  ) ?? null;
+
+  const submitMutation = useMutation({
     mutationFn: async () => {
-      if (!user?.id) throw new Error("You must be signed in.");
+      if (!accessToken) throw new Error("You must be signed in.");
       if (!answer.trim()) throw new Error("Please write your answers before submitting.");
-
-      const { error } = await supabase.from("capstone_submissions").upsert(
-        {
-          user_id: user.id,
-          lesson_id: lessonId,
-          file_path: "",
-          file_name: `practical-${lessonId}.txt`,
-          submitted_at: new Date().toISOString(),
-          status: "submitted",
-          response_text: answer.trim(),
-          grade: null,
-          feedback: null,
-          graded_by: null,
-          graded_at: null,
-        } as any,
-        { onConflict: "user_id,lesson_id" }
-      );
-
-      if (error) throw error;
+      await submitPractical({ course, lesson, content: answer.trim() }, accessToken);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["practicalSubmission", user?.id, lessonId],
-      });
+      queryClient.invalidateQueries({ queryKey: frappeKeys.submissions(course) });
       setIsEditing(false);
       toast({
         title: "Practical submitted",
@@ -109,8 +93,8 @@ export function PracticalSubmission({ lessonId }: PracticalSubmissionProps) {
     );
   }
 
-  const statusCfg = submission ? STATUS_CONFIG[(submission as any).status] || STATUS_CONFIG.submitted : null;
-  const hasSubmission = !!submission && !!(submission as any).response_text;
+  const statusCfg = submission ? STATUS_CONFIG[submission.status] ?? STATUS_CONFIG.Submitted : null;
+  const hasSubmission = !!submission?.content;
   const showTextarea = !hasSubmission || isEditing;
 
   return (
@@ -125,7 +109,7 @@ export function PracticalSubmission({ lessonId }: PracticalSubmissionProps) {
       </p>
 
       {/* Existing submission status */}
-      {hasSubmission && !isEditing && statusCfg && (
+      {hasSubmission && !isEditing && statusCfg && submission && (
         <div className="rounded-lg border border-border bg-card p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">Your submission</span>
@@ -136,47 +120,54 @@ export function PracticalSubmission({ lessonId }: PracticalSubmissionProps) {
           </div>
 
           <div className="rounded-lg bg-muted/50 p-3 text-sm text-foreground whitespace-pre-wrap max-h-60 overflow-y-auto">
-            {(submission as any).response_text}
+            {submission.content}
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            Submitted{" "}
-            {new Date((submission as any).submitted_at).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
+          {submission.submitted_at && (
+            <p className="text-xs text-muted-foreground">
+              Submitted{" "}
+              {new Date(submission.submitted_at).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          )}
 
-          {/* Grade display */}
-          {(submission as any).status === "graded" && (submission as any).grade !== null && (
+          {submission.status === "Graded" && submission.grade !== null && (
             <div className="rounded-lg bg-primary/10 p-3 space-y-1">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" />
                 <span className="font-semibold text-foreground">
-                  Grade: {(submission as any).grade}/100
+                  Grade: {submission.grade}/100
                 </span>
               </div>
-              {(submission as any).feedback && (
-                <p className="text-sm text-muted-foreground">{(submission as any).feedback}</p>
+              {submission.feedback && (
+                <p className="text-sm text-muted-foreground">{submission.feedback}</p>
               )}
             </div>
           )}
 
-          {/* Resubmit feedback */}
-          {(submission as any).status === "resubmit" && (submission as any).feedback && (
+          {submission.status === "Resubmit Required" && submission.feedback && (
             <div className="rounded-lg bg-destructive/10 p-3 space-y-1">
               <div className="flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 text-destructive" />
                 <span className="font-medium text-destructive">Instructor feedback:</span>
               </div>
-              <p className="text-sm text-foreground">{(submission as any).feedback}</p>
+              <p className="text-sm text-foreground">{submission.feedback}</p>
             </div>
           )}
 
-          <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setAnswer(submission.content ?? "");
+              setIsEditing(true);
+            }}
+          >
             <RotateCcw className="h-4 w-4 mr-2" />
             Edit & Resubmit
           </Button>
@@ -194,10 +185,10 @@ export function PracticalSubmission({ lessonId }: PracticalSubmissionProps) {
           />
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => submitAnswer.mutate()}
-              disabled={submitAnswer.isPending || !answer.trim()}
+              onClick={() => submitMutation.mutate()}
+              disabled={submitMutation.isPending || !answer.trim()}
             >
-              {submitAnswer.isPending ? (
+              {submitMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   Submitting…
@@ -214,7 +205,7 @@ export function PracticalSubmission({ lessonId }: PracticalSubmissionProps) {
                 variant="outline"
                 onClick={() => {
                   setIsEditing(false);
-                  setAnswer((submission as any)?.response_text || "");
+                  setAnswer(submission?.content ?? "");
                 }}
               >
                 Cancel

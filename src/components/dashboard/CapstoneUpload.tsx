@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,56 +14,57 @@ import {
   RotateCcw,
   File,
 } from "lucide-react";
+import {
+  uploadFileFrappe,
+  submitCapstone,
+  getSubmissions,
+  frappeKeys,
+  type BHSubmission,
+} from "@/lib/frappe";
 
 interface CapstoneUploadProps {
-  lessonId: string;
+  /** Frappe course slug, e.g. "practitioner-core-grc-2" */
+  course: string;
+  /** Short course code for display, e.g. "BH-GRC-2" */
   courseCode: string;
+  /** Frappe lesson doc name (optional — used to scope the submission) */
+  lesson?: string;
 }
 
 const STATUS_CONFIG: Record<
-  string,
+  BHSubmission["status"],
   { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: typeof Clock }
 > = {
-  submitted: { label: "Submitted", variant: "default", icon: Clock },
-  under_review: { label: "Under Review", variant: "secondary", icon: Clock },
-  graded: { label: "Graded", variant: "default", icon: CheckCircle2 },
-  resubmit: { label: "Resubmission Required", variant: "destructive", icon: RotateCcw },
+  Submitted: { label: "Submitted", variant: "default", icon: Clock },
+  "Under Review": { label: "Under Review", variant: "secondary", icon: Clock },
+  Graded: { label: "Graded", variant: "default", icon: CheckCircle2 },
+  "Resubmit Required": { label: "Resubmission Required", variant: "destructive", icon: RotateCcw },
 };
 
-export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
-  const { user } = useAuth();
+export function CapstoneUpload({ course, courseCode, lesson }: CapstoneUploadProps) {
+  const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const accessToken = session?.access_token ?? "";
 
-  // Fetch existing submission - gracefully handle missing table
-  const {
-    data: submission,
-    isLoading,
-    isError,
-    error: queryError,
-  } = useQuery({
-    queryKey: ["capstoneSubmission", user?.id, lessonId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("capstone_submissions")
-        .select("*")
-        .eq("user_id", user!.id)
-        .eq("lesson_id", lessonId)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user?.id && !!lessonId,
-    retry: 1,
+  const { data: submissions = [], isLoading } = useQuery({
+    queryKey: frappeKeys.submissions(course),
+    queryFn: () => getSubmissions(accessToken, course),
+    enabled: !!accessToken && !!course,
   });
 
-  const handleUpload = async (file: File) => {
-    if (!user?.id) return;
+  // Find the capstone submission for this specific lesson (or latest capstone for course)
+  const submission = submissions.find(
+    (s) =>
+      s.submission_type === "Capstone" &&
+      (lesson ? s.lesson === lesson : true)
+  ) ?? null;
 
-    // Validate file type
+  const handleUpload = async (file: File) => {
+    if (!accessToken) return;
+
     if (file.type !== "application/pdf") {
       toast({
         title: "Invalid file type",
@@ -74,7 +74,6 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
       return;
     }
 
-    // Validate file size (20 MB max)
     if (file.size > 20 * 1024 * 1024) {
       toast({
         title: "File too large",
@@ -84,10 +83,7 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
       return;
     }
 
-    // Validate file name pattern (informational - don't block)
-    const expectedPattern = new RegExp(
-      `^BH-[A-Z0-9-]+-capstone-[A-Za-z]+-[A-Za-z]+\\.pdf$`
-    );
+    const expectedPattern = /^BH-[A-Z0-9-]+-capstone-[A-Za-z]+-[A-Za-z]+\.pdf$/;
     if (!expectedPattern.test(file.name)) {
       toast({
         title: "File naming reminder",
@@ -97,40 +93,13 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
 
     setUploading(true);
     try {
-      const filePath = `${user.id}/${lessonId}/${file.name}`;
+      // Step 1: Upload file to Frappe storage
+      const fileUrl = await uploadFileFrappe(file, accessToken);
 
-      // Upload to storage
-      const { error: uploadError } = await supabase.storage
-        .from("capstone-submissions")
-        .upload(filePath, file, { upsert: true });
+      // Step 2: Create BH Submission doc in Frappe
+      await submitCapstone({ course, lesson, file_url: fileUrl }, accessToken);
 
-      if (uploadError) throw uploadError;
-
-      // Upsert submission record
-      const { error: dbError } = await supabase
-        .from("capstone_submissions")
-        .upsert(
-          {
-            user_id: user.id,
-            lesson_id: lessonId,
-            file_path: filePath,
-            file_name: file.name,
-            file_size_bytes: file.size,
-            submitted_at: new Date().toISOString(),
-            status: "submitted",
-            grade: null,
-            feedback: null,
-            graded_by: null,
-            graded_at: null,
-          },
-          { onConflict: "user_id,lesson_id" }
-        );
-
-      if (dbError) throw dbError;
-
-      queryClient.invalidateQueries({
-        queryKey: ["capstoneSubmission", user.id, lessonId],
-      });
+      queryClient.invalidateQueries({ queryKey: frappeKeys.submissions(course) });
 
       toast({
         title: "Capstone uploaded",
@@ -166,52 +135,9 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
     );
   }
 
-  if (isError) {
-    return (
-      <div className="rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6 space-y-4">
-        <div className="flex items-center gap-2">
-          <Upload className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold text-foreground">Upload Capstone</h3>
-        </div>
-        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
-          <AlertCircle className="h-4 w-4" />
-          <span className="text-sm">
-            Submission tracking is being set up. You can still upload your PDF below.
-          </span>
-        </div>
-        <div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            accept="application/pdf"
-            className="hidden"
-            onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
-          />
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-          >
-            {uploading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Uploading…
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Capstone PDF
-              </>
-            )}
-          </Button>
-          <p className="text-xs text-muted-foreground mt-2">
-            PDF only, max 20 MB. Name: <code>{courseCode}-capstone-FirstName-LastName.pdf</code>
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const statusCfg = submission ? STATUS_CONFIG[submission.status] || STATUS_CONFIG.submitted : null;
+  const statusCfg = submission ? STATUS_CONFIG[submission.status] ?? STATUS_CONFIG.Submitted : null;
+  // Extract filename from file_url for display
+  const fileName = submission?.file_url?.split("/").pop() ?? "";
 
   return (
     <div className="rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6 space-y-4">
@@ -244,7 +170,7 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
             <div className="flex items-center gap-2">
               <File className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium text-foreground truncate max-w-[250px]">
-                {submission.file_name}
+                {fileName}
               </span>
             </div>
             <Badge variant={statusCfg.variant}>
@@ -253,19 +179,20 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
             </Badge>
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            Submitted{" "}
-            {new Date(submission.submitted_at).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
+          {submission.submitted_at && (
+            <p className="text-xs text-muted-foreground">
+              Submitted{" "}
+              {new Date(submission.submitted_at).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          )}
 
-          {/* Grade display */}
-          {submission.status === "graded" && submission.grade !== null && (
+          {submission.status === "Graded" && submission.grade !== null && (
             <div className="rounded-lg bg-primary/10 p-3 space-y-1">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" />
@@ -279,8 +206,7 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
             </div>
           )}
 
-          {/* Resubmit feedback */}
-          {submission.status === "resubmit" && submission.feedback && (
+          {submission.status === "Resubmit Required" && submission.feedback && (
             <div className="rounded-lg bg-destructive/10 p-3 space-y-1">
               <div className="flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 text-destructive" />
@@ -326,7 +252,7 @@ export function CapstoneUpload({ lessonId, courseCode }: CapstoneUploadProps) {
         </Button>
         {submission && (
           <p className="text-xs text-muted-foreground mt-2">
-            Re-uploading will replace your previous submission.
+            Re-uploading will create a new submission for instructor review.
           </p>
         )}
       </div>

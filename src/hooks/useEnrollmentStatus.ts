@@ -1,40 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
+/**
+ * Returns enrollment / subscription status derived purely from the JWT.
+ * tier_level in the JWT (issued by frappe-proxy) is the authoritative source.
+ * No Supabase queries needed.
+ */
 export function useEnrollmentStatus() {
-  const { user } = useAuth();
+  const { user, tierLevel } = useAuth();
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["enrollment-status", user?.id],
-    queryFn: async () => {
-      if (!user?.id) return { is_enrolled: false, subscription_status: "inactive" };
-
-      const tierRes = await supabase.rpc("get_user_tier_level", { _user_id: user.id });
-      const tierLevel = typeof tierRes.data === "number" ? tierRes.data : 0;
-      const hasActiveSubscription = tierLevel >= 1;
-
-      const profileRes = await supabase
-        .from("profiles")
-        .select("is_enrolled, subscription_status")
-        .eq("user_id", user.id)
-        .single();
-
-      const profileEnrolled = !profileRes.error && (profileRes.data?.is_enrolled ?? false);
-      const profileStatus = profileRes.data?.subscription_status ?? "inactive";
-
-      return {
-        is_enrolled: profileEnrolled || hasActiveSubscription,
-        subscription_status: hasActiveSubscription ? "active" : profileStatus,
-      };
-    },
-    enabled: !!user?.id,
-  });
+  const isEnrolled = !!user && tierLevel >= 0; // any signed-in user is "enrolled" in Explorer at minimum
+  const subscriptionStatus = user ? (tierLevel >= 1 ? "active" : "free") : "inactive";
 
   return {
-    isEnrolled: data?.is_enrolled ?? false,
-    subscriptionStatus: data?.subscription_status ?? "inactive",
-    isLoading,
-    refetch,
+    isEnrolled,
+    subscriptionStatus,
+    isLoading: false,
+    refetch: () => {},
   };
 }

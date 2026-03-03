@@ -1,39 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useStageProgress, StageKey } from "@/hooks/useStageProgress";
-import { CertificateCard } from "./CertificateCard";
-import { Award } from "lucide-react";
-
-interface Certificate {
-  id: string;
-  certificate_type: string;
-  stage_name: string;
-  certificate_number: string;
-  issued_at: string;
-  learner_name: string;
-}
+import { getCertificates, frappeKeys } from "@/lib/frappe";
+import { Award, Loader2 } from "lucide-react";
 
 export function CertificatesPanel() {
-  const { user } = useAuth();
-  const { stageStatuses, calculateStageCompletion } = useStageProgress();
+  const { session } = useAuth();
+  const token = session?.access_token ?? "";
 
-  const { data: earnedCertificates } = useQuery({
-    queryKey: ["userCertificates", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("certificates")
-        .select("*")
-        .eq("user_id", user?.id ?? "");
-      if (error) throw error;
-      return (data ?? []) as Certificate[];
-    },
-    enabled: !!user?.id,
+  const { data: certificates = [], isLoading } = useQuery({
+    queryKey: frappeKeys.certificates(),
+    queryFn: () => getCertificates(token),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
   });
-
-  const earnedSet = new Set(earnedCertificates?.map((c) => c.certificate_type) ?? []);
-
-  const stageOrder: StageKey[] = ["bridge", "foundations", "core_cyber", "specialist"];
 
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -42,32 +21,34 @@ export function CertificatesPanel() {
         <h3 className="font-semibold text-foreground">Certificates</h3>
       </div>
 
-      <div className="space-y-3">
-        {stageOrder.map((stageKey) => {
-          const stage = stageStatuses.find((s) => s.stage_key === stageKey);
-          if (!stage) return null;
-
-          const earned = earnedCertificates?.find(
-            (c) => c.certificate_type === stageKey
-          );
-          const isEarned = earnedSet.has(stageKey);
-          const { isComplete, progress, avgScore } = calculateStageCompletion(stageKey);
-
-          return (
-            <CertificateCard
-              key={stageKey}
-              stageKey={stageKey}
-              stageName={stage.stage_name}
-              isEligible={isComplete && !isEarned}
-              isEarned={isEarned}
-              certificateNumber={earned?.certificate_number}
-              issuedAt={earned?.issued_at}
-              progress={progress}
-              avgScore={avgScore}
-            />
-          );
-        })}
-      </div>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-4">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      ) : certificates.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          Complete a course to earn your certificate.
+        </p>
+      ) : (
+        <div className="space-y-2">
+          {certificates.map((cert) => (
+            <div key={cert.name} className="flex items-start gap-2 p-2 rounded-lg bg-muted/50">
+              <Award className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">
+                  {cert.course_title}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Issued{" "}
+                  {new Date(cert.issue_date).toLocaleDateString(undefined, {
+                    dateStyle: "medium",
+                  })}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

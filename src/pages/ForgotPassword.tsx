@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Mail, CheckCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+
+const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -21,21 +22,21 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      await fetch(`${PROXY_URL}?action=forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
-
-      if (error) throw error;
-
+      // Always show success to avoid email enumeration
       setIsSuccess(true);
       toast({
         title: "Check your email",
-        description: "We've sent you a password reset link.",
+        description: "If an account exists, we've sent a password reset link.",
       });
-    } catch (error: any) {
+    } catch {
       toast({
         title: "Error",
-        description: error.message || "Failed to send reset email",
+        description: "Failed to send reset email. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -63,8 +64,8 @@ const ForgotPassword = () => {
                   <CheckCircle className="h-8 w-8 text-primary" />
                 </div>
                 <p className="text-muted-foreground">
-                  We've sent a password reset link to <strong>{email}</strong>. 
-                  Please check your inbox and follow the instructions.
+                  If <strong>{email}</strong> is registered, you'll receive a reset link shortly.
+                  Follow the link in the email to set a new password.
                 </p>
                 <Button variant="outline" asChild className="w-full">
                   <Link to="/login">
@@ -94,8 +95,8 @@ const ForgotPassword = () => {
                   {isLoading ? "Sending..." : "Send Reset Link"}
                 </Button>
                 <div className="text-center">
-                  <Link 
-                    to="/login" 
+                  <Link
+                    to="/login"
                     className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
                   >
                     <ArrowLeft className="h-3 w-3" />

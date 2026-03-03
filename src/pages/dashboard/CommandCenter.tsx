@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   RadarChart,
@@ -12,64 +11,55 @@ import {
 import { Loader2, TrendingUp, Award, Target } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { getSkillLevelsFromCourseProgress } from "@/lib/courseSkillAlignment";
+import { listEnrollments, frappeKeys } from "@/lib/frappe";
+import { getCourseByFrappeName } from "@/lib/courseCatalog";
+import { useMemo } from "react";
+
+// Static skill domain definitions — matches COURSE_SKILL_MAP keys
+const SKILL_DOMAINS = [
+  { id: "network-security",    name: "Network Security",    category: "Network" },
+  { id: "security-operations", name: "Security Operations", category: "Operations" },
+  { id: "threat-analysis",     name: "Threat Analysis",     category: "Analysis" },
+  { id: "cryptography",        name: "Cryptography",        category: "Technical" },
+  { id: "penetration-testing", name: "Penetration Testing", category: "Technical" },
+  { id: "incident-response",   name: "Incident Response",   category: "Operations" },
+  { id: "grc-compliance",      name: "GRC & Compliance",    category: "Governance" },
+  { id: "cloud-security",      name: "Cloud Security",      category: "Cloud" },
+];
 
 export default function CommandCenter() {
-  const { user } = useAuth();
+  const { session } = useAuth();
+  const token = session?.access_token ?? "";
 
-  const { data: skills, isLoading: skillsLoading } = useQuery({
-    queryKey: ["skills"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("skills").select("*").order("name");
-      if (error) throw error;
-      return data;
-    },
+  // Frappe enrollments (course slug → progress %)
+  const { data: enrollments = [], isLoading: enrollmentsLoading } = useQuery({
+    queryKey: frappeKeys.enrollments(),
+    queryFn: () => listEnrollments(token),
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
   });
 
-  const { data: courseProgress, isLoading: progressLoading } = useQuery({
-    queryKey: ["commandCenterCourseProgress", user?.id],
-    queryFn: async () => {
-      const { data: enrollments } = await supabase
-        .from("course_enrollments")
-        .select("course_id")
-        .eq("user_id", user!.id);
-      const courseIds = (enrollments ?? []).map((e) => e.course_id);
-      if (courseIds.length === 0) return [] as { code: string; progress: number }[];
-
-      const { data: courses } = await supabase.from("courses").select("id, code").in("id", courseIds);
-      const { data: modules } = await supabase.from("modules").select("id, course_id");
-      const { data: lessons } = await supabase.from("lessons").select("id, module_id");
-      const { data: progress } = await supabase
-        .from("user_progress")
-        .select("lesson_id")
-        .eq("user_id", user!.id)
-        .eq("completed", true);
-      const completedSet = new Set((progress ?? []).map((p) => p.lesson_id));
-
-      return (courses ?? []).map((c) => {
-        const moduleIds = (modules ?? []).filter((m) => m.course_id === c.id).map((m) => m.id);
-        const lessonIds = (lessons ?? []).filter((l) => moduleIds.includes(l.module_id)).map((l) => l.id);
-        const total = lessonIds.length;
-        const completed = lessonIds.filter((id) => completedSet.has(id)).length;
-        return {
-          code: c.code,
-          progress: total > 0 ? Math.round((completed / total) * 100) : 0,
-        };
-      });
-    },
-    enabled: !!user?.id,
-  });
+  // Build courseProgress: [{code, progress}] using catalog for frappe_name → code
+  const courseProgress = useMemo(() => {
+    return enrollments
+      .map((e) => {
+        const catalog = getCourseByFrappeName(e.course);
+        if (!catalog) return null;
+        return { code: catalog.code, progress: e.progress ?? 0 };
+      })
+      .filter(Boolean) as { code: string; progress: number }[];
+  }, [enrollments]);
 
   const userSkillLevels: Record<string, number> =
-    skills && courseProgress
-      ? getSkillLevelsFromCourseProgress(courseProgress, skills.map((s) => s.name))
+    courseProgress.length > 0
+      ? getSkillLevelsFromCourseProgress(courseProgress, SKILL_DOMAINS.map((s) => s.name))
       : {};
 
-  const radarData =
-    skills?.map((skill) => ({
-      subject: skill.name,
-      value: userSkillLevels[skill.name] ?? 0,
-      fullMark: 100,
-    })) || [];
+  const radarData = SKILL_DOMAINS.map((skill) => ({
+    subject: skill.name,
+    value: userSkillLevels[skill.name] ?? 0,
+    fullMark: 100,
+  }));
 
   const scoreValues = Object.values(userSkillLevels).filter((v) => v > 0);
   const overallScore =
@@ -78,15 +68,13 @@ export default function CommandCenter() {
       : 0;
   const domainsAbove50 = Object.values(userSkillLevels).filter((v) => v >= 50).length;
 
-  if (skillsLoading || (!!user?.id && progressLoading)) {
+  if (!!token && enrollmentsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
-
-  const hasSkills = skills && skills.length > 0;
 
   return (
     <div className="space-y-8">
@@ -125,14 +113,6 @@ export default function CommandCenter() {
       {/* Skill Radar Chart */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">Your skills by domain</h2>
-        {!hasSkills ? (
-          <div className="h-80 flex items-center justify-center rounded-lg bg-muted/30 text-center">
-            <div>
-              <p className="text-muted-foreground">No skill domains loaded yet.</p>
-              <p className="text-sm text-muted-foreground mt-1">Complete courses to build your skills profile.</p>
-            </div>
-          </div>
-        ) : (
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={radarData}>
@@ -157,19 +137,15 @@ export default function CommandCenter() {
             </RadarChart>
           </ResponsiveContainer>
         </div>
-        )}
       </div>
 
-      {/* Skill Breakdown - from course progress */}
+      {/* Skill Breakdown */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Domain Breakdown
         </h2>
-        {!hasSkills ? (
-          <p className="text-sm text-muted-foreground">Skill domains will appear here as you progress.</p>
-        ) : (
         <div className="grid md:grid-cols-2 gap-4">
-          {skills.map((skill) => {
+          {SKILL_DOMAINS.map((skill) => {
             const level = userSkillLevels[skill.name] ?? 0;
             return (
               <div
@@ -188,7 +164,6 @@ export default function CommandCenter() {
             );
           })}
         </div>
-        )}
       </div>
     </div>
   );

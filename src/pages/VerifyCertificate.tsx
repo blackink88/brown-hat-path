@@ -1,34 +1,42 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Award, CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageLayout } from "@/components/layout/PageLayout";
 
+const FRAPPE_URL =
+  (import.meta.env.VITE_FRAPPE_URL as string) ?? "https://lms-dzr-tbs.c.frappe.cloud";
+
 interface Certificate {
-  id: string;
-  certificate_type: string;
-  stage_name: string;
-  certificate_number: string;
-  issued_at: string;
-  learner_name: string;
+  name: string;
+  course: string;
+  course_title: string;
+  member: string;
+  issue_date: string;
+}
+
+async function fetchCertificate(certName: string): Promise<Certificate | null> {
+  try {
+    const res = await fetch(
+      `${FRAPPE_URL}/api/resource/LMS Certificate/${encodeURIComponent(certName)}`,
+      { headers: { Accept: "application/json" } }
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data as Certificate;
+  } catch {
+    return null;
+  }
 }
 
 export default function VerifyCertificate() {
   const { certNumber } = useParams<{ certNumber: string }>();
 
-  const { data: certificate, isLoading, error } = useQuery({
+  const { data: certificate, isLoading } = useQuery({
     queryKey: ["verifyCertificate", certNumber],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("certificates")
-        .select("*")
-        .eq("certificate_number", certNumber ?? "")
-        .single();
-      if (error) throw error;
-      return data as Certificate;
-    },
+    queryFn: () => fetchCertificate(certNumber ?? ""),
     enabled: !!certNumber,
+    retry: false,
   });
 
   return (
@@ -54,21 +62,15 @@ export default function VerifyCertificate() {
 
               <div className="rounded-lg bg-muted/50 p-4 text-left space-y-3">
                 <div>
-                  <p className="text-xs text-muted-foreground">Learner Name</p>
+                  <p className="text-xs text-muted-foreground">Course</p>
                   <p className="font-semibold text-foreground">
-                    {certificate.learner_name}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Stage Completed</p>
-                  <p className="font-semibold text-foreground">
-                    {certificate.stage_name}
+                    {certificate.course_title ?? certificate.course}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Issue Date</p>
                   <p className="font-semibold text-foreground">
-                    {new Date(certificate.issued_at).toLocaleDateString("en-ZA", {
+                    {new Date(certificate.issue_date).toLocaleDateString("en-ZA", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
@@ -76,9 +78,9 @@ export default function VerifyCertificate() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Certificate Number</p>
+                  <p className="text-xs text-muted-foreground">Certificate ID</p>
                   <p className="font-mono text-sm text-foreground">
-                    {certificate.certificate_number}
+                    {certificate.name}
                   </p>
                 </div>
               </div>
@@ -99,8 +101,8 @@ export default function VerifyCertificate() {
                 Certificate Not Found
               </h1>
               <p className="text-muted-foreground mb-6">
-                We couldn't find a certificate with this number. Please check the
-                certificate number and try again.
+                We couldn&apos;t find a certificate with this ID. Please check
+                the certificate ID and try again.
               </p>
               <Button asChild>
                 <Link to="/">Back to Home</Link>
