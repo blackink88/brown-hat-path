@@ -12,23 +12,24 @@ interface PaystackButtonProps {
   popular?: boolean;
 }
 
-// Fallback button: for logged-in users links to /pricing (they're already here),
-// for unauthenticated flow Pricing.tsx already shows /enroll instead of PaystackButton.
+// Fallback: Paystack not configured or plan code missing — direct user to enroll
 function EnrollFallbackButton({ tierName, popular }: Omit<PaystackButtonProps, "planCode">) {
   return (
     <Button
       variant={popular ? "accent" : "outline"}
       className="w-full gap-2 font-medium"
       size="lg"
-      disabled
+      asChild
     >
-      Subscribe to {tierName}
-      <ArrowRight className="h-4 w-4" />
+      <Link to="/enroll">
+        Get Started with {tierName}
+        <ArrowRight className="h-4 w-4" />
+      </Link>
     </Button>
   );
 }
 
-// Inner component that only renders when we have a valid public key
+// Inner component that only renders when we have a valid public key + plan code
 function PaystackPaymentButton({
   planCode,
   tierName,
@@ -40,7 +41,6 @@ function PaystackPaymentButton({
     tierName,
     publicKey,
     onSuccess: () => {
-      // Subscription active — send them straight to their courses on Frappe LMS
       window.location.href = FRAPPE_LMS_URL;
     },
   });
@@ -48,17 +48,21 @@ function PaystackPaymentButton({
   return (
     <Button
       variant={popular ? "accent" : "outline"}
-      className="w-full"
+      className="w-full gap-2"
+      size="lg"
       onClick={pay}
       disabled={isVerifying}
     >
       {isVerifying ? (
         <>
-          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-          Verifying...
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Activating...
         </>
       ) : (
-        `Subscribe to ${tierName}`
+        <>
+          Subscribe to {tierName}
+          <ArrowRight className="h-4 w-4" />
+        </>
       )}
     </Button>
   );
@@ -69,14 +73,14 @@ export function PaystackButton({ planCode, tierName, popular }: PaystackButtonPr
 
   if (isLoading) {
     return (
-      <Button variant={popular ? "accent" : "outline"} className="w-full" disabled>
+      <Button variant={popular ? "accent" : "outline"} className="w-full" size="lg" disabled>
         <Loader2 className="h-4 w-4 animate-spin mr-2" />
         Loading...
       </Button>
     );
   }
 
-  // If Paystack isn't configured or plan code is missing, fall back to enroll page
+  // If Paystack public key or plan code not set, fall back to enroll flow
   if (error || !publicKey || !planCode) {
     return <EnrollFallbackButton tierName={tierName} popular={popular} />;
   }

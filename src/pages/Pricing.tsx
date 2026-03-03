@@ -75,7 +75,7 @@ function parseFeatures(raw: string | string[]): string[] {
 }
 
 const Pricing = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
@@ -123,6 +123,7 @@ const Pricing = () => {
     });
 
   const isLoading = currencyLoading || tiersLoading;
+  const ctaLoading = authLoading || isLoading;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -237,19 +238,32 @@ const Pricing = () => {
                       </li>
                     ))}
                   </ul>
-                  {user ? (
+                  {ctaLoading ? (
+                    <Button variant={tier.popular ? "accent" : "outline"} size="lg" className="w-full" disabled>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Loading...
+                    </Button>
+                  ) : user ? (
                     <PaystackButton
                       planCode={tier.planCode}
                       tierName={tier.name}
                       popular={tier.popular}
                     />
                   ) : (
-                    <Button variant={tier.popular ? "default" : "outline"} size="lg" className="w-full gap-2 font-medium" asChild>
-                      <Link to="/enroll" className="group">
-                        {tier.cta}
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                      </Link>
-                    </Button>
+                    <div className="space-y-2">
+                      <Button variant={tier.popular ? "accent" : "default"} size="lg" className="w-full gap-2 font-medium" asChild>
+                        <Link to="/login">
+                          Log in to Subscribe
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <p className="text-xs text-center text-muted-foreground">
+                        New here?{" "}
+                        <Link to="/enroll" className="text-accent hover:underline font-medium">
+                          Create a free account
+                        </Link>
+                      </p>
+                    </div>
                   )}
                 </div>
               ))}
