@@ -8,7 +8,10 @@ import {
   Settings,
   Settings2,
   Award,
+  ExternalLink,
 } from "lucide-react";
+
+const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
 import bhlogo from "@/assets/bhlogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -69,8 +72,29 @@ export function DashboardSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
+        {/* Primary: Open the LMS */}
         <SidebarGroup>
-          <SidebarGroupLabel>Learn</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Open LMS — all your courses">
+                  <a
+                    href={FRAPPE_LMS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-primary"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    <span>Open LMS</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Subscription</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

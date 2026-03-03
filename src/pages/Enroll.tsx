@@ -10,6 +10,8 @@ import bhlogo from "@/assets/bhlogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
+const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
+
 const benefits = [
   "Skills-first curriculum aligned to global certifications",
   "Verified Skills Portfolio for employers",
@@ -52,9 +54,10 @@ const Enroll = () => {
     } else {
       toast({
         title: "Welcome to Brown Hat Academy!",
-        description: "Your account has been created. Let's get started.",
+        description: "Account created — taking you to your courses now.",
       });
-      navigate("/dashboard");
+      // Redirect to Frappe LMS where all course content lives
+      window.location.href = FRAPPE_LMS_URL;
     }
   };
 

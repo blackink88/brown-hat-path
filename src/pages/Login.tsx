@@ -9,6 +9,8 @@ import { Mail, Lock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
+const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +20,11 @@ const Login = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
+  // If the user was trying to reach a React dashboard page (settings/profile/etc),
+  // send them there. Otherwise, send them to Frappe LMS where all courses live.
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+  const dashboardOnlyPaths = ["/dashboard/settings", "/dashboard/profile", "/dashboard/billing"];
+  const redirectToDashboard = from && dashboardOnlyPaths.some((p) => from.startsWith(p));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,9 +42,14 @@ const Login = () => {
     } else {
       toast({
         title: "Welcome back!",
-        description: "You've successfully signed in.",
+        description: "Taking you to your courses...",
       });
-      navigate(from, { replace: true });
+      if (redirectToDashboard) {
+        navigate(from!, { replace: true });
+      } else {
+        // Redirect to Frappe LMS — all course content lives there
+        window.location.href = FRAPPE_LMS_URL;
+      }
     }
   };
 
