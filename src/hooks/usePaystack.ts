@@ -31,7 +31,8 @@ export function usePaystackSubscription({
     email:     user?.email || "",
     plan:      planCode,
     publicKey,
-    currency:  "ZAR",
+    // currency is set on the Paystack plan itself — passing it here causes
+    // "Invalid transaction parameters" when a plan code is used
   };
 
   const initializePayment = usePaystackPayment(config);
