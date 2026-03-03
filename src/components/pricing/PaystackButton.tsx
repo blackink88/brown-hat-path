@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { usePaystackSubscription } from "@/hooks/usePaystack";
 import { usePaystackConfig } from "@/hooks/usePaystackConfig";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
+const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
 
 interface PaystackButtonProps {
   planCode: string;
@@ -34,15 +35,13 @@ function PaystackPaymentButton({
   popular,
   publicKey
 }: PaystackButtonProps & { publicKey: string }) {
-  const navigate = useNavigate();
-
-  // Fix: pass tierName so activate-subscription receives it
   const { pay, isVerifying } = usePaystackSubscription({
     planCode,
     tierName,
     publicKey,
     onSuccess: () => {
-      navigate("/dashboard");
+      // Subscription active — send them straight to their courses on Frappe LMS
+      window.location.href = FRAPPE_LMS_URL;
     },
   });
 

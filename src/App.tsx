@@ -4,11 +4,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { EnrolledRoute } from "@/components/auth/EnrolledRoute";
-import { AdminRoute } from "@/components/auth/AdminRoute";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { useEffect } from "react";
+
+const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
+
+// Redirect any /dashboard/* visits to Frappe LMS — all learning happens there
+function FrappeLMSRedirect() {
+  useEffect(() => { window.location.href = FRAPPE_LMS_URL; }, []);
+  return null;
+}
 
 // Public pages
 import Index from "./pages/Index";
@@ -33,20 +39,6 @@ import ResetPassword from "./pages/ResetPassword";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import NotFound from "./pages/NotFound";
 
-// Dashboard pages
-import { DashboardLayout } from "./components/dashboard/DashboardLayout";
-import DashboardHome from "./pages/dashboard/DashboardHome";
-import MyCourses from "./pages/dashboard/MyCourses";
-import CommandCenter from "./pages/dashboard/CommandCenter";
-import CoursePlayer from "./pages/dashboard/CoursePlayer";
-import Certificates from "./pages/dashboard/Certificates";
-import Profile from "./pages/dashboard/Profile";
-import Settings from "./pages/dashboard/Settings";
-import { AdminLayout } from "./components/dashboard/AdminLayout";
-import AdminOverview from "./pages/dashboard/admin/AdminOverview";
-import AdminCourses from "./pages/dashboard/admin/AdminCourses";
-import AdminUsers from "./pages/dashboard/admin/AdminUsers";
-import AdminQuizzes from "./pages/dashboard/admin/AdminQuizzes";
 
 const queryClient = new QueryClient();
 
@@ -81,32 +73,9 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify/:certNumber" element={<VerifyCertificate />} />
-            {/* Redirect stray /course to courses list */}
-            <Route path="/course" element={<Navigate to="/dashboard/courses" replace />} />
-
-            {/* Protected Dashboard Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<DashboardHome />} />
-              <Route path="courses" element={<MyCourses />} />
-              <Route path="skills" element={<CommandCenter />} />
-              <Route path="course/:courseCode" element={<EnrolledRoute><CoursePlayer /></EnrolledRoute>} />
-              <Route path="certificates" element={<Certificates />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-                <Route index element={<AdminOverview />} />
-                <Route path="courses" element={<AdminCourses />} />
-                <Route path="quizzes" element={<AdminQuizzes />} />
-                <Route path="users" element={<AdminUsers />} />
-              </Route>
-            </Route>
+            {/* /dashboard and /course both live on Frappe LMS now */}
+            <Route path="/dashboard/*" element={<FrappeLMSRedirect />} />
+            <Route path="/course/*" element={<FrappeLMSRedirect />} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
