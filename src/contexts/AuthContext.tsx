@@ -112,7 +112,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem(TOKEN_KEY);
     applyToken(stored);
-    setLoading(false);
+
+    // Refresh JWT from Frappe on every app load so tier_level stays accurate
+    // after webhook-processed subscription renewals or cancellations.
+    if (stored && PROXY_URL) {
+      fetch(`${PROXY_URL}?action=refresh-token`, {
+        headers: { Authorization: `Bearer ${stored}` },
+      })
+        .then((r) => r.json())
+        .then((data: Record<string, unknown>) => {
+          if (data.token) applyToken(data.token as string);
+        })
+        .catch(() => { /* silent — stored token used as fallback */ })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

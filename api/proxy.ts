@@ -643,6 +643,24 @@ export default async function handler(req: Request): Promise<Response> {
       return json({ success: true });
     }
 
+    // ── GET: refresh-token ─────────────────────────────────────────────────
+    // Re-reads the user's current subscription from Frappe and issues a
+    // fresh JWT with the up-to-date tier_level. Call on app load to ensure
+    // the JWT reflects any renewals or cancellations processed by the webhook.
+    if (req.method === "GET" && action === "refresh-token") {
+      const [newTierLevel, newIsAdmin] = await Promise.all([
+        getUserTierLevel(memberEmail),
+        checkIsAdmin(memberEmail),
+      ]);
+      const newToken = await issueJWT(
+        memberEmail,
+        payload.full_name as string,
+        newTierLevel,
+        newIsAdmin,
+      );
+      return json({ token: newToken, tier_level: newTierLevel, is_admin: newIsAdmin });
+    }
+
     return json({ error: `Unknown action: ${action}` }, 400);
 
   } catch (err) {
