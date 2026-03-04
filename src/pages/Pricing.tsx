@@ -252,15 +252,15 @@ const Pricing = () => {
                   ) : (
                     <div className="space-y-2">
                       <Button variant={tier.popular ? "accent" : "default"} size="lg" className="w-full gap-2 font-medium" asChild>
-                        <Link to="/login">
-                          Log in to Subscribe
+                        <Link to="/enroll">
+                          Get Started
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                       </Button>
                       <p className="text-xs text-center text-muted-foreground">
-                        New here?{" "}
-                        <Link to="/enroll" className="text-accent hover:underline font-medium">
-                          Create a free account
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-accent hover:underline font-medium">
+                          Log in
                         </Link>
                       </p>
                     </div>
