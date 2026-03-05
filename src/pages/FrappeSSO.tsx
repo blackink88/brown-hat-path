@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
@@ -6,48 +6,51 @@ const FRAPPE_LMS_URL =
   (import.meta.env.VITE_FRAPPE_URL as string) || "https://lms-dzr-tbs.c.frappe.cloud";
 
 /**
- * SSO bridge: auto-submits the user's credentials directly to Frappe's
- * login endpoint via a hidden HTML form.
- *
- * A top-level form POST (unlike fetch) respects SameSite=Lax, so Frappe
- * sets its session cookie in the browser and then issues a 302 redirect
- * into the LMS — giving the user a single seamless login.
+ * SSO bridge: calls Frappe's login API via fetch in `no-cors` mode so the
+ * browser processes the Set-Cookie response (storing the Frappe session)
+ * without needing CORS headers. We then navigate to the LMS — the browser
+ * sends the stored `sid` cookie with that navigation and the user is in.
  *
  * Credentials are passed via React Router state (never in the URL).
- * If no state is present (direct navigation), fall back to Frappe's
- * own login page.
  */
 const FrappeSSO = () => {
   const location = useLocation();
-  const formRef = useRef<HTMLFormElement>(null);
   const { email, password } = (location.state as { email?: string; password?: string }) || {};
 
   useEffect(() => {
-    if (email && password && formRef.current) {
-      // Small delay so the "Signing you in…" message renders before navigating away
-      const t = setTimeout(() => formRef.current?.submit(), 120);
-      return () => clearTimeout(t);
-    } else {
-      // No credentials in state — send straight to Frappe login page
-      window.location.href = `${FRAPPE_LMS_URL}/login`;
-    }
+    const doSSO = async () => {
+      if (!email || !password) {
+        window.location.href = `${FRAPPE_LMS_URL}/login`;
+        return;
+      }
+
+      try {
+        // no-cors: browser sends the request without a CORS preflight.
+        // The Set-Cookie in the response IS stored for Frappe's domain
+        // regardless of CORS policy — establishing the Frappe session silently.
+        // credentials: "include" ensures the cookie is sent/received cross-origin.
+        await fetch(`${FRAPPE_LMS_URL}/api/method/login`, {
+          method: "POST",
+          mode: "no-cors",
+          credentials: "include",
+          body: new URLSearchParams({ usr: email, pwd: password }),
+        });
+      } catch {
+        // Network error — navigate anyway; Frappe will show its own login
+      }
+
+      // Navigate to the LMS. The browser includes the stored sid cookie
+      // in this request so the user arrives already logged in.
+      window.location.href = `${FRAPPE_LMS_URL}/lms`;
+    };
+
+    doSSO();
   }, [email, password]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
       <Loader2 className="h-8 w-8 animate-spin text-primary" />
       <p className="text-muted-foreground text-sm">Signing you in to your courses…</p>
-
-      {/* Hidden form — submitted programmatically above */}
-      <form
-        ref={formRef}
-        method="POST"
-        action={`${FRAPPE_LMS_URL}/api/method/login`}
-        style={{ display: "none" }}
-      >
-        <input type="hidden" name="usr" value={email ?? ""} />
-        <input type="hidden" name="pwd" value={password ?? ""} />
-      </form>
     </div>
   );
 };
