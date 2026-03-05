@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,13 +9,13 @@ import { Mail, Lock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
-const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,8 +32,9 @@ const Login = () => {
       });
       setIsLoading(false);
     } else {
-      // Always send returning users to Frappe LMS — it handles what they can access
-      window.location.href = FRAPPE_LMS_URL;
+      // SSO bridge: pass credentials via Router state so FrappeSSO can
+      // auto-submit them to Frappe's login endpoint (single login for the user)
+      navigate("/frappe-sso", { state: { email, password }, replace: true });
     }
   };
 

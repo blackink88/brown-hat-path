@@ -37,6 +37,7 @@ import PublicPortfolio from "./pages/PublicPortfolio";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyCertificate from "./pages/VerifyCertificate";
+import FrappeSSO from "./pages/FrappeSSO";
 import NotFound from "./pages/NotFound";
 
 
@@ -73,6 +74,8 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify/:certNumber" element={<VerifyCertificate />} />
+            {/* SSO bridge — auto-logs user into Frappe after React login */}
+            <Route path="/frappe-sso" element={<FrappeSSO />} />
             {/* /dashboard and /course both live on Frappe LMS now */}
             <Route path="/dashboard/*" element={<FrappeLMSRedirect />} />
             <Route path="/course/*" element={<FrappeLMSRedirect />} />
