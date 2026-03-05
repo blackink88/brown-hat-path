@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -16,14 +16,13 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error, tierLevel } = await signIn(email, password);
+    const { error } = await signIn(email, password);
 
     if (error) {
       toast({
@@ -32,16 +31,9 @@ const Login = () => {
         variant: "destructive",
       });
       setIsLoading(false);
-    } else if (tierLevel && tierLevel > 0) {
-      // Has an active subscription — go straight to Frappe LMS
-      window.location.href = FRAPPE_LMS_URL;
     } else {
-      // No subscription — choose a plan first
-      toast({
-        title: "Welcome back!",
-        description: "Choose a plan to access your courses.",
-      });
-      navigate("/pricing", { replace: true });
+      // Always send returning users to Frappe LMS — it handles what they can access
+      window.location.href = FRAPPE_LMS_URL;
     }
   };
 
