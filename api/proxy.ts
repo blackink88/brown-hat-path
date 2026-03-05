@@ -609,6 +609,34 @@ export default async function handler(req: Request): Promise<Response> {
       if (!createResult.ok)
         return json({ error: "Failed to create subscription record" }, 500);
 
+      // ── Auto-enroll in courses the new tier grants access to ───────────────
+      // Courses with custom_required_tier_level <= newTierLevel (and > 0)
+      const COURSE_TIER: Record<string, number> = {
+        "practitioner-core-grc-2":       1,
+        "specialisation-iam":            2,
+        "specialisation-cloud-security": 2,
+        "specialisation-advanced-grc":   3,
+      };
+      const enrollable = Object.entries(COURSE_TIER)
+        .filter(([, required]) => required > 0 && required <= newTierLevel)
+        .map(([course]) => course);
+
+      await Promise.allSettled(enrollable.map(async (course) => {
+        const existing = await frappeDocGet(
+          "LMS Enrollment",
+          [["course", "=", course], ["member", "=", memberEmail]],
+          ["name"],
+          1,
+        );
+        if ((existing.data?.data ?? []).length > 0) return; // already enrolled
+        await frappeDocPost("LMS Enrollment", {
+          course,
+          member:      memberEmail,
+          member_type: "Student",
+        });
+      }));
+      // ── ───────────────────────────────────────────────────────────────────
+
       const newToken = await issueJWT(memberEmail, payload.full_name as string, newTierLevel);
       return json({
         success:      true,

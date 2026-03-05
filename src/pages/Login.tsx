@@ -22,7 +22,7 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
+    const { error, tierLevel } = await signIn(email, password);
 
     if (error) {
       toast({
@@ -32,9 +32,7 @@ const Login = () => {
       });
       setIsLoading(false);
     } else {
-      // SSO bridge: pass credentials via Router state so FrappeSSO can
-      // auto-submit them to Frappe's login endpoint (single login for the user)
-      navigate("/frappe-sso", { state: { email, password }, replace: true });
+      navigate("/frappe-sso", { state: { email, password, tierLevel: tierLevel ?? 0 }, replace: true });
     }
   };
 
