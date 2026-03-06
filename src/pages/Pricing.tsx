@@ -245,7 +245,6 @@ const Pricing = () => {
                     </Button>
                   ) : user ? (
                     <PaystackButton
-                      planCode={tier.planCode}
                       tierName={tier.name}
                       popular={tier.popular}
                     />

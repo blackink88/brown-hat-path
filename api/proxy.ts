@@ -646,6 +646,52 @@ export default async function handler(req: Request): Promise<Response> {
       });
     }
 
+    // ── POST: init-payment ─────────────────────────────────────────────────
+    // Initialises a Paystack transaction and returns the hosted checkout URL.
+    // The client redirects there; Paystack redirects back to callback_url on success.
+    if (req.method === "POST" && action === "init-payment") {
+      const { tier_name, callback_url } = await req.json() as { tier_name?: string; callback_url?: string };
+      if (!tier_name) return json({ error: "tier_name required" }, 400);
+
+      const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY ?? "";
+      if (!PAYSTACK_SECRET) return json({ error: "Paystack not configured on server" }, 500);
+
+      const tierResult = await frappeDocGet(
+        "BH Subscription Tier",
+        [["tier_name", "=", tier_name]],
+        ["name", "tier_level", "paystack_plan_code"],
+        1,
+      );
+      const tier = (tierResult.data?.data ?? [])[0] as Record<string, unknown> | undefined;
+      if (!tier) return json({ error: `Tier '${tier_name}' not found` }, 404);
+
+      const planCode = tier.paystack_plan_code as string;
+      if (!planCode) return json({ error: "No Paystack plan code for this tier" }, 400);
+
+      const psRes = await fetch("https://api.paystack.co/transaction/initialize", {
+        method:  "POST",
+        headers: {
+          Authorization:  `Bearer ${PAYSTACK_SECRET}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email:        memberEmail,
+          plan:         planCode,
+          callback_url: callback_url ?? "",
+          metadata: { tier_name },
+        }),
+      });
+
+      const psData = await psRes.json() as { status: boolean; data?: { authorization_url: string; reference: string } };
+      if (!psData.status || !psData.data)
+        return json({ error: "Paystack initialisation failed" }, 502);
+
+      return json({
+        authorization_url: psData.data.authorization_url,
+        reference:         psData.data.reference,
+      });
+    }
+
     // ── POST: cancel-subscription ──────────────────────────────────────────
     if (req.method === "POST" && action === "cancel-subscription") {
       const existingResult = await frappeDocGet(

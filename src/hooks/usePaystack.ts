@@ -1,4 +1,3 @@
-import { usePaystackPayment } from "react-paystack";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -6,87 +5,23 @@ import { useState } from "react";
 const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
 
 interface UsePaystackOptions {
-  planCode:  string;
   tierName:  string;
-  publicKey: string;
-  onSuccess?: () => void;
-  onError?:   (error: string) => void;
+  onError?:  (error: string) => void;
 }
 
-export function usePaystackSubscription({
-  planCode,
-  tierName,
-  publicKey,
-  onSuccess,
-  onError,
-}: UsePaystackOptions) {
-  const { user, session, applyNewToken } = useAuth();
+/**
+ * Redirect-based Paystack subscription flow.
+ *
+ * Calls our proxy to initialise a Paystack transaction, stores the tier name
+ * in sessionStorage so the callback page can read it, then redirects the
+ * user to Paystack's hosted checkout page.  No ugly white popup.
+ */
+export function usePaystackSubscription({ tierName, onError }: UsePaystackOptions) {
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [isVerifying, setIsVerifying] = useState(false);
 
-  const reference = `bh_${Date.now()}_${user?.id?.slice(0, 8) || "guest"}`;
-
-  const config = {
-    reference,
-    email:     user?.email || "",
-    amount:    0,          // required by Paystack inline JS even for subscription plans; plan amount takes precedence
-    plan:      planCode,
-    publicKey,
-    // currency omitted — set on the Paystack plan itself
-  };
-
-  const initializePayment = usePaystackPayment(config);
-
-  const handleSuccess = async (response: { reference: string }) => {
-    setIsVerifying(true);
-    try {
-      const token = session?.access_token;
-      if (!token) throw new Error("Not signed in");
-
-      const res = await fetch(`${PROXY_URL}?action=activate-subscription`, {
-        method:  "POST",
-        headers: {
-          Authorization:  `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          tier_name:          tierName,
-          paystack_reference: response.reference,
-        }),
-      });
-
-      const data = await res.json() as Record<string, unknown>;
-      if (!res.ok) throw new Error((data.error as string) || "Activation failed");
-
-      // Apply the new JWT which carries the updated tier_level
-      if (data.token) applyNewToken(data.token as string);
-
-      toast({
-        title:       "Subscription Activated!",
-        description: `Welcome to the ${tierName} plan. Your access has been updated.`,
-      });
-      onSuccess?.();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Payment verification failed";
-      toast({
-        title:       "Verification Failed",
-        description: message,
-        variant:     "destructive",
-      });
-      onError?.(message);
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  const handleClose = () => {
-    toast({
-      title:       "Payment Cancelled",
-      description: "You can complete your subscription anytime.",
-    });
-  };
-
-  const pay = () => {
+  const pay = async () => {
     if (!user?.email) {
       toast({
         title:       "Login Required",
@@ -95,8 +30,38 @@ export function usePaystackSubscription({
       });
       return;
     }
-    initializePayment({ onSuccess: handleSuccess, onClose: handleClose });
+
+    const token = session?.access_token;
+    if (!token) return;
+
+    setIsVerifying(true);
+    try {
+      const callbackUrl = `${window.location.origin}/payment-callback`;
+
+      const res = await fetch(`${PROXY_URL}?action=init-payment`, {
+        method:  "POST",
+        headers: {
+          Authorization:  `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tier_name: tierName, callback_url: callbackUrl }),
+      });
+
+      const data = await res.json() as Record<string, unknown>;
+      if (!res.ok) throw new Error((data.error as string) || "Failed to initialise payment");
+
+      // Persist tier so the callback page can activate the subscription
+      sessionStorage.setItem("bh_pending_tier", tierName);
+
+      // Navigate to Paystack's hosted checkout
+      window.location.href = data.authorization_url as string;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to start payment";
+      toast({ title: "Payment Error", description: message, variant: "destructive" });
+      onError?.(message);
+      setIsVerifying(false);
+    }
   };
 
-  return { pay, isVerifying, reference };
+  return { pay, isVerifying };
 }

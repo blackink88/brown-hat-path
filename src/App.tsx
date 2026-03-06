@@ -38,6 +38,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import FrappeSSO from "./pages/FrappeSSO";
+import PaymentCallback from "./pages/PaymentCallback";
 import NotFound from "./pages/NotFound";
 
 
@@ -76,6 +77,8 @@ const App = () => (
             <Route path="/verify/:certNumber" element={<VerifyCertificate />} />
             {/* SSO bridge — auto-logs user into Frappe after React login */}
             <Route path="/frappe-sso" element={<FrappeSSO />} />
+            {/* Paystack redirect callback — activates subscription after hosted checkout */}
+            <Route path="/payment-callback" element={<PaymentCallback />} />
             {/* /dashboard and /course both live on Frappe LMS now */}
             <Route path="/dashboard/*" element={<FrappeLMSRedirect />} />
             <Route path="/course/*" element={<FrappeLMSRedirect />} />
