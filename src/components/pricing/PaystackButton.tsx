@@ -1,14 +1,42 @@
 import { Button } from "@/components/ui/button";
 import { usePaystackSubscription } from "@/hooks/usePaystack";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Check } from "lucide-react";
 
 interface PaystackButtonProps {
-  tierName: string;
-  popular?: boolean;
+  tierName:         string;
+  tierLevel:        number;
+  currentTierLevel: number;
+  popular?:         boolean;
 }
 
-export function PaystackButton({ tierName, popular }: PaystackButtonProps) {
+export function PaystackButton({ tierName, tierLevel, currentTierLevel, popular }: PaystackButtonProps) {
   const { pay, isVerifying } = usePaystackSubscription({ tierName });
+
+  const isCurrentPlan = currentTierLevel === tierLevel;
+  const isUpgrade     = currentTierLevel > 0 && tierLevel > currentTierLevel;
+  const isDowngrade   = currentTierLevel > 0 && tierLevel < currentTierLevel;
+
+  const label = isCurrentPlan
+    ? "Current Plan"
+    : isUpgrade
+    ? `Upgrade to ${tierName}`
+    : isDowngrade
+    ? `Downgrade to ${tierName}`
+    : `Subscribe to ${tierName}`;
+
+  if (isCurrentPlan) {
+    return (
+      <Button
+        variant={popular ? "accent" : "outline"}
+        className="w-full gap-2 font-medium"
+        size="lg"
+        disabled
+      >
+        <Check className="h-4 w-4" />
+        Current Plan
+      </Button>
+    );
+  }
 
   return (
     <Button
@@ -25,7 +53,7 @@ export function PaystackButton({ tierName, popular }: PaystackButtonProps) {
         </>
       ) : (
         <>
-          Subscribe to {tierName}
+          {label}
           <ArrowRight className="h-4 w-4" />
         </>
       )}

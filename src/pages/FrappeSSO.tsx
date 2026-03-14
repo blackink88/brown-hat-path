@@ -32,11 +32,8 @@ const FrappeSSO = () => {
         return;
       }
 
-      // Unsubscribed user — must choose a plan before accessing the LMS
-      if (!tierLevel || tierLevel === 0) {
-        navigate("/pricing", { replace: true });
-        return;
-      }
+      // Explorer (tier_level=0) gets the Bridge course — allowed into LMS.
+      // Only block if we somehow have no tier info at all (shouldn't happen post-login).
 
       // Subscribed user — establish Frappe session then go to LMS
       try {

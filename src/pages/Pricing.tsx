@@ -75,7 +75,8 @@ function parseFeatures(raw: string | string[]): string[] {
 }
 
 const Pricing = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, tierLevel: currentTierLevel } = useAuth();
+  const FRAPPE_LMS_URL = (import.meta.env.VITE_FRAPPE_URL as string) || "https://lms-dzr-tbs.c.frappe.cloud";
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
@@ -189,12 +190,24 @@ const Pricing = () => {
                         </li>
                       ))}
                     </ul>
-                    <Button variant="outline" size="lg" className="w-full gap-2 font-medium" asChild>
-                      <Link to="/enroll" className="group">
-                        {meta.cta}
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                      </Link>
-                    </Button>
+                    {user ? (
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="w-full gap-2 font-medium"
+                        onClick={() => { window.location.href = `${FRAPPE_LMS_URL}/lms`; }}
+                      >
+                        Go to Courses
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button variant="outline" size="lg" className="w-full gap-2 font-medium" asChild>
+                        <Link to="/enroll" className="group">
+                          {meta.cta}
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 );
               })()}
@@ -246,6 +259,8 @@ const Pricing = () => {
                   ) : user ? (
                     <PaystackButton
                       tierName={tier.name}
+                      tierLevel={tier.tier_level}
+                      currentTierLevel={currentTierLevel}
                       popular={tier.popular}
                     />
                   ) : (
