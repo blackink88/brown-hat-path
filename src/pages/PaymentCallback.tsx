@@ -4,9 +4,9 @@ import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { redirectToLMS } from "@/lib/frappe";
 
-const PROXY_URL      = import.meta.env.VITE_PROXY_URL as string;
-const FRAPPE_LMS_URL = (import.meta.env.VITE_FRAPPE_URL as string) || "https://lms-dzr-tbs.c.frappe.cloud";
+const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
 
 /**
  * Handles the redirect back from Paystack's hosted checkout.
@@ -63,9 +63,7 @@ export default function PaymentCallback() {
         setStatus("success");
 
         // Brief pause so the user sees the success message, then SSO to LMS
-        setTimeout(() => {
-          window.location.href = `${FRAPPE_LMS_URL}/lms`;
-        }, 2000);
+        setTimeout(redirectToLMS, 2000);
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Activation failed";
         setErrorMsg(msg);

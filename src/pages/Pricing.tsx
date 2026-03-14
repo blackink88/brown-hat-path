@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Zap, Shield, Crown, Globe, Loader2, ArrowRight, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
+import { redirectToLMS } from "@/lib/frappe";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { PaystackButton } from "@/components/pricing/PaystackButton";
@@ -76,7 +77,6 @@ function parseFeatures(raw: string | string[]): string[] {
 
 const Pricing = () => {
   const { user, loading: authLoading, tierLevel: currentTierLevel } = useAuth();
-  const FRAPPE_LMS_URL = (import.meta.env.VITE_FRAPPE_URL as string) || "https://lms-dzr-tbs.c.frappe.cloud";
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
@@ -195,7 +195,7 @@ const Pricing = () => {
                         variant="outline"
                         size="lg"
                         className="w-full gap-2 font-medium"
-                        onClick={() => { window.location.href = `${FRAPPE_LMS_URL}/lms`; }}
+                        onClick={redirectToLMS}
                       >
                         Go to Courses
                         <ArrowRight className="h-4 w-4" />

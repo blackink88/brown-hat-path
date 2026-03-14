@@ -11,8 +11,9 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
-const TOKEN_KEY = "bh_token";
+const PROXY_URL   = import.meta.env.VITE_PROXY_URL as string;
+const TOKEN_KEY   = "bh_token";
+const SSO_KEY     = "bh_sso_cred"; // temp sessionStorage — cleared after SSO or signout
 
 // ── JWT payload shape ────────────────────────────────────────────────────────
 
@@ -141,6 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json() as Record<string, unknown>;
       if (data.error) return { error: new Error(data.error as string) };
       applyToken(data.token as string);
+      sessionStorage.setItem(SSO_KEY, JSON.stringify({ email, password }));
       return { error: null };
     } catch (e) {
       return { error: e instanceof Error ? e : new Error("Registration failed") };
@@ -157,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json() as Record<string, unknown>;
       if (data.error) return { error: new Error(data.error as string) };
       applyToken(data.token as string);
+      sessionStorage.setItem(SSO_KEY, JSON.stringify({ email, password }));
       return { error: null, tierLevel: (data.tier_level as number) ?? 0 };
     } catch (e) {
       return { error: e instanceof Error ? e : new Error("Login failed") };
@@ -165,6 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(SSO_KEY);
     applyToken(null);
   };
 

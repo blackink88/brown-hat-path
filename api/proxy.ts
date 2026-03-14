@@ -682,9 +682,9 @@ export default async function handler(req: Request): Promise<Response> {
         }),
       });
 
-      const psData = await psRes.json() as { status: boolean; data?: { authorization_url: string; reference: string } };
+      const psData = await psRes.json() as { status: boolean; message?: string; data?: { authorization_url: string; reference: string } };
       if (!psData.status || !psData.data)
-        return json({ error: "Paystack initialisation failed" }, 502);
+        return json({ error: psData.message || "Paystack initialisation failed" }, 502);
 
       return json({
         authorization_url: psData.data.authorization_url,

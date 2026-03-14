@@ -22,6 +22,28 @@
 
 const FRAPPE_URL = (import.meta.env.VITE_FRAPPE_URL as string) ?? "https://lms-dzr-tbs.c.frappe.cloud";
 
+// ─── Frappe SSO helper ────────────────────────────────────────────────────────
+// Silently establishes a Frappe session cookie using credentials stored in
+// sessionStorage by AuthContext during login/signup, then redirects to the LMS.
+// The no-cors fetch bypasses CORS; Set-Cookie in the opaque response is still
+// stored by the browser, giving the user a seamless single sign-on experience.
+
+export async function redirectToLMS() {
+  try {
+    const raw  = sessionStorage.getItem("bh_sso_cred");
+    const cred = raw ? (JSON.parse(raw) as { email?: string; password?: string }) : {};
+    if (cred.email && cred.password) {
+      await fetch(`${FRAPPE_URL}/api/method/login`, {
+        method:      "POST",
+        mode:        "no-cors",
+        credentials: "include",
+        body:        new URLSearchParams({ usr: cred.email, pwd: cred.password }),
+      });
+    }
+  } catch { /* silent — navigate anyway; Frappe will prompt login if session missing */ }
+  window.location.href = `${FRAPPE_URL}/lms`;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface FrappeCourse {
