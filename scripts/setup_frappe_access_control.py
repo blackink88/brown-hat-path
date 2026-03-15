@@ -148,20 +148,74 @@ if "data" in result:
 else:
     print(f"  ✗ Failed: {result.get('error','')[:120]}")
 
-# ── 4. Summary ─────────────────────────────────────────────────────────────────
+# ── 4. Create Permission Query Server Script ───────────────────────────────────
+# Automatically filters LMS Course list so each user only sees courses at or
+# below their subscription tier level — no manual Role Permission Manager config.
+
+print("\n── Step 4: Creating Permission Query Server Script ──────────────────")
+
+perm_script = '''\
+# BH Course Visibility — Permission Query Conditions
+# Runs on every LMS Course list query to filter by the current user's tier.
+# Explorer (tier 0) sees only tier-0 courses; Foundation sees 0+1; etc.
+
+user = frappe.session.user
+if user == "Guest":
+    conditions = "`tabLMS Course`.`custom_required_tier_level` = 0"
+else:
+    tier_level = 0
+    subs = frappe.get_all(
+        "BH Subscription",
+        filters={"member": user, "status": "Active"},
+        fields=["tier"],
+        limit=1,
+    )
+    if subs:
+        tiers = frappe.get_all(
+            "BH Subscription Tier",
+            filters={"tier_name": subs[0].tier},
+            fields=["tier_level"],
+            limit=1,
+        )
+        if tiers:
+            tier_level = tiers[0].tier_level
+    conditions = f"`tabLMS Course`.`custom_required_tier_level` <= {tier_level}"
+'''
+
+script_name = "BH LMS Course Visibility"
+existing_script = get(f"/api/resource/Server%20Script/{urllib.parse.quote(script_name)}")
+
+if "data" in existing_script and "error" not in existing_script:
+    result = put(f"/api/resource/Server%20Script/{urllib.parse.quote(script_name)}", {
+        "script": perm_script,
+        "disabled": 0,
+    })
+    action = "Updated"
+else:
+    result = post("/api/resource/Server%20Script", {
+        "name":              script_name,
+        "script_type":       "Permission Query",
+        "reference_doctype": "LMS Course",
+        "script":            perm_script,
+        "disabled":          0,
+    })
+    action = "Created"
+
+if "data" in result:
+    print(f"  ✓ {action} Server Script: {script_name}")
+    print("    Course list is now automatically filtered by subscription tier.")
+else:
+    print(f"  ✗ Failed: {result.get('error','')[:200]}")
+
+# ── 5. Summary ─────────────────────────────────────────────────────────────────
 
 print("""
 ── Done ──────────────────────────────────────────────────────────────────────
 
-Next steps in the Frappe Desk (portal.brownhat.academy/app):
+1. Course visibility is automatic — no manual Role Permission setup needed.
+   Each user only sees LMS courses at or below their subscription tier.
 
-1. Role Permissions:
-   Go to Role Permission Manager → select "LMS Course" doctype.
-   For each BH role, tick "Read" on the row with the matching
-   custom_required_tier_level field value.
-   (Or use Document-level permissions if your Frappe supports it.)
-
-2. Test the /manage-plan page:
+2. Test /manage-plan:
    Open portal.brownhat.academy/manage-plan while logged in as a test user.
 
 3. Add "Manage Plan" to the LMS sidebar (optional):

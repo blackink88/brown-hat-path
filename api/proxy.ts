@@ -722,6 +722,7 @@ export default async function handler(req: Request): Promise<Response> {
         body: JSON.stringify({
           email:        memberEmail,
           plan:         planCode,
+          amount:       0,           // required by Paystack when using a subscription plan
           callback_url: callback_url ?? "",
           metadata: { tier_name },
         }),
