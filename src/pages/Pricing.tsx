@@ -201,12 +201,20 @@ const Pricing = () => {
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     ) : (
-                      <Button variant="outline" size="lg" className="w-full gap-2 font-medium" asChild>
-                        <Link to="/enroll" className="group">
-                          {meta.cta}
-                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                        </Link>
-                      </Button>
+                      <div className="space-y-2">
+                        <Button variant="outline" size="lg" className="w-full gap-2 font-medium" asChild>
+                          <Link to="/enroll" className="group">
+                            {meta.cta}
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                          </Link>
+                        </Button>
+                        <p className="text-xs text-center text-muted-foreground">
+                          Already have an account?{" "}
+                          <Link to="/login" className="text-accent hover:underline font-medium">
+                            Log in
+                          </Link>
+                        </p>
+                      </div>
                     )}
                   </div>
                 );
