@@ -20,7 +20,7 @@
  *   get-certificates, issue-certificate, upload-file
  */
 
-const FRAPPE_URL = (import.meta.env.VITE_FRAPPE_URL as string) ?? "https://lms-dzr-tbs.c.frappe.cloud";
+const FRAPPE_URL = (import.meta.env.VITE_FRAPPE_URL as string) ?? "https://portal.brownhat.academy";
 
 // ─── Frappe SSO helper ────────────────────────────────────────────────────────
 // Silently establishes a Frappe session cookie using credentials stored in

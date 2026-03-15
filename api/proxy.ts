@@ -30,7 +30,7 @@
  *   GET   ?action=my-subscription
  *
  * Required env vars (set in Vercel Dashboard → Settings → Environment Variables):
- *   FRAPPE_URL           https://lms-dzr-tbs.c.frappe.cloud
+ *   FRAPPE_URL           https://portal.brownhat.academy
  *   FRAPPE_API_KEY       Frappe admin API key
  *   FRAPPE_API_SECRET    Frappe admin API secret
  *   PROXY_JWT_SECRET     ≥32-character random string for signing JWTs
@@ -38,7 +38,7 @@
 
 export const config = { runtime: "edge" };
 
-const FRAPPE_URL        = process.env.FRAPPE_URL        ?? "https://lms-dzr-tbs.c.frappe.cloud";
+const FRAPPE_URL        = process.env.FRAPPE_URL        ?? "https://portal.brownhat.academy";
 const FRAPPE_API_KEY    = process.env.FRAPPE_API_KEY    ?? "";
 const FRAPPE_API_SECRET = process.env.FRAPPE_API_SECRET ?? "";
 const JWT_SECRET        = process.env.PROXY_JWT_SECRET  ?? "change-me-in-production-32chars!!";
@@ -206,6 +206,45 @@ async function frappeDocPut(doctype: string, name: string, doc: Record<string, u
   return { ok: res.ok, status: res.status, data };
 }
 
+// ── Assign Frappe role matching the user's subscription tier ──────────────────
+// Removes any existing BH-* roles then adds the single correct one.
+// This drives course visibility in Frappe LMS (role-based DocPerm).
+
+const BH_ROLES: Record<number, string> = {
+  0: "BH Explorer",
+  1: "BH Foundation",
+  2: "BH Practitioner",
+  3: "BH Professional",
+  4: "BH Professional",
+};
+
+async function setFrappeUserRole(email: string, tierLevel: number): Promise<void> {
+  // Get current user roles
+  const userRes = await fetch(
+    `${FRAPPE_URL}/api/resource/User/${encodeURIComponent(email)}?fields=["name","roles"]`,
+    { headers: { Authorization: frappeAdminHeader(), Accept: "application/json" } },
+  );
+  if (!userRes.ok) return;
+  const userData = await userRes.json().catch(() => ({})) as { data?: { roles?: { role: string }[] } };
+  const currentRoles = (userData.data?.roles ?? []) as { role: string }[];
+
+  // Keep non-BH roles, add the new BH role
+  const bhRoleValues = new Set(Object.values(BH_ROLES));
+  const filteredRoles = currentRoles.filter((r) => !bhRoleValues.has(r.role));
+  const newRole = BH_ROLES[tierLevel] ?? "BH Explorer";
+  filteredRoles.push({ role: newRole });
+
+  await fetch(`${FRAPPE_URL}/api/resource/User/${encodeURIComponent(email)}`, {
+    method:  "PUT",
+    headers: {
+      Authorization:  frappeAdminHeader(),
+      "Content-Type": "application/json",
+      Accept:         "application/json",
+    },
+    body: JSON.stringify({ roles: filteredRoles }),
+  });
+}
+
 // ── Get a user's active subscription tier level ────────────────────────────────
 
 async function getUserTierLevel(email: string): Promise<number> {
@@ -272,6 +311,9 @@ export default async function handler(req: Request): Promise<Response> {
       logout_all_sessions:             0,
       send_password_update_notification: 0,
     });
+
+    // Assign BH Explorer role so Frappe course visibility rules apply immediately
+    await setFrappeUserRole(email, 0);
 
     const token = await issueJWT(email, full_name, 0);
     return json({ token, email, full_name, tier_level: 0 });
@@ -608,6 +650,9 @@ export default async function handler(req: Request): Promise<Response> {
 
       if (!createResult.ok)
         return json({ error: "Failed to create subscription record" }, 500);
+
+      // ── Assign Frappe role for course visibility ───────────────────────────
+      await setFrappeUserRole(memberEmail, newTierLevel);
 
       // ── Auto-enroll in courses the new tier grants access to ───────────────
       // Courses with custom_required_tier_level <= newTierLevel (and > 0)
