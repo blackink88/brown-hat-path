@@ -160,6 +160,16 @@ const Pricing = () => {
         {/* Pricing Cards */}
         <section className="py-16 md:py-24">
           <div className="container">
+            {/* Single auth prompt — shown once for guests, not repeated per card */}
+            {!authLoading && !user && (
+              <p className="text-center text-sm text-muted-foreground mb-8">
+                Already have an account?{" "}
+                <Link to="/login" className="text-accent hover:underline font-medium">
+                  Log in
+                </Link>{" "}
+                to manage your subscription.
+              </p>
+            )}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
 
               {/* Explorer — always free, static */}
@@ -201,20 +211,12 @@ const Pricing = () => {
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     ) : (
-                      <div className="space-y-2">
-                        <Button variant="outline" size="lg" className="w-full gap-2 font-medium" asChild>
-                          <Link to="/enroll" className="group">
-                            {meta.cta}
-                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                          </Link>
-                        </Button>
-                        <p className="text-xs text-center text-muted-foreground">
-                          Already have an account?{" "}
-                          <Link to="/login" className="text-accent hover:underline font-medium">
-                            Log in
-                          </Link>
-                        </p>
-                      </div>
+                      <Button variant="outline" size="lg" className="w-full gap-2 font-medium" asChild>
+                        <Link to="/enroll" className="group">
+                          {meta.cta}
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                      </Button>
                     )}
                   </div>
                 );
@@ -272,20 +274,12 @@ const Pricing = () => {
                       popular={tier.popular}
                     />
                   ) : (
-                    <div className="space-y-2">
-                      <Button variant={tier.popular ? "accent" : "default"} size="lg" className="w-full gap-2 font-medium" asChild>
-                        <Link to="/enroll">
-                          Get Started
-                          <ArrowRight className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <p className="text-xs text-center text-muted-foreground">
-                        Already have an account?{" "}
-                        <Link to="/login" className="text-accent hover:underline font-medium">
-                          Log in
-                        </Link>
-                      </p>
-                    </div>
+                    <Button variant={tier.popular ? "accent" : "default"} size="lg" className="w-full gap-2 font-medium" asChild>
+                      <Link to="/enroll">
+                        Get Started
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
                   )}
                 </div>
               ))}
