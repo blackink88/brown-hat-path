@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 const FRAPPE_LMS_URL =
-  (import.meta.env.VITE_FRAPPE_URL as string) || "https://lms-dzr-tbs.c.frappe.cloud";
+  (import.meta.env.VITE_FRAPPE_URL as string) || "https://portal.brownhat.academy";
 
 /**
  * SSO bridge for authenticated subscribers.
@@ -50,7 +50,7 @@ const FrappeSSO = () => {
         // Network error — navigate anyway; Frappe will prompt login if needed
       }
 
-      window.location.href = `${FRAPPE_LMS_URL}/lms`;
+      window.location.href = `${FRAPPE_LMS_URL}/lms/my-courses`;
     };
 
     doSSO();

@@ -1,7 +1,7 @@
 /**
  * Frappe LMS Proxy — Vercel Edge Function
  * ─────────────────────────────────────────
- * Site: lms-dzr-tbs.c.frappe.cloud
+ * Site: portal.brownhat.academy
  *
  * This function is the sole backend for the Brown Hat Academy React app.
  * Authentication: proxy-issued JWTs (HMAC-SHA256).
@@ -268,6 +268,94 @@ async function getUserTierLevel(email: string): Promise<number> {
   return (tierRows[0]?.tier_level as number) ?? 0;
 }
 
+// ── Tier → courses map (single source of truth) ───────────────────────────────
+// Each tier unlocks all courses listed AT or BELOW its level.
+
+const TIER_COURSES: Record<number, string[]> = {
+  0: [
+    "technical-readiness-bridge",
+  ],
+  1: [
+    "technical-readiness-bridge",
+    "practitioner-core-grc-2",
+  ],
+  2: [
+    "technical-readiness-bridge",
+    "practitioner-core-grc-2",
+    "specialisation-iam",
+    "specialisation-cloud-security",
+  ],
+  3: [
+    "technical-readiness-bridge",
+    "practitioner-core-grc-2",
+    "specialisation-iam",
+    "specialisation-cloud-security",
+    "specialisation-advanced-grc",
+  ],
+};
+
+// ── Set Frappe User Permissions for LMS Course ────────────────────────────────
+// User Permissions are enforced by Frappe's get_list at a low level — they
+// filter what courses appear on /lms/courses, /lms/my-courses, and any Frappe
+// API call, without needing Server Scripts.
+
+async function setFrappeUserCoursePermissions(email: string, tierLevel: number): Promise<void> {
+  // Fetch existing LMS Course User Permissions for this user
+  const existing = await frappeDocGet(
+    "User Permission",
+    [["user", "=", email], ["allow", "=", "LMS Course"]],
+    ["name"],
+    50,
+  );
+
+  // Delete all existing ones first (clean slate for tier change)
+  await Promise.allSettled(
+    (existing.data?.data ?? []).map((perm: Record<string, unknown>) =>
+      fetch(
+        `${FRAPPE_URL}/api/resource/User%20Permission/${encodeURIComponent(perm.name as string)}`,
+        {
+          method:  "DELETE",
+          headers: { Authorization: frappeAdminHeader(), Accept: "application/json" },
+        },
+      ),
+    ),
+  );
+
+  // Add one User Permission per course the tier grants access to
+  const courses = TIER_COURSES[tierLevel] ?? TIER_COURSES[0];
+  await Promise.allSettled(
+    courses.map((course) =>
+      frappeDocPost("User Permission", {
+        user:                  email,
+        allow:                 "LMS Course",
+        for_value:             course,
+        apply_to_all_doctypes: 0,
+      }),
+    ),
+  );
+}
+
+// ── Explorer auto-enrollment ───────────────────────────────────────────────────
+// Every BH user should be enrolled in the free bridge course so that
+// /lms/my-courses is never empty and they can't accidentally browse all courses.
+
+const EXPLORER_COURSE = "technical-readiness-bridge";
+
+async function ensureExplorerEnrollment(email: string): Promise<void> {
+  const existing = await frappeDocGet(
+    "LMS Enrollment",
+    [["course", "=", EXPLORER_COURSE], ["member", "=", email]],
+    ["name"],
+    1,
+  );
+  if ((existing.data?.data ?? []).length > 0) return; // already enrolled
+  await frappeDocPost("LMS Enrollment", {
+    course:      EXPLORER_COURSE,
+    member:      email,
+    member_type: "Student",
+  });
+}
+
 // ── Main handler ───────────────────────────────────────────────────────────────
 
 export default async function handler(req: Request): Promise<Response> {
@@ -312,8 +400,12 @@ export default async function handler(req: Request): Promise<Response> {
       send_password_update_notification: 0,
     });
 
-    // Assign BH Explorer role so Frappe course visibility rules apply immediately
+    // Assign BH Explorer role + User Permissions so Frappe filters courses correctly
     await setFrappeUserRole(email, 0);
+    await setFrappeUserCoursePermissions(email, 0);
+
+    // Auto-enroll new Explorer users in the free bridge course
+    await ensureExplorerEnrollment(email);
 
     const token = await issueJWT(email, full_name, 0);
     return json({ token, email, full_name, tier_level: 0 });
@@ -345,6 +437,9 @@ export default async function handler(req: Request): Promise<Response> {
       getUserTierLevel(email),
       checkIsAdmin(email),
     ]);
+
+    // Ensure every user has at least the Explorer bridge course enrollment
+    await ensureExplorerEnrollment(email);
 
     const token = await issueJWT(email, full_name, tier_level, is_admin);
     return json({ token, email, full_name, tier_level, is_admin });
@@ -651,22 +746,14 @@ export default async function handler(req: Request): Promise<Response> {
       if (!createResult.ok)
         return json({ error: "Failed to create subscription record" }, 500);
 
-      // ── Assign Frappe role for course visibility ───────────────────────────
+      // ── Assign Frappe role + User Permissions for course visibility ───────────
       await setFrappeUserRole(memberEmail, newTierLevel);
+      await setFrappeUserCoursePermissions(memberEmail, newTierLevel);
 
-      // ── Auto-enroll in courses the new tier grants access to ───────────────
-      // Courses with custom_required_tier_level <= newTierLevel (and > 0)
-      const COURSE_TIER: Record<string, number> = {
-        "practitioner-core-grc-2":       1,
-        "specialisation-iam":            2,
-        "specialisation-cloud-security": 2,
-        "specialisation-advanced-grc":   3,
-      };
-      const enrollable = Object.entries(COURSE_TIER)
-        .filter(([, required]) => required > 0 && required <= newTierLevel)
-        .map(([course]) => course);
+      // ── Auto-enroll in all courses the new tier grants access to ──────────
+      const enrollable = TIER_COURSES[newTierLevel] ?? TIER_COURSES[0];
 
-      await Promise.allSettled(enrollable.map(async (course) => {
+      await Promise.allSettled(enrollable.map(async (course: string) => {
         const existing = await frappeDocGet(
           "LMS Enrollment",
           [["course", "=", course], ["member", "=", memberEmail]],

@@ -11,7 +11,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
+const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://portal.brownhat.academy";
 import bhlogo from "@/assets/bhlogo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -34,11 +34,13 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { title: "Learning Path", url: "/dashboard", icon: Map },
   { title: "My Courses", url: "/dashboard/courses", icon: BookOpen },
-  { title: "Skills Radar", url: "/dashboard/skills", icon: BarChart3 },
   { title: "Certificates", url: "/dashboard/certificates", icon: Award },
 ];
 
-const adminNavItem = { title: "Admin", url: "/dashboard/admin", icon: Settings2 };
+const adminNavItems = [
+  { title: "Skills Radar", url: "/dashboard/skills", icon: BarChart3 },
+  { title: "Admin", url: "/dashboard/admin", icon: Settings2 },
+];
 
 const settingsItems = [
   { title: "Profile", url: "/dashboard/profile", icon: User },
@@ -51,7 +53,7 @@ export function DashboardSidebar() {
   const { isAdmin } = useUserRole();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const items = [...navItems, ...(isAdmin ? [adminNavItem] : [])];
+  const items = [...navItems, ...(isAdmin ? adminNavItems : [])];
 
   const isActive = (path: string) => {
     if (path === "/dashboard") {
@@ -79,7 +81,7 @@ export function DashboardSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Open LMS — all your courses">
                   <a
-                    href={FRAPPE_LMS_URL}
+                    href={`${FRAPPE_LMS_URL}/lms/my-courses`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-semibold text-primary"

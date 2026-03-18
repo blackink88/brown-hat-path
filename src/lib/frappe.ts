@@ -1,7 +1,7 @@
 /**
  * Frappe LMS API client — Brown Hat Academy
  * ──────────────────────────────────────────
- * Site: lms-dzr-tbs.c.frappe.cloud
+ * Site: portal.brownhat.academy
  *
  * Architecture:
  *   Frappe LMS  → ALL student data: courses, lessons, quizzes, enrollment,
@@ -41,7 +41,7 @@ export async function redirectToLMS() {
       });
     }
   } catch { /* silent — navigate anyway; Frappe will prompt login if session missing */ }
-  window.location.href = `${FRAPPE_URL}/lms`;
+  window.location.href = `${FRAPPE_URL}/lms/my-courses`;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────

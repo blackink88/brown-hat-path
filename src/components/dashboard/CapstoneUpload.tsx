@@ -62,13 +62,19 @@ export function CapstoneUpload({ course, courseCode, lesson }: CapstoneUploadPro
       (lesson ? s.lesson === lesson : true)
   ) ?? null;
 
+  const ACCEPTED_TYPES = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+  const ACCEPTED_EXT_LABEL = "PDF or DOCX";
+
   const handleUpload = async (file: File) => {
     if (!accessToken) return;
 
-    if (file.type !== "application/pdf") {
+    if (!ACCEPTED_TYPES.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a PDF file only.",
+        description: `Please upload a ${ACCEPTED_EXT_LABEL} file.`,
         variant: "destructive",
       });
       return;
@@ -77,13 +83,13 @@ export function CapstoneUpload({ course, courseCode, lesson }: CapstoneUploadPro
     if (file.size > 20 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Maximum file size is 20 MB. Please compress your PDF and try again.",
+        description: "Maximum file size is 20 MB. Please compress your file and try again.",
         variant: "destructive",
       });
       return;
     }
 
-    const expectedPattern = /^BH-[A-Z0-9-]+-capstone-[A-Za-z]+-[A-Za-z]+\.pdf$/;
+    const expectedPattern = /^BH-[A-Z0-9-]+-capstone-[A-Za-z]+-[A-Za-z]+\.(pdf|docx)$/i;
     if (!expectedPattern.test(file.name)) {
       toast({
         title: "File naming reminder",
@@ -151,7 +157,7 @@ export function CapstoneUpload({ course, courseCode, lesson }: CapstoneUploadPro
         <p className="font-medium text-foreground">Submission requirements:</p>
         <ul className="list-disc list-inside space-y-0.5">
           <li>
-            File format: <strong>PDF only</strong>
+            File format: <strong>PDF or DOCX</strong>
           </li>
           <li>Maximum size: 20 MB</li>
           <li>
@@ -223,7 +229,7 @@ export function CapstoneUpload({ course, courseCode, lesson }: CapstoneUploadPro
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,application/pdf"
+          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           onChange={handleFileChange}
           className="hidden"
         />
@@ -246,7 +252,7 @@ export function CapstoneUpload({ course, courseCode, lesson }: CapstoneUploadPro
           ) : (
             <>
               <FileCheck className="h-4 w-4 mr-2" />
-              Upload Capstone PDF
+              Upload Capstone (PDF or DOCX)
             </>
           )}
         </Button>

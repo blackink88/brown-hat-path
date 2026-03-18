@@ -188,13 +188,13 @@ export function LessonQuiz({
               "flex items-center gap-3 rounded-xl px-4 py-3",
               score !== null && score >= PASS_THRESHOLD
                 ? "bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20"
-                : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                : "bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20"
             )}
           >
             {score !== null && score >= PASS_THRESHOLD ? (
               <CheckCircle2 className="h-6 w-6 shrink-0" />
             ) : (
-              <XCircle className="h-6 w-6 shrink-0" />
+              <XCircle className="h-6 w-6 shrink-0 text-red-600 dark:text-red-400" />
             )}
             <div>
               <p className="font-semibold">
@@ -226,7 +226,7 @@ export function LessonQuiz({
                     "rounded-xl border p-3.5 text-sm",
                     isCorrect
                       ? "border-green-500/30 bg-green-500/5"
-                      : "border-amber-500/30 bg-amber-500/5"
+                      : "border-red-500/30 bg-red-500/5"
                   )}
                 >
                   <p className="font-medium text-foreground">
@@ -236,7 +236,7 @@ export function LessonQuiz({
                   {!isCorrect && chosenOpt && (
                     <p className="mt-1.5 text-muted-foreground">
                       Your answer:{" "}
-                      <span className="text-amber-700 dark:text-amber-400 font-medium">
+                      <span className="text-red-700 dark:text-red-400 font-medium">
                         {chosenOpt.text}
                       </span>
                     </p>
