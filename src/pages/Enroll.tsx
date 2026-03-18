@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { redirectToLMS } from "@/lib/frappe";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -61,9 +62,9 @@ const Enroll = () => {
         });
         navigate(`/pricing?plan=${intendedPlan}`);
       } else {
-        // Explorer signup — go straight to LMS
+        // Explorer signup — SSO silently then go straight to LMS
         toast({ title: "Welcome to Brown Hat Academy!" });
-        navigate("/frappe-sso", { state: { email, password, tierLevel: 0 }, replace: true });
+        await redirectToLMS();
       }
     }
   };
