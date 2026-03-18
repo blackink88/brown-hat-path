@@ -79,8 +79,15 @@ const Pricing = () => {
   const { user, loading: authLoading, tierLevel: currentTierLevel } = useAuth();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
+  const highlightPlan = searchParams.get("plan") ?? "";
   const { formatPrice, currency, isLoading: currencyLoading } = useCurrency();
   const handledCancelledRef = useRef(false);
+
+  useEffect(() => {
+    if (!highlightPlan) return;
+    const el = document.getElementById(`plan-${highlightPlan.toLowerCase()}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightPlan]);
 
   useEffect(() => {
     if (searchParams.get("subscription") !== "cancelled" || handledCancelledRef.current) return;
@@ -226,11 +233,13 @@ const Pricing = () => {
               {paidTiers.map((tier) => (
                 <div
                   key={tier.name}
+                  id={`plan-${tier.name.toLowerCase()}`}
                   className={cn(
                     "relative p-8 rounded-2xl border bg-card transition-all",
                     tier.popular
                       ? "border-accent shadow-xl sm:scale-105 z-10"
-                      : "border-border hover:shadow-lg"
+                      : "border-border hover:shadow-lg",
+                    highlightPlan === tier.name && "ring-2 ring-accent ring-offset-2"
                   )}
                 >
                   {tier.popular && (
@@ -275,7 +284,7 @@ const Pricing = () => {
                     />
                   ) : (
                     <Button variant={tier.popular ? "accent" : "default"} size="lg" className="w-full gap-2 font-medium" asChild>
-                      <Link to="/enroll">
+                      <Link to={`/enroll?plan=${encodeURIComponent(tier.name)}`}>
                         Get Started
                         <ArrowRight className="h-4 w-4" />
                       </Link>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,9 @@ const Enroll = () => {
   const { signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  // Plan intent passed from pricing page, e.g. /enroll?plan=Foundation
+  const intendedPlan = searchParams.get("plan");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,12 +53,18 @@ const Enroll = () => {
       });
       setIsLoading(false);
     } else {
-      toast({
-        title: "Welcome to Brown Hat Academy!",
-        description: "Account created! Choose a plan to start learning.",
-      });
-      // New accounts have no subscription yet — send them to pricing
-      navigate("/pricing");
+      if (intendedPlan) {
+        // User came from a specific paid plan card — return to pricing to complete payment
+        toast({
+          title: "Account created!",
+          description: `Now complete your ${intendedPlan} subscription below.`,
+        });
+        navigate(`/pricing?plan=${intendedPlan}`);
+      } else {
+        // Explorer signup — go straight to LMS
+        toast({ title: "Welcome to Brown Hat Academy!" });
+        navigate("/frappe-sso", { state: { email, password, tierLevel: 0 }, replace: true });
+      }
     }
   };
 
