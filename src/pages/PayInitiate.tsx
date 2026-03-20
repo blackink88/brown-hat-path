@@ -18,13 +18,16 @@ const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
  */
 export default function PayInitiate() {
   const [searchParams] = useSearchParams();
-  const { session }    = useAuth();
+  const { session, loading } = useAuth();
   const { toast }      = useToast();
   const [error, setError] = useState("");
 
   const tierName = searchParams.get("tier") ?? "";
 
   useEffect(() => {
+    // Wait for AuthContext to finish reading localStorage before acting
+    if (loading) return;
+
     if (!tierName) {
       setError("No plan specified.");
       return;
@@ -32,8 +35,8 @@ export default function PayInitiate() {
 
     const token = session?.access_token;
     if (!token) {
-      // Not logged in on React side — send to login, preserve intent
-      window.location.href = `/login?redirect=/pay?tier=${encodeURIComponent(tierName)}`;
+      // Not logged in — send to login, preserving the intended destination
+      window.location.href = `/login?redirect=${encodeURIComponent(`/pay?tier=${tierName}`)}`;
       return;
     }
 
@@ -59,7 +62,7 @@ export default function PayInitiate() {
 
     run();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tierName, session?.access_token]);
+  }, [loading, tierName, session?.access_token]);
 
   if (error) {
     return (

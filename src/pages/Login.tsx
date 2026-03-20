@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +34,14 @@ const Login = () => {
       });
       setIsLoading(false);
     } else {
-      // signIn stores credentials in sessionStorage — redirectToLMS reads them,
-      // silently establishes the Frappe session cookie, then navigates to LMS.
-      await redirectToLMS();
+      // If a ?redirect= param is present (e.g. from /pay?tier=X), go there
+      // instead of the LMS so the intended flow can complete.
+      const redirect = searchParams.get("redirect");
+      if (redirect) {
+        navigate(redirect, { replace: true });
+      } else {
+        await redirectToLMS();
+      }
     }
   };
 
