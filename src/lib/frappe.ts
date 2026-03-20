@@ -41,7 +41,13 @@ export async function redirectToLMS() {
       });
     }
   } catch { /* silent — navigate anyway; Frappe will prompt login if session missing */ }
-  window.location.href = `${FRAPPE_URL}/lms/my-courses`;
+  // Pass BH JWT via URL fragment so Frappe pages (e.g. manage-plan) can call
+  // the proxy on behalf of the user. Fragment is never sent to the Frappe server;
+  // a global Website Script in Frappe reads it, stores in sessionStorage, and
+  // immediately clears it from the URL.
+  const token = localStorage.getItem("bh_token") ?? "";
+  const dest  = `${FRAPPE_URL}/lms/my-courses`;
+  window.location.href = token ? `${dest}#bh_auth=${encodeURIComponent(token)}` : dest;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
