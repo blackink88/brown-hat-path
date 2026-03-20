@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { useEffect } from "react";
 
-const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://lms-dzr-tbs.c.frappe.cloud";
+const FRAPPE_LMS_URL = import.meta.env.VITE_FRAPPE_URL as string || "https://portal.brownhat.academy";
 
 // Redirect any /dashboard/* visits to Frappe LMS — all learning happens there
 function FrappeLMSRedirect() {
@@ -39,6 +39,7 @@ import ResetPassword from "./pages/ResetPassword";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import FrappeSSO from "./pages/FrappeSSO";
 import PaymentCallback from "./pages/PaymentCallback";
+import PayInitiate from "./pages/PayInitiate";
 import NotFound from "./pages/NotFound";
 
 
@@ -79,6 +80,8 @@ const App = () => (
             <Route path="/frappe-sso" element={<FrappeSSO />} />
             {/* Paystack redirect callback — activates subscription after hosted checkout */}
             <Route path="/payment-callback" element={<PaymentCallback />} />
+            {/* Headless payment initiator — linked to from Frappe manage-plan */}
+            <Route path="/pay" element={<PayInitiate />} />
             {/* /dashboard and /course both live on Frappe LMS now */}
             <Route path="/dashboard/*" element={<FrappeLMSRedirect />} />
             <Route path="/course/*" element={<FrappeLMSRedirect />} />
