@@ -15,12 +15,15 @@ const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
  */
 export default function PaymentCallback() {
   const navigate          = useNavigate();
-  const { session, applyNewToken } = useAuth();
+  const { session, loading, applyNewToken } = useAuth();
   const { toast }         = useToast();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
+    // Wait for AuthContext to finish reading localStorage before acting
+    if (loading) return;
+
     const params    = new URLSearchParams(window.location.search);
     const reference = params.get("reference") || params.get("trxref");
     const tierName  = sessionStorage.getItem("bh_pending_tier");
@@ -74,7 +77,7 @@ export default function PaymentCallback() {
 
     activate();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.access_token]);
+  }, [loading, session?.access_token]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-background px-4">

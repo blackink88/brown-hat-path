@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,14 @@ import {
 
 /* ── Contact info cards ───────────────────────────── */
 
+const PROXY_URL = import.meta.env.VITE_PROXY_URL as string;
+
 const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    detail: "hello@brownhat.academy",
-    href: "mailto:hello@brownhat.academy",
+    detail: "support@brownhat.academy",
+    href: "mailto:support@brownhat.academy",
   },
   {
     icon: MapPin,
@@ -39,10 +41,35 @@ const contactInfo = [
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsLoading(true);
+    setError("");
+    const form = e.currentTarget;
+    const data = {
+      name:    (form.elements.namedItem("name") as HTMLInputElement).value,
+      email:   (form.elements.namedItem("email") as HTMLInputElement).value,
+      subject: (form.elements.namedItem("subject") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+    try {
+      const res = await fetch(`${PROXY_URL}?action=contact`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(data),
+      });
+      const json = await res.json() as Record<string, unknown>;
+      if (!res.ok) throw new Error((json.error as string) || "Failed to send message");
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -127,7 +154,7 @@ export default function Contact() {
                   <p className="text-sm text-muted-foreground mb-8">
                     Fill in the form below and we will get back to you within 1-2 business days.
                   </p>
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid sm:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="name">Name</Label>
@@ -146,9 +173,12 @@ export default function Contact() {
                       <Label htmlFor="message">Message</Label>
                       <Textarea id="message" name="message" placeholder="Your message..." rows={5} required />
                     </div>
-                    <Button type="submit" size="lg" className="w-full gap-2 font-medium">
+                    {error && (
+                      <p className="text-sm text-destructive">{error}</p>
+                    )}
+                    <Button type="submit" size="lg" className="w-full gap-2 font-medium" disabled={isLoading}>
                       <Send className="h-4 w-4" />
-                      Send message
+                      {isLoading ? "Sending…" : "Send message"}
                     </Button>
                   </form>
                 </div>

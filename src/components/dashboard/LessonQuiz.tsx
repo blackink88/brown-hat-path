@@ -154,8 +154,9 @@ export function LessonQuiz({
                     {options.map((opt) => (
                       <div
                         key={opt.idx}
+                        onClick={() => setSelected((prev) => ({ ...prev, [q.name]: opt.idx }))}
                         className={cn(
-                          "flex items-center space-x-2 rounded-lg border border-border px-3 py-2 hover:bg-muted/50",
+                          "flex items-center space-x-2 rounded-lg border border-border px-3 py-2 hover:bg-muted/50 cursor-pointer",
                           selected[q.name] === opt.idx && "border-primary bg-primary/5"
                         )}
                       >

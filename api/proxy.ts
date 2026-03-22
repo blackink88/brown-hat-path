@@ -456,6 +456,41 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ tiers: result.data?.data ?? [] });
   }
 
+  // ── PUBLIC: contact ───────────────────────────────────────────────────────
+  if (req.method === "POST" && action === "contact") {
+    const { name: senderName, email: senderEmail, subject, message } = await req.json().catch(() => ({}));
+    if (!senderName || !senderEmail || !message)
+      return json({ error: "name, email, and message required" }, 400);
+
+    const emailSubject = subject ? `[Contact] ${subject}` : `[Contact] Enquiry from ${senderName}`;
+    const emailContent = `<p><strong>Name:</strong> ${senderName}</p><p><strong>Email:</strong> ${senderEmail}</p><p><strong>Subject:</strong> ${subject || "(none)"}</p><hr/><p>${(message as string).replace(/\n/g, "<br>")}</p>`;
+
+    // Create a Communication doc in Frappe so admin can view it
+    await frappeDocPost("Communication", {
+      communication_type:   "Communication",
+      communication_medium: "Email",
+      subject:              emailSubject,
+      content:              emailContent,
+      sender:               senderEmail,
+      sender_full_name:     senderName,
+      recipients:           "support@brownhat.academy",
+      sent_or_received:     "Received",
+      status:               "Open",
+    });
+
+    // Also send via Frappe email (works when Frappe SMTP is configured)
+    frappeMethodPost("frappe.core.doctype.communication.email.make", {
+      recipients:           "support@brownhat.academy",
+      subject:              emailSubject,
+      content:              emailContent,
+      send_email:           true,
+      communication_medium: "Email",
+      sent_or_received:     "Sent",
+    }).catch(() => { /* silent — Communication doc already saved above */ });
+
+    return json({ success: true });
+  }
+
   // ── PUBLIC: forgot-password ───────────────────────────────────────────────
   if (req.method === "POST" && action === "forgot-password") {
     const { email: resetEmail } = await req.json().catch(() => ({})) as { email?: string };
