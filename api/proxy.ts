@@ -213,8 +213,7 @@ async function frappeDocPut(doctype: string, name: string, doc: Record<string, u
 const BH_ROLES: Record<number, string> = {
   0: "BH Explorer",
   1: "BH Foundation",
-  2: "BH Practitioner",
-  3: "BH Professional",
+  3: "BH Practitioner",
   4: "BH Professional",
 };
 
@@ -272,25 +271,40 @@ async function getUserTierLevel(email: string): Promise<number> {
 // Each tier unlocks all courses listed AT or BELOW its level.
 
 const TIER_COURSES: Record<number, string[]> = {
+  // Explorer — free bridge course only
   0: [
     "technical-readiness-bridge",
   ],
+  // Foundation (tier_level=1) — Level 1: Foundations of Cybersecurity
   1: [
     "technical-readiness-bridge",
-    "practitioner-core-grc-2",
+    "cybersecurity-foundations-i",
+    "cybersecurity-foundations-ii",
+    "core-cyber-foundations",
   ],
-  2: [
-    "technical-readiness-bridge",
-    "practitioner-core-grc-2",
-    "specialisation-iam",
-    "specialisation-cloud-security",
-  ],
+  // Practitioner (tier_level=3) — Level 3: Practitioner Track (GRC or SOC Analyst)
   3: [
     "technical-readiness-bridge",
+    "cybersecurity-foundations-i",
+    "cybersecurity-foundations-ii",
+    "core-cyber-foundations",
     "practitioner-core-grc-2",
+    "practitioner-core-cyber-operations",
+    "specialisation-soc-incident-response",
+  ],
+  // Professional (tier_level=4) — Level 4: Specialisation
+  4: [
+    "technical-readiness-bridge",
+    "cybersecurity-foundations-i",
+    "cybersecurity-foundations-ii",
+    "core-cyber-foundations",
+    "practitioner-core-grc-2",
+    "practitioner-core-cyber-operations",
+    "specialisation-soc-incident-response",
     "specialisation-iam",
     "specialisation-cloud-security",
     "specialisation-advanced-grc",
+    "advanced-leadership",
   ],
 };
 
