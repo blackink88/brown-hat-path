@@ -27,7 +27,6 @@ export default function PaymentCallback() {
     const params    = new URLSearchParams(window.location.search);
     const reference = params.get("reference") || params.get("trxref");
     const tierName  = sessionStorage.getItem("bh_pending_tier");
-    sessionStorage.removeItem("bh_pending_tier");
 
     if (!reference || !tierName) {
       navigate("/pricing", { replace: true });
@@ -55,8 +54,12 @@ export default function PaymentCallback() {
         });
 
         const data = await res.json() as Record<string, unknown>;
-        if (!res.ok) throw new Error((data.error as string) || "Activation failed");
+        if (!res.ok) {
+          const detail = data.detail ? ` (${data.detail})` : "";
+          throw new Error(((data.error as string) || "Activation failed") + detail);
+        }
 
+        sessionStorage.removeItem("bh_pending_tier");
         if (data.token) applyNewToken(data.token as string);
 
         toast({

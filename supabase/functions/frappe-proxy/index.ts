@@ -30,16 +30,21 @@
  *   GET   ?action=my-subscription
  *
  * Required secrets (set in Supabase Dashboard → Edge Functions → frappe-proxy):
+ *   POST  ?action=init-payment        { tier_name, callback_url }
+ *
+ * Required secrets (set in Supabase Dashboard → Edge Functions → frappe-proxy):
  *   FRAPPE_URL           https://lms-dzr-tbs.c.frappe.cloud
  *   FRAPPE_API_KEY       Frappe admin API key
  *   FRAPPE_API_SECRET    Frappe admin API secret
  *   PROXY_JWT_SECRET     ≥32-character random string for signing JWTs
+ *   PAYSTACK_SECRET_KEY  sk_live_... from Paystack dashboard
  */
 
-const FRAPPE_URL       = Deno.env.get("FRAPPE_URL")       ?? "https://lms-dzr-tbs.c.frappe.cloud";
-const FRAPPE_API_KEY   = Deno.env.get("FRAPPE_API_KEY")   ?? "";
+const FRAPPE_URL        = Deno.env.get("FRAPPE_URL")        ?? "https://lms-dzr-tbs.c.frappe.cloud";
+const FRAPPE_API_KEY    = Deno.env.get("FRAPPE_API_KEY")    ?? "";
 const FRAPPE_API_SECRET = Deno.env.get("FRAPPE_API_SECRET") ?? "";
-const JWT_SECRET       = Deno.env.get("PROXY_JWT_SECRET") ?? "change-me-in-production-32chars!!";
+const JWT_SECRET        = Deno.env.get("PROXY_JWT_SECRET")  ?? "change-me-in-production-32chars!!";
+const PAYSTACK_SECRET   = Deno.env.get("PAYSTACK_SECRET_KEY") ?? "";
 
 const JWT_EXPIRY_SECONDS = 30 * 24 * 60 * 60; // 30 days
 
@@ -216,11 +221,11 @@ async function getUserTierLevel(email: string): Promise<number> {
   const rows = result.data?.data ?? [];
   if (!rows.length) return 0; // Explorer (free)
 
-  const tierName = rows[0].tier as string;
-  // Fetch tier level
+  // `tier` is the Link field value = the BH Subscription Tier doc name
+  const tierDocName = rows[0].tier as string;
   const tierResult = await frappeDocGet(
     "BH Subscription Tier",
-    [["tier_name", "=", tierName]],
+    [["name", "=", tierDocName]],
     ["tier_level"],
     1,
   );
@@ -540,43 +545,107 @@ Deno.serve(async (req) => {
       const rows = subResult.data?.data ?? [];
       if (!rows.length) return json({ subscription: null, tier: null });
 
-      const sub       = rows[0];
-      const tierName  = sub.tier as string;
+      const sub          = rows[0];
+      const tierDocName  = sub.tier as string; // Link field value = doc name
 
       const tierResult = await frappeDocGet(
         "BH Subscription Tier",
-        [["tier_name", "=", tierName]],
-        ["tier_name","tier_level","price_zar","features","paystack_plan_code"],
+        [["name", "=", tierDocName]],
+        ["name","tier_name","tier_level","price_zar","features","paystack_plan_code"],
         1,
       );
       const tierRows = tierResult.data?.data ?? [];
       return json({ subscription: sub, tier: tierRows[0] ?? null });
     }
 
+    // ── POST: init-payment ─────────────────────────────────────────────────
+    if (req.method === "POST" && action === "init-payment") {
+      const { tier_name, callback_url } = await req.json();
+      if (!tier_name || !callback_url)
+        return json({ error: "tier_name and callback_url required" }, 400);
+
+      if (!PAYSTACK_SECRET)
+        return json({ error: "Paystack not configured on server" }, 500);
+
+      // Look up tier
+      const tierRes = await frappeDocGet(
+        "BH Subscription Tier",
+        [["tier_name", "=", tier_name]],
+        ["name", "tier_level", "price_zar", "paystack_plan_code"],
+        1,
+      );
+      const tierRow = (tierRes.data?.data ?? [])[0];
+      if (!tierRow)
+        return json({ error: `Subscription tier '${tier_name}' not found` }, 404);
+
+      const planCode = (tierRow.paystack_plan_code as string) || "";
+      const priceZar = (tierRow.price_zar as number) ?? 0;
+
+      const paystackBody: Record<string, unknown> = {
+        email:        memberEmail,
+        amount:       priceZar * 100, // Paystack uses kobo (cents)
+        callback_url,
+        currency:     "ZAR",
+        metadata:     { tier_name, tier_doc_name: tierRow.name, tier_level: tierRow.tier_level },
+      };
+      if (planCode) paystackBody.plan = planCode;
+
+      const psRes = await fetch("https://api.paystack.co/transaction/initialize", {
+        method:  "POST",
+        headers: {
+          Authorization:  `Bearer ${PAYSTACK_SECRET}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paystackBody),
+      });
+      const psData = await psRes.json().catch(() => ({}));
+      if (!psRes.ok || !psData.data?.authorization_url)
+        return json({ error: psData.message ?? "Failed to initialize Paystack payment" }, 502);
+
+      return json({
+        authorization_url: psData.data.authorization_url,
+        reference:         psData.data.reference,
+        access_code:       psData.data.access_code,
+      });
+    }
+
     // ── POST: activate-subscription ────────────────────────────────────────
     if (req.method === "POST" && action === "activate-subscription") {
-      const {
-        tier_name,
-        paystack_reference,
-        paystack_subscription_code,
-        paystack_customer_code,
-        amount_paid,
-      } = await req.json();
+      const { tier_name, paystack_reference } = await req.json();
 
       if (!tier_name || !paystack_reference)
         return json({ error: "tier_name and paystack_reference required" }, 400);
 
-      // Verify tier exists
+      // Verify payment with Paystack (if secret key is configured)
+      let amountPaid = 0;
+      let paystackSubCode = "";
+      let paystackCustCode = "";
+      if (PAYSTACK_SECRET) {
+        const verifyRes = await fetch(
+          `https://api.paystack.co/transaction/verify/${encodeURIComponent(paystack_reference)}`,
+          { headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` } },
+        );
+        const verifyData = await verifyRes.json().catch(() => ({}));
+        if (!verifyRes.ok || verifyData.data?.status !== "success")
+          return json({ error: "Payment verification failed — transaction not successful" }, 402);
+
+        amountPaid     = ((verifyData.data.amount as number) ?? 0) / 100; // convert from kobo
+        paystackSubCode  = verifyData.data.subscription?.subscription_code ?? "";
+        paystackCustCode = verifyData.data.customer?.customer_code ?? "";
+      }
+
+      // Look up tier by tier_name field to get the doc name (needed for the Link field)
       const tierResult = await frappeDocGet(
         "BH Subscription Tier",
         [["tier_name", "=", tier_name]],
-        ["name","tier_level"],
+        ["name", "tier_level"],
         1,
       );
       const tierRows = tierResult.data?.data ?? [];
       if (!tierRows.length)
         return json({ error: `Subscription tier '${tier_name}' not found` }, 404);
 
+      const tierDocName  = tierRows[0].name as string;   // actual Frappe doc name for the Link field
       const newTierLevel = (tierRows[0].tier_level as number) ?? 0;
 
       // Cancel any existing active subscription
@@ -590,25 +659,31 @@ Deno.serve(async (req) => {
         await frappeDocPut("BH Subscription", existing.name as string, { status: "Cancelled" });
       }
 
-      // Create new subscription
+      // Create new subscription using the doc name (not tier_name string) for the Link field
       const today     = new Date();
       const nextMonth = new Date(today);
       nextMonth.setMonth(nextMonth.getMonth() + 1);
 
       const createResult = await frappeDocPost("BH Subscription", {
         member:                     memberEmail,
-        tier:                       tier_name,
+        tier:                       tierDocName,
         status:                     "Active",
         paystack_reference:         paystack_reference,
-        paystack_subscription_code: paystack_subscription_code ?? "",
-        paystack_customer_code:     paystack_customer_code ?? "",
+        paystack_subscription_code: paystackSubCode,
+        paystack_customer_code:     paystackCustCode,
         start_date:                 today.toISOString().substring(0, 10),
         end_date:                   nextMonth.toISOString().substring(0, 10),
-        amount_paid:                amount_paid ?? 0,
+        amount_paid:                amountPaid,
       });
 
-      if (!createResult.ok)
-        return json({ error: "Failed to create subscription record" }, 500);
+      if (!createResult.ok) {
+        const frappeErr = createResult.data?.exception
+          ?? createResult.data?.message
+          ?? createResult.data?._server_messages
+          ?? JSON.stringify(createResult.data);
+        console.error("BH Subscription create failed:", frappeErr);
+        return json({ error: "Failed to create subscription record", detail: frappeErr }, 500);
+      }
 
       // Issue a fresh JWT with the new tier level
       const newToken = await issueJWT(memberEmail, payload.full_name as string, newTierLevel);
