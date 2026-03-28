@@ -256,10 +256,11 @@ async function getUserTierLevel(email: string): Promise<number> {
   const rows = result.data?.data ?? [];
   if (!rows.length) return 0;
 
-  const tierName = rows[0].tier as string;
+  // `tier` is the Link field value = the BH Subscription Tier doc name
+  const tierDocName = rows[0].tier as string;
   const tierResult = await frappeDocGet(
     "BH Subscription Tier",
-    [["tier_name", "=", tierName]],
+    [["name", "=", tierDocName]],
     ["tier_level"],
     1,
   );
@@ -728,13 +729,13 @@ export default async function handler(req: Request): Promise<Response> {
       const rows = subResult.data?.data ?? [];
       if (!rows.length) return json({ subscription: null, tier: null });
 
-      const sub      = rows[0];
-      const tierName = sub.tier as string;
+      const sub         = rows[0];
+      const tierDocName = sub.tier as string; // Link field value = doc name
 
       const tierResult = await frappeDocGet(
         "BH Subscription Tier",
-        [["tier_name", "=", tierName]],
-        ["tier_name","tier_level","price_zar","features","paystack_plan_code"],
+        [["name", "=", tierDocName]],
+        ["name","tier_name","tier_level","price_zar","features","paystack_plan_code"],
         1,
       );
       const tierRows = tierResult.data?.data ?? [];
@@ -764,7 +765,26 @@ export default async function handler(req: Request): Promise<Response> {
       if (!tierRows.length)
         return json({ error: `Subscription tier '${tier_name}' not found` }, 404);
 
+      const tierDocName  = tierRows[0].name as string;   // actual Frappe doc name for the Link field
       const newTierLevel = (tierRows[0].tier_level as number) ?? 0;
+
+      // Verify payment with Paystack before recording it
+      const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY ?? "";
+      let verifiedAmount    = amount_paid ?? 0;
+      let verifiedSubCode   = paystack_subscription_code ?? "";
+      let verifiedCustCode  = paystack_customer_code ?? "";
+      if (PAYSTACK_SECRET) {
+        const verifyRes  = await fetch(
+          `https://api.paystack.co/transaction/verify/${encodeURIComponent(paystack_reference)}`,
+          { headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` } },
+        );
+        const verifyData = await verifyRes.json() as { status: boolean; data?: Record<string, unknown> };
+        if (!verifyRes.ok || (verifyData.data as Record<string, unknown>)?.status !== "success")
+          return json({ error: "Payment verification failed — transaction not successful" }, 402);
+        verifiedAmount   = (((verifyData.data as Record<string, unknown>)?.amount as number) ?? 0) / 100;
+        verifiedSubCode  = ((verifyData.data as Record<string, unknown>)?.subscription as Record<string, unknown>)?.subscription_code as string ?? "";
+        verifiedCustCode = ((verifyData.data as Record<string, unknown>)?.customer as Record<string, unknown>)?.customer_code as string ?? "";
+      }
 
       const existingResult = await frappeDocGet(
         "BH Subscription",
@@ -782,18 +802,24 @@ export default async function handler(req: Request): Promise<Response> {
 
       const createResult = await frappeDocPost("BH Subscription", {
         member:                     memberEmail,
-        tier:                       tier_name,
+        tier:                       tierDocName,
         status:                     "Active",
         paystack_reference:         paystack_reference,
-        paystack_subscription_code: paystack_subscription_code ?? "",
-        paystack_customer_code:     paystack_customer_code ?? "",
+        paystack_subscription_code: verifiedSubCode,
+        paystack_customer_code:     verifiedCustCode,
         start_date:                 today.toISOString().substring(0, 10),
         end_date:                   nextMonth.toISOString().substring(0, 10),
-        amount_paid:                amount_paid ?? 0,
+        amount_paid:                verifiedAmount,
       });
 
-      if (!createResult.ok)
-        return json({ error: "Failed to create subscription record" }, 500);
+      if (!createResult.ok) {
+        const frappeErr = createResult.data?.exception
+          ?? createResult.data?.message
+          ?? createResult.data?._server_messages
+          ?? JSON.stringify(createResult.data);
+        console.error("BH Subscription create failed:", frappeErr);
+        return json({ error: "Failed to create subscription record", detail: frappeErr }, 500);
+      }
 
       // ── Assign Frappe role + User Permissions for course visibility ───────────
       await setFrappeUserRole(memberEmail, newTierLevel);
@@ -840,14 +866,23 @@ export default async function handler(req: Request): Promise<Response> {
       const tierResult = await frappeDocGet(
         "BH Subscription Tier",
         [["tier_name", "=", tier_name]],
-        ["name", "tier_level", "paystack_plan_code"],
+        ["name", "tier_level", "price_zar", "paystack_plan_code"],
         1,
       );
       const tier = (tierResult.data?.data ?? [])[0] as Record<string, unknown> | undefined;
       if (!tier) return json({ error: `Tier '${tier_name}' not found` }, 404);
 
-      const planCode = tier.paystack_plan_code as string;
-      if (!planCode) return json({ error: "No Paystack plan code for this tier" }, 400);
+      const planCode = (tier.paystack_plan_code as string) || "";
+      const priceZar = (tier.price_zar as number) ?? 0;
+
+      const paystackBody: Record<string, unknown> = {
+        email:        memberEmail,
+        amount:       planCode ? 0 : priceZar * 100, // 0 when using a plan code (Paystack sets amount from plan)
+        callback_url: callback_url ?? "",
+        currency:     "ZAR",
+        metadata:     { tier_name, tier_doc_name: tier.name },
+      };
+      if (planCode) paystackBody.plan = planCode;
 
       const psRes = await fetch("https://api.paystack.co/transaction/initialize", {
         method:  "POST",
@@ -855,13 +890,7 @@ export default async function handler(req: Request): Promise<Response> {
           Authorization:  `Bearer ${PAYSTACK_SECRET}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email:        memberEmail,
-          plan:         planCode,
-          amount:       0,           // required by Paystack when using a subscription plan
-          callback_url: callback_url ?? "",
-          metadata: { tier_name },
-        }),
+        body: JSON.stringify(paystackBody),
       });
 
       const psData = await psRes.json() as { status: boolean; message?: string; data?: { authorization_url: string; reference: string } };
