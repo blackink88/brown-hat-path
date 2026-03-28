@@ -40,6 +40,7 @@ import VerifyCertificate from "./pages/VerifyCertificate";
 import FrappeSSO from "./pages/FrappeSSO";
 import PaymentCallback from "./pages/PaymentCallback";
 import PayInitiate from "./pages/PayInitiate";
+import VideoPlayer from "./pages/VideoPlayer";
 import NotFound from "./pages/NotFound";
 
 
@@ -82,6 +83,8 @@ const App = () => (
             <Route path="/payment-callback" element={<PaymentCallback />} />
             {/* Headless payment initiator — linked to from Frappe manage-plan */}
             <Route path="/pay" element={<PayInitiate />} />
+            {/* Bunny.net video player — embedded as iframe inside Frappe lessons */}
+            <Route path="/player/:guid" element={<VideoPlayer />} />
             {/* /dashboard and /course both live on Frappe LMS now */}
             <Route path="/dashboard/*" element={<FrappeLMSRedirect />} />
             <Route path="/course/*" element={<FrappeLMSRedirect />} />

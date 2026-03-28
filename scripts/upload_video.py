@@ -26,6 +26,7 @@ BUNNY_LIBRARY_ID  = os.environ.get("BUNNY_STREAM_LIBRARY_ID",  "626967")
 BUNNY_API_KEY     = os.environ.get("BUNNY_STREAM_API_KEY",     "c993f12d-cfa2-4804-a2f5ffd3a934-19d7-4235")
 BUNNY_BASE        = f"https://video.bunnycdn.com/library/{BUNNY_LIBRARY_ID}"
 EMBED_BASE        = f"https://iframe.mediadelivery.net/embed/{BUNNY_LIBRARY_ID}"
+PLAYER_BASE       = "https://www.brownhat.academy/player"  # proxies Bunny via our domain
 
 FRAPPE_URL        = os.environ.get("FRAPPE_URL",        "https://lms-dzr-tbs.c.frappe.cloud")
 FRAPPE_API_KEY    = os.environ.get("FRAPPE_API_KEY",    "c051ee2f244a78a")
@@ -132,9 +133,13 @@ def find_lesson(title: str) -> str | None:
 
 def update_lesson_video(lesson_name: str, embed_url: str):
     """Clears the youtube field and embeds the video as a raw HTML block in content."""
+    # Use brownhat.academy/player/{guid} as the iframe src so Frappe Cloud's
+    # CSP doesn't block it (we control headers on our domain via Vercel)
+    guid        = embed_url.split("/")[-1].split("?")[0]
+    player_url  = f"{PLAYER_BASE}/{guid}"
     iframe = (
         '<div style="position:relative;padding-top:56.25%;">'
-        f'<iframe src="{embed_url}" loading="lazy" '
+        f'<iframe src="{player_url}" loading="lazy" '
         'style="border:none;position:absolute;top:0;left:0;height:100%;width:100%;" '
         'allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" '
         'allowfullscreen="true"></iframe></div>'

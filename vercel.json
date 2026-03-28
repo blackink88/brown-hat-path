@@ -2,5 +2,20 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/player/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-src https://iframe.mediadelivery.net; frame-ancestors https://portal.brownhat.academy https://lms-dzr-tbs.c.frappe.cloud"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "ALLOW-FROM https://portal.brownhat.academy"
+        }
+      ]
+    }
   ]
 }
