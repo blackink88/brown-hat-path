@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/player/:guid", "destination": "/api/player?guid=:guid" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
