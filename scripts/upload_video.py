@@ -131,8 +131,21 @@ def find_lesson(title: str) -> str | None:
 
 
 def update_lesson_video(lesson_name: str, embed_url: str):
+    """Clears the youtube field and embeds the video as a raw HTML block in content."""
+    iframe = (
+        '<div style="position:relative;padding-top:56.25%;">'
+        f'<iframe src="{embed_url}" loading="lazy" '
+        'style="border:none;position:absolute;top:0;left:0;height:100%;width:100%;" '
+        'allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" '
+        'allowfullscreen="true"></iframe></div>'
+    )
+    content = json.dumps({
+        "time": int(__import__("time").time() * 1000),
+        "blocks": [{"id": "bunny-video", "type": "raw", "data": {"html": iframe}}],
+        "version": "2.29.0",
+    })
     url  = f"{FRAPPE_URL}/api/resource/Course%20Lesson/{urllib.parse.quote(lesson_name)}"
-    body = json.dumps({"youtube": embed_url}).encode()
+    body = json.dumps({"youtube": "", "content": content}).encode()
     req  = urllib.request.Request(url, data=body, headers=frappe_headers(), method="PUT")
     with urllib.request.urlopen(req, timeout=30) as r:
         result = json.loads(r.read())
